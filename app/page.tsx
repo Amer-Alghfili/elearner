@@ -1,7 +1,23 @@
-"use client";
+import { Box, Stack } from "@/components/chakra-server";
 
-import { Box } from "@chakra-ui/react";
+export default async function Home() {
+  async function p() {
+    return new Promise<string>((res) => {
+      setTimeout(() => {
+        res("returned");
+      }, 1000);
+    });
+  }
 
-export default function Home() {
-  return <Box color="green">!Hello</Box>;
+  const res = await fetch("https://jsonplaceholder.typicode.com/todos/1");
+  const todo = await res.json();
+
+  const promise = await p();
+
+  return (
+    <Stack>
+      <Box color="green">{todo.title}</Box>
+      <Box color="green">{promise}</Box>
+    </Stack>
+  );
 }
