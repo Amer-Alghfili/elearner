@@ -14,7 +14,9 @@ export default function LoginPage() {
       <Box maxW="38.625em" mx="auto">
         <Stack mb="5.25em" alignItems="center">
           <Heading as="h1">Welcome to Elearner</Heading>
-          <Box>You’re about one step to improve your learning!</Box>
+          <Box fontSize="1.25rem" fontWeight="medium">
+            You’re about one step to improve your learning!
+          </Box>
         </Stack>
         <Stack gap="1.875em">
           <Button
