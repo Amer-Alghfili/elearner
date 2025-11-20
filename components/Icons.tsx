@@ -81,3 +81,26 @@ export function StrikeEyeIcon(props: IconProps) {
     </Icon>
   );
 }
+
+export function ExitIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path
+          opacity="0.5"
+          d="M10.0002 16.6666C8.23205 16.6666 6.53636 15.9642 5.28612 14.714C4.03588 13.4637 3.3335 11.768 3.3335 9.99992C3.3335 8.23181 4.03588 6.53612 5.28612 5.28587C6.53636 4.03563 8.23205 3.33325 10.0002 3.33325"
+          stroke="#986D00"
+          stroke-width="1.5"
+          stroke-linecap="round"
+        />
+        <path
+          d="M8.3335 10H16.6668M16.6668 10L14.1668 7.5M16.6668 10L14.1668 12.5"
+          stroke="#986D00"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </Icon>
+  );
+}

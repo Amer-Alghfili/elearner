@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Provider } from "@/components/ui/provider";
 import { Toaster } from "@/components/ui/toaster";
-import { signOut } from "@/auth";
 import { inter, manrope } from "@/fonts";
 
 export const metadata: Metadata = {
@@ -23,16 +22,6 @@ export default function RootLayout({
     >
       <body>
         <Provider>
-          {/* <form
-            action={async () => {
-              "use server";
-              await signOut({ redirectTo: "/login" });
-            }}
-          >
-            <button className="flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3">
-              <div className="hidden md:block">Sign Out</div>
-            </button>
-          </form> */}
           {children}
           <Toaster />
         </Provider>

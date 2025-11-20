@@ -9,10 +9,10 @@ export const colors = {
     "forest green": { value: "#15803D" },
     "soft coral": { value: "#F87171" },
     "dusty plum": { value: "#8B5CF6" },
-    neutral: {
-      background: { value: "#FAFAF9" },
-      surface: { value: "#F4F4F2" },
-    },
+  },
+  neutral: {
+    background: { value: "#FAFAF9" },
+    surface: { value: "#F4F4F2" },
   },
   stroke: { DEFAULT: { value: "#D6D3CD" } },
   text: {

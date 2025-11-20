@@ -2,13 +2,13 @@ import { GoogleIcon, OutlookIcon } from "@/components/Icons";
 import { Box, Button, Heading, Stack, Flex } from "@chakra-ui/react";
 import { CustomForm } from "./CustomForm";
 import { domine, syne } from "@/fonts";
+import { Scaffold } from "@/components/Scaffold";
 
 export default async function LoginPage() {
   return (
-    <Box
-      minH="100vh"
+    <Scaffold
       pt="5em"
-      bgGradient="linear-gradient(127deg, rgba(255, 191, 84, 0.8) 0%, rgba(65, 41, 0, 0.8) 100%)"
+      bg="linear-gradient(127deg, rgba(255, 191, 84, 0.8) 0%, rgba(65, 41, 0, 0.8) 100%)"
     >
       <Box maxW="38.625em" mx="auto">
         <Stack mb="5.25em" alignItems="center">
@@ -36,7 +36,7 @@ export default async function LoginPage() {
         <Divider />
         <CustomForm />
       </Box>
-    </Box>
+    </Scaffold>
   );
 }
 
