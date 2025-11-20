@@ -1,0 +1,18 @@
+# Use postgres/example user/password credentials
+
+services:
+  db:
+    image: postgres
+    restart: always
+    # or set shared memory limit when deploy via swarm stack
+    volumes:
+      - db:/data/postgres
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: elearner
+    ports:
+      - 5432:5432
+
+volumes:
+  db:
