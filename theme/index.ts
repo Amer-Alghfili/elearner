@@ -3,6 +3,7 @@ import { heading } from "./recipes/heading";
 import { textStyles } from "./text-styles";
 import { button } from "./recipes/button";
 import { colors } from "./colors";
+import { input } from "./recipes/input";
 
 const config = defineConfig({
   globalCss: {
@@ -36,6 +37,7 @@ const config = defineConfig({
     recipes: {
       heading,
       button,
+      input,
     },
   },
 });

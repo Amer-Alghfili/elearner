@@ -1,7 +1,8 @@
 "use client";
 
 import { GoogleIcon, OutlookIcon } from "@/components/Icons";
-import { Box, Button, Heading, Stack, Flex } from "@chakra-ui/react";
+import { Field } from "@/components/ui/field";
+import { Box, Button, Heading, Stack, Flex, Input } from "@chakra-ui/react";
 import React from "react";
 
 export default function LoginPage() {
@@ -33,6 +34,11 @@ export default function LoginPage() {
           </Button>
         </Stack>
         <Divider />
+        <Stack>
+          <Field label="Email">
+            <Input placeholder="e.g a@a.com" />
+          </Field>
+        </Stack>
       </Box>
     </Box>
   );
