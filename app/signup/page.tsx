@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
-export default function LoginPage() {
+export default function SignupPage() {
   return (
     <Box
       h="100%"
@@ -23,7 +23,7 @@ export default function LoginPage() {
     >
       <Box maxW="38.625em" mx="auto">
         <Stack mb="5.25em" alignItems="center">
-          <Heading as="h1">Welcome Back!</Heading>
+          <Heading as="h1">Welcome to Elearner</Heading>
           <Box fontSize="1.25rem" fontWeight="medium">
             You’re about one step to improve your learning!
           </Box>
@@ -58,12 +58,12 @@ export default function LoginPage() {
           </Stack>
           <Stack gap="1em">
             <Button variant="primary" borderColor="rgba(255, 243, 218, 0.6)">
-              Sign in
+              Sign up
             </Button>
             <Box textAlign="center" color="stroke" textStyle="md-bold">
-              You don’t have an account?{" "}
-              <Link href="/signup" color="white">
-                Sign Up
+              Already have an account?{" "}
+              <Link href="/login" color="white">
+                Sign In
               </Link>
             </Box>
           </Stack>

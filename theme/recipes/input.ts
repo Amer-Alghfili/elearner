@@ -20,8 +20,10 @@ export const input = defineRecipe({
       outline: {
         borderRadius: "8px",
         textStyle: "md-medium",
+        borderColor: "stroke",
         bg: "white",
         px: "1rem",
+        color: "text.primary",
         _placeholder: {
           color: "#6C6C6C",
         },
