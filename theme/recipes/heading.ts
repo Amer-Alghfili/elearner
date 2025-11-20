@@ -1,4 +1,6 @@
-export const heading = {
+import { defineRecipe } from "@chakra-ui/react";
+
+export const heading = defineRecipe({
   variants: {
     size: {
       xs: { textStyle: "none" },
@@ -14,4 +16,4 @@ export const heading = {
       "7xl": { textStyle: "none" },
     },
   },
-};
+});

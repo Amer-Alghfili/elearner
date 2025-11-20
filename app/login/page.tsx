@@ -1,7 +1,7 @@
 "use client";
 
 import { GoogleIcon, OutlookIcon } from "@/components/Icons";
-import { Box, Button, Heading, Stack } from "@chakra-ui/react";
+import { Box, Button, Heading, Stack, Flex } from "@chakra-ui/react";
 import React from "react";
 
 export default function LoginPage() {
@@ -19,11 +19,7 @@ export default function LoginPage() {
           </Box>
         </Stack>
         <Stack gap="1.875em">
-          <Button
-            bg="#986D00"
-            variant="plain"
-            borderColor="rgba(255, 243, 218, 0.6)"
-          >
+          <Button variant="primary" borderColor="rgba(255, 243, 218, 0.6)">
             <GoogleIcon />
             Continue with Google
           </Button>
@@ -36,7 +32,18 @@ export default function LoginPage() {
             Continue with Outlook
           </Button>
         </Stack>
+        <Divider />
       </Box>
     </Box>
+  );
+}
+
+function Divider() {
+  return (
+    <Flex mt="3.0625em" mb="1.8125em" alignItems="center" gap="0.75em">
+      <Box h="1px" flex="100%" bg="white" />
+      <Box>OR</Box>
+      <Box h="1px" flex="100%" bg="white" />
+    </Flex>
   );
 }

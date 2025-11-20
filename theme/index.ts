@@ -1,6 +1,8 @@
 import { createSystem, defaultConfig, defineConfig } from "@chakra-ui/react";
 import { heading } from "./recipes/heading";
 import { textStyles } from "./text-styles";
+import { button } from "./recipes/button";
+import { colors } from "./colors";
 
 const config = defineConfig({
   globalCss: {
@@ -27,9 +29,13 @@ const config = defineConfig({
     //     body: ,
     //   }
     // }
+    tokens: {
+      colors,
+    },
     textStyles,
     recipes: {
       heading,
+      button,
     },
   },
 });
