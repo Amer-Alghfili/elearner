@@ -5,8 +5,8 @@ import { CustomForm } from "./CustomForm";
 export default async function LoginPage() {
   return (
     <Box
-      h="100%"
-      pt="9.125em"
+      minH="100vh"
+      pt="5em"
       bgGradient="linear-gradient(127deg, rgba(255, 191, 84, 0.8) 0%, rgba(65, 41, 0, 0.8) 100%)"
     >
       <Box maxW="38.625em" mx="auto">
