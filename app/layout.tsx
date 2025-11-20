@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Provider } from "@/components/ui/provider";
 import { Toaster } from "@/components/ui/toaster";
 import { signOut } from "@/auth";
+import { inter, manrope } from "@/fonts";
 
 export const metadata: Metadata = {
   title: "Elearner",
@@ -15,7 +16,11 @@ export default function RootLayout({
 }>) {
   return (
     // TODO: Change `lang`
-    <html lang="en" suppressHydrationWarning>
+    <html
+      className={`${manrope.className} ${inter.variable}`}
+      lang="en"
+      suppressHydrationWarning
+    >
       <body>
         <Provider>
           {/* <form

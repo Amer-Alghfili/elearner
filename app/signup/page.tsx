@@ -3,6 +3,7 @@
 import { GoogleIcon, OutlookIcon } from "@/components/Icons";
 import { Field } from "@/components/ui/field";
 import { PasswordInput } from "@/components/ui/password-input";
+import { domine, syne } from "@/fonts";
 import {
   Box,
   Button,
@@ -22,8 +23,10 @@ export default function SignupPage() {
     >
       <Box maxW="38.625em" mx="auto">
         <Stack mb="5.25em" alignItems="center">
-          <Heading as="h1">Welcome to Elearner</Heading>
-          <Box fontSize="1.25rem" fontWeight="medium">
+          <Heading as="h1" {...domine.style}>
+            Welcome to Elearner
+          </Heading>
+          <Box {...syne.style} fontSize="1.25rem" fontWeight="medium">
             You’re about one step to improve your learning!
           </Box>
         </Stack>

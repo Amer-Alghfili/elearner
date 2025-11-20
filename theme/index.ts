@@ -24,13 +24,11 @@ const config = defineConfig({
     },
   },
   theme: {
-    // tokens: {
-    //   fonts: {
-    //     heading: ,
-    //     body: ,
-    //   }
-    // }
     tokens: {
+      fonts: {
+        heading: { value: "var(--font-inter)" },
+        body: { value: "var(--font-manrope)" },
+      },
       colors,
     },
     textStyles,
