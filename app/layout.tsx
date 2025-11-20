@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import "./globals.css";
 import { Provider } from "@/components/ui/provider";
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
   title: "Elearner",
@@ -16,7 +16,10 @@ export default function RootLayout({
     // TODO: Change `lang`
     <html lang="en" suppressHydrationWarning style={{ height: "100%" }}>
       <body style={{ height: "100%" }}>
-        <Provider>{children}</Provider>
+        <Provider>
+          {children}
+          <Toaster />
+        </Provider>
       </body>
     </html>
   );

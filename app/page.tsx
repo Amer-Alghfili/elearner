@@ -1,4 +1,4 @@
-import { Box, Stack } from "@/components/chakra-server";
+import { Box, Stack } from "@chakra-ui/react";
 
 export default async function Home() {
   async function p() {

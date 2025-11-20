@@ -1,11 +1,14 @@
 "use client";
 
+import React from "react";
+
 import type {
   ButtonProps,
   GroupProps,
   InputProps,
   StackProps,
 } from "@chakra-ui/react";
+
 import {
   Box,
   HStack,
@@ -16,8 +19,7 @@ import {
   mergeRefs,
   useControllableState,
 } from "@chakra-ui/react";
-import * as React from "react";
-import { LuEye, LuEyeOff } from "react-icons/lu";
+
 import { EyeIcon, StrikeEyeIcon } from "../Icons";
 
 export interface PasswordVisibilityProps {
