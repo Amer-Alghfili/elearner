@@ -3,14 +3,11 @@
 import { Field } from "@/components/ui/field";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Box, Button, Stack, Input, Link } from "@chakra-ui/react";
-import { useSearchParams } from "next/navigation";
 import React from "react";
 import { authenticate } from "../lib/actions";
 import { toaster } from "@/components/ui/toaster";
 
 export function CustomForm() {
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
   const [errorMessage, formAction, isPending] = React.useActionState(
     authenticate,
     undefined
@@ -53,7 +50,7 @@ export function CustomForm() {
           </Field>
         </Stack>
 
-        <input type="hidden" name="redirectTo" value={callbackUrl} />
+        <input type="hidden" name="redirectTo" value="/" />
         <Stack gap="1em">
           <Button
             type="submit"

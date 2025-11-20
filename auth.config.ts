@@ -4,19 +4,27 @@ import type { NextAuthConfig } from "next-auth";
 export const authConfig = {
   pages: {
     signIn: "/login",
+    newUser: "/signup",
   },
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
 
       const isOnLoginPage = nextUrl.pathname.startsWith("/login");
-      const isOnSignupPage = nextUrl.pathname.startsWith("/signup");
 
-      if (isOnLoginPage || isOnSignupPage) {
-        if (isLoggedIn) return Response.redirect(new URL("/", nextUrl));
+      if (isLoggedIn) {
+        if (isOnLoginPage) {
+          return Response.redirect(new URL("/", nextUrl));
+        }
+
+        return true;
       }
 
-      return isLoggedIn;
+      if (isOnLoginPage) {
+        return false;
+      }
+
+      return Response.redirect(new URL("/login", nextUrl));
     },
   },
   providers: [], // Add providers with an empty array for now
