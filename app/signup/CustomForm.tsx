@@ -43,7 +43,7 @@ export function CustomForm() {
     <form action={formAction}>
       <Stack gap="2.625em">
         <Stack gap="1.875em">
-          <Field label="Email">
+          <Field label="Email" color="white">
             <Input
               id="email"
               name="email"
@@ -52,7 +52,7 @@ export function CustomForm() {
               bg="primary.thin"
             />
           </Field>
-          <Field label="Password">
+          <Field label="Password" color="white">
             <PasswordInput
               id="password"
               name="password"
@@ -67,6 +67,7 @@ export function CustomForm() {
           <Button
             type="submit"
             variant="primary"
+            loading={isPending}
             borderColor="rgba(255, 243, 218, 0.6)"
             aria-disabled={isPending}
           >

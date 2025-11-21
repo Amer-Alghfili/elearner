@@ -12,10 +12,15 @@ export default async function LoginPage() {
     >
       <Box maxW="38.625em" mx="auto">
         <Stack mb="5.25em" alignItems="center">
-          <Heading as="h1" {...domine.style}>
+          <Heading as="h1" color="white" {...domine.style}>
             Welcome Back!
           </Heading>
-          <Box {...syne.style} fontSize="1.25rem" fontWeight="medium">
+          <Box
+            {...syne.style}
+            color="white"
+            fontSize="1.25rem"
+            fontWeight="medium"
+          >
             You’re about one step to improve your learning!
           </Box>
         </Stack>
@@ -24,11 +29,7 @@ export default async function LoginPage() {
             <GoogleIcon />
             Continue with Google
           </Button>
-          <Button
-            bg="#986D00"
-            variant="plain"
-            borderColor="rgba(255, 243, 218, 0.6)"
-          >
+          <Button variant="primary" borderColor="rgba(255, 243, 218, 0.6)">
             <OutlookIcon />
             Continue with Outlook
           </Button>
@@ -44,7 +45,7 @@ function Divider() {
   return (
     <Flex mt="3.0625em" mb="1.8125em" alignItems="center" gap="0.75em">
       <Box h="1px" flex="100%" bg="white" />
-      <Box>OR</Box>
+      <Box color="white">OR</Box>
       <Box h="1px" flex="100%" bg="white" />
     </Flex>
   );

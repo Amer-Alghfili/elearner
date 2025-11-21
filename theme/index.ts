@@ -8,6 +8,9 @@ import { input } from "./recipes/input";
 const config = defineConfig({
   //TODO: Responsive font size
   globalCss: {
+    body: {
+      bg: "black",
+    },
     h1: {
       textStyle: "h1",
     },

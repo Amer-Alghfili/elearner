@@ -11,9 +11,39 @@ import {
 import { Field } from "@/components/ui/field";
 import { Button, Input } from "@chakra-ui/react";
 import React from "react";
+import { createLearn } from "./actions";
+import { toaster } from "@/components/ui/toaster";
 
 export default function CreateLearn() {
   const [open, setOpen] = React.useState<boolean>();
+
+  const [state, formAction, isPending] = React.useActionState(
+    createLearn,
+    undefined
+  );
+
+  React.useEffect(
+    function handleDialogState() {
+      if (state == null) return;
+
+      if (Array.isArray(state)) {
+        toaster.create({
+          title: "Something went wrong",
+          type: "error",
+          closable: true,
+        });
+      } else {
+        toaster.create({
+          title: "Learn has been created successfully 🎉",
+          type: "success",
+          closable: true,
+        });
+
+        setOpen(false);
+      }
+    },
+    [state]
+  );
 
   return (
     <>
@@ -31,40 +61,46 @@ export default function CreateLearn() {
           bg="linear-gradient(127deg, #F4F4F2 0%, rgba(255, 255, 255, 0.7) 64%, rgba(255, 255, 255, 0.4) 100%)"
           backdropFilter="blur(80px)"
         >
-          <DialogHeader pb={0} px="3rem">
-            <Field>
-              <Input
-                variant="plain"
-                textStyle="h2"
-                placeholder="Learn title..."
-                _placeholder={{ color: "#7A7A7A" }}
-              />
-            </Field>
-          </DialogHeader>
-          <DialogBody px="3rem">
-            <Field>
-              <Input
-                variant="plain"
-                textStyle="h4"
-                fontWeight="medium"
-                placeholder="Add description..."
-                _placeholder={{ color: "#7A7A7A" }}
-              />
-            </Field>
-          </DialogBody>
-          <DialogFooter px="3rem" pt="3rem" pb="2rem">
-            <Button
-              w="100%"
-              maxW="12.5rem"
-              variant="secondary"
-              onClick={() => setOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button w="100%" maxW="12.5rem">
-              Add
-            </Button>
-          </DialogFooter>
+          <form action={formAction}>
+            <DialogHeader pb={0} px="3rem">
+              <Field>
+                <Input
+                  id="title"
+                  name="title"
+                  variant="plain"
+                  textStyle="h2"
+                  placeholder="Learn title..."
+                  _placeholder={{ color: "#7A7A7A" }}
+                />
+              </Field>
+            </DialogHeader>
+            <DialogBody px="3rem">
+              <Field>
+                <Input
+                  id="description"
+                  name="description"
+                  variant="plain"
+                  textStyle="h4"
+                  fontWeight="medium"
+                  placeholder="Add description..."
+                  _placeholder={{ color: "#7A7A7A" }}
+                />
+              </Field>
+            </DialogBody>
+            <DialogFooter px="3rem" pt="3rem" pb="2rem">
+              <Button
+                w="100%"
+                maxW="12.5rem"
+                variant="secondary"
+                onClick={() => setOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button loading={isPending} type="submit" w="100%" maxW="12.5rem">
+                Add
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </DialogRoot>
     </>

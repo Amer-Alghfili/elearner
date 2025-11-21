@@ -36,8 +36,6 @@ export const authConfig = {
     },
 
     authorized({ auth, request: { nextUrl } }) {
-      console.log("hello", nextUrl);
-
       if (nextUrl.pathname.startsWith("/signup")) return true;
 
       const isLoggedIn = !!auth?.user?.email;
