@@ -1,19 +1,8 @@
-"use client";
-
 import { GoogleIcon, OutlookIcon } from "@/components/Icons";
 import { Scaffold } from "@/components/Scaffold";
-import { Field } from "@/components/ui/field";
-import { PasswordInput } from "@/components/ui/password-input";
 import { domine, syne } from "@/fonts";
-import {
-  Box,
-  Button,
-  Heading,
-  Stack,
-  Flex,
-  Input,
-  Link,
-} from "@chakra-ui/react";
+import { Box, Button, Heading, Stack, Flex } from "@chakra-ui/react";
+import { CustomForm } from "./CustomForm";
 
 export default function SignupPage() {
   return (
@@ -45,31 +34,7 @@ export default function SignupPage() {
           </Button>
         </Stack>
         <Divider />
-        <Stack gap="2.625em">
-          <Stack gap="1.875em">
-            <Field label="Email">
-              <Input size="lg" placeholder="e.g a@a.com" bg="primary.thin" />
-            </Field>
-            <Field label="Password">
-              <PasswordInput
-                size="lg"
-                placeholder="at least 8 characters"
-                bg="primary.thin"
-              />
-            </Field>
-          </Stack>
-          <Stack gap="1em">
-            <Button variant="primary" borderColor="rgba(255, 243, 218, 0.6)">
-              Sign up
-            </Button>
-            <Box textAlign="center" color="stroke" textStyle="md-bold">
-              Already have an account?{" "}
-              <Link href="/login" color="white">
-                Sign In
-              </Link>
-            </Box>
-          </Stack>
-        </Stack>
+        <CustomForm />
       </Box>
     </Scaffold>
   );

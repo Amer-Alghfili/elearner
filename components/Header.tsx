@@ -15,7 +15,7 @@ export default function Header() {
           await signOut({ redirectTo: "/login" });
         }}
       >
-        <Button variant="plain" color="primary" fontWeight="bold">
+        <Button type="submit" variant="plain" color="primary" fontWeight="bold">
           <ExitIcon />
           Logout
         </Button>
