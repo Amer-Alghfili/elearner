@@ -22,7 +22,10 @@ export async function authenticate(
   }
 }
 
-export async function authenticateSignup(formData: FormData) {
+export async function authenticateSignup(
+  prevState: string | undefined,
+  formData: FormData
+) {
   try {
     await signup(formData);
     await signIn("credentials", {
@@ -33,13 +36,13 @@ export async function authenticateSignup(formData: FormData) {
     return "success";
   } catch (error) {
     if (error instanceof AuthError) {
-      switch (error.message) {
-        case "CredentialsSignin":
-          return "Invalid credentials.";
-        default:
-          return "Something went wrong";
+      if (error.type === "CredentialsSignin") {
+        return "Invalid credentials.";
       }
+    } else if (error instanceof Error && error.message != null) {
+      return error.message;
+    } else {
+      return "Something went wrong";
     }
-    throw error;
   }
 }

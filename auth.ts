@@ -1,6 +1,6 @@
 "use server";
 
-import NextAuth, { AuthError } from "next-auth";
+import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
@@ -21,7 +21,7 @@ export async function signup(input: FormData) {
     const user = await getUser(email);
 
     if (user) {
-      throw new AuthError("User already exists");
+      throw Error("User already exists");
     }
 
     try {
@@ -35,7 +35,7 @@ export async function signup(input: FormData) {
       throw Error("something went wrong");
     }
   } else {
-    throw new AuthError("Invalid");
+    throw Error("Invalid credentials.");
   }
 }
 

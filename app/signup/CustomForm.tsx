@@ -11,10 +11,16 @@ import { useRouter } from "next/navigation";
 export function CustomForm() {
   const router = useRouter();
 
-  const [errorMessage, formAction, isPending] = React.useActionState(
-    async (_: void, p: FormData) => {
-      const res = await authenticateSignup(p);
-      if (res == "success") {
+  const [state, formAction, isPending] = React.useActionState(
+    authenticateSignup,
+    undefined
+  );
+
+  React.useEffect(
+    function toastError() {
+      if (!state) return;
+
+      if (state == "success") {
         toaster.create({
           title: "Account has been created successfully 🎉",
           type: "success",
@@ -22,22 +28,15 @@ export function CustomForm() {
         });
 
         router.push("/");
-      }
-    },
-    undefined
-  );
-
-  React.useEffect(
-    function toastError() {
-      if (errorMessage) {
+      } else {
         toaster.create({
-          title: errorMessage,
+          title: state,
           type: "error",
           closable: true,
         });
       }
     },
-    [errorMessage]
+    [state]
   );
 
   return (
