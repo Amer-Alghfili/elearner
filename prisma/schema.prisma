@@ -8,6 +8,15 @@ datasource db {
 }
 
 model users {
-  email    String  @id @db.VarChar(255)
-  password String? @db.VarChar(255)
+  email    String    @id @db.VarChar(255)
+  password String?   @db.VarChar(255)
+  learns   learns[]
+}
+
+model learns {
+  id          Int      @id
+  title       String   @db.VarChar(255)
+  description String?  @db.VarChar(255)
+  user_id     String
+  user        users   @relation(fields: [user_id], references: [email])
 }
