@@ -28,10 +28,10 @@ export async function signup(input: FormData) {
       await prisma.users.create({
         data: {
           email,
-          password,
+          password: bcrypt.hashSync(password),
         },
       });
-    } catch (err) {
+    } catch (_) {
       throw Error("something went wrong");
     }
   } else {
@@ -60,10 +60,12 @@ export const { auth, signIn, signOut } = NextAuth({
           if (!user) {
             return null;
           }
-          // const passwordsMatch = await bcrypt.compare(password, user.password);
+          const passwordsMatch = await bcrypt.compare(
+            password,
+            user.password as string
+          );
 
-          // if (password === "1234") return user;
-          return user;
+          if (passwordsMatch) return user;
         }
 
         return null;

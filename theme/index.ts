@@ -6,6 +6,7 @@ import { colors } from "./colors";
 import { input } from "./recipes/input";
 
 const config = defineConfig({
+  //TODO: Responsive font size
   globalCss: {
     h1: {
       textStyle: "h1",
