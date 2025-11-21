@@ -8,19 +8,19 @@ import { input } from "./recipes/input";
 const config = defineConfig({
   globalCss: {
     h1: {
-      fontSize: "3.0625rem",
+      textStyle: "h1",
     },
     h2: {
-      fontSize: "2.4375rem",
+      textStyle: "h2",
     },
     h3: {
-      fontSize: "1.9375rem",
+      textStyle: "h3",
     },
     h4: {
-      fontSize: "1.5625rem",
+      textStyle: "h4",
     },
     h5: {
-      fontSize: "1.25rem",
+      textStyle: "h5",
     },
   },
   theme: {

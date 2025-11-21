@@ -1,6 +1,31 @@
 import { defineTextStyles } from "@chakra-ui/react";
 
 export const textStyles = defineTextStyles({
+  h1: {
+    value: {
+      fontSize: "3.0625rem",
+    },
+  },
+  h2: {
+    value: {
+      fontSize: "2.4375rem",
+    },
+  },
+  h3: {
+    value: {
+      fontSize: "1.9375rem",
+    },
+  },
+  h4: {
+    value: {
+      fontSize: "1.5625rem",
+    },
+  },
+  h5: {
+    value: {
+      fontSize: "1.25rem",
+    },
+  },
   lg: {
     value: {
       fontSize: "1.125rem",
