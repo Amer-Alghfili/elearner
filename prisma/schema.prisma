@@ -14,7 +14,7 @@ model users {
 }
 
 model learns {
-  id          Int      @id
+  id          Int      @id @default(autoincrement())
   title       String   @db.VarChar(255)
   description String?  @db.VarChar(255)
   user_id     String
