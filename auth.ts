@@ -17,6 +17,7 @@ export async function signup(input: FormData) {
 
   if (parsedCredentials.success) {
     const { email, password } = parsedCredentials.data;
+
     const user = await getUser(email);
 
     if (user) {

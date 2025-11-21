@@ -6,20 +6,23 @@ import { toaster } from "@/components/ui/toaster";
 import { Box, Button, Stack, Input, Link } from "@chakra-ui/react";
 import React from "react";
 import { authenticateSignup } from "../lib/actions";
+import { useRouter } from "next/navigation";
 
 export function CustomForm() {
+  const router = useRouter();
+
   const [errorMessage, formAction, isPending] = React.useActionState(
-    async (s, p) => {
-      try {
-        const res = await authenticateSignup(s, p);
-        if (res == "success") {
-          toaster.create({
-            title: "Account has been created successfully 🎉",
-            type: "success",
-            closable: true,
-          });
-        }
-      } catch (err) {}
+    async (_: void, p: FormData) => {
+      const res = await authenticateSignup(p);
+      if (res == "success") {
+        toaster.create({
+          title: "Account has been created successfully 🎉",
+          type: "success",
+          closable: true,
+        });
+
+        router.push("/");
+      }
     },
     undefined
   );

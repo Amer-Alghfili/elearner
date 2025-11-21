@@ -22,13 +22,13 @@ export async function authenticate(
   }
 }
 
-export async function authenticateSignup(
-  prevState: string | undefined,
-  formData: FormData
-) {
+export async function authenticateSignup(formData: FormData) {
   try {
     await signup(formData);
-    await signIn("credentials", formData);
+    await signIn("credentials", {
+      redirect: false,
+      ...{ email: formData.get("email"), password: formData.get("password") },
+    });
 
     return "success";
   } catch (error) {
