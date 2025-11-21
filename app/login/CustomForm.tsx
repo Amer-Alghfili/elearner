@@ -50,7 +50,7 @@ export function CustomForm() {
           </Field>
         </Stack>
 
-        <input type="hidden" name="redirectTo" value="/" />
+        <input type="hidden" name="redirectTo" value="/home" />
         <Stack gap="1em">
           <Button
             type="submit"

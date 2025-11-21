@@ -28,6 +28,11 @@ export const input = defineRecipe({
           color: "#6C6C6C",
         },
       },
+      plain: {
+        h: "auto",
+        p: 0,
+        bg: "transparent",
+      },
     },
   },
 });

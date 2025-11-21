@@ -27,7 +27,7 @@ export function CustomForm() {
           closable: true,
         });
 
-        router.push("/");
+        router.push("/home");
       } else {
         toaster.create({
           title: state,
@@ -62,7 +62,7 @@ export function CustomForm() {
             />
           </Field>
         </Stack>
-        <input type="hidden" name="redirectTo" value="/" />
+        <input type="hidden" name="redirectTo" value="/home" />
         <Stack gap="1em">
           <Button
             type="submit"
