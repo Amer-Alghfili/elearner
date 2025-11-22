@@ -3,6 +3,7 @@ import { Box, Button, Heading, Stack, Flex } from "@chakra-ui/react";
 import { CustomForm } from "./CustomForm";
 import { domine, syne } from "@/fonts";
 import { Scaffold } from "@/components/Scaffold";
+import { ProvidersAuth } from "@/features/ProvidersAuth";
 
 export default async function LoginPage() {
   return (
@@ -24,16 +25,7 @@ export default async function LoginPage() {
             You’re about one step to improve your learning!
           </Box>
         </Stack>
-        <Stack gap="1.875em">
-          <Button variant="primary" borderColor="rgba(255, 243, 218, 0.6)">
-            <GoogleIcon />
-            Continue with Google
-          </Button>
-          <Button variant="primary" borderColor="rgba(255, 243, 218, 0.6)">
-            <OutlookIcon />
-            Continue with Outlook
-          </Button>
-        </Stack>
+        <ProvidersAuth />
         <Divider />
         <CustomForm />
       </Box>

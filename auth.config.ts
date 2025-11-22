@@ -1,6 +1,5 @@
 import type { NextAuthConfig } from "next-auth";
 import { prisma } from "./prisma";
-// import GoogleProvider from "next-auth/providers/google";
 
 export async function getUser(
   email: string
