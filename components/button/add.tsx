@@ -5,8 +5,9 @@ import { PlusIcon } from "../Icons";
 export default function AddButton({
   children,
   iconProps,
+  startWithIcon = true,
   ...props
-}: { iconProps?: IconProps } & ButtonProps) {
+}: { iconProps?: IconProps; startWithIcon?: boolean } & ButtonProps) {
   return (
     <Button
       variant="plain"
@@ -17,6 +18,7 @@ export default function AddButton({
       _hover={{ color: "text.primary" }}
       {...props}
     >
+      {!startWithIcon && children}
       <PlusIcon
         fill="text.caption"
         stroke="text.caption"
@@ -25,7 +27,7 @@ export default function AddButton({
         strokeWidth="0.4"
         {...iconProps}
       />{" "}
-      {children}
+      {startWithIcon && children}
     </Button>
   );
 }
