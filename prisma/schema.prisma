@@ -14,9 +14,18 @@ model users {
 }
 
 model learns {
+  id          Int             @id @default(autoincrement())
+  title       String          @db.VarChar(255)
+  description String?         @db.VarChar(255)
+  user_id     String
+  user        users          @relation(fields: [user_id], references: [email])
+  todos       learns_todos[]
+}
+
+model learns_todos {
   id          Int      @id @default(autoincrement())
   title       String   @db.VarChar(255)
   description String?  @db.VarChar(255)
-  user_id     String
-  user        users   @relation(fields: [user_id], references: [email])
+  learn_id    Int
+  learn       learns  @relation(fields: [learn_id], references: [id])
 }
