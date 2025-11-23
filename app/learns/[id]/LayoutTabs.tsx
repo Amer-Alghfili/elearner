@@ -1,12 +1,20 @@
 "use client";
 
+import { Prisma } from "@/generated/prisma/client";
 import { Box, Tabs } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import React from "react";
+import { LearnContext } from "./learn-context";
 
 type Tab = "overview" | "resources";
 
-export function LayoutTabs({ children }: { children: React.ReactNode }) {
+export function LayoutTabs({
+  children,
+  learn,
+}: {
+  learn: Prisma.learnsModel;
+  children: React.ReactNode;
+}) {
   const [tab, setTab] = React.useState<Tab>("overview");
 
   const router = useRouter();
@@ -26,7 +34,9 @@ export function LayoutTabs({ children }: { children: React.ReactNode }) {
           Resources
         </Tabs.Trigger>
       </Tabs.List>
-      <Box mt="2em">{children}</Box>
+      <LearnContext.Provider value={{ learn }}>
+        <Box mt="2em">{children}</Box>
+      </LearnContext.Provider>
     </Tabs.Root>
   );
 }

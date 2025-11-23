@@ -42,7 +42,7 @@ export default async function LearnDetailsLayout({
             {learn.description}
           </Box>
         </Stack>
-        <LayoutTabs>{children}</LayoutTabs>
+        <LayoutTabs learn={learn}>{children}</LayoutTabs>
       </Stack>
     </Scaffold>
   );
