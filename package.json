@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "typegen": "npx @chakra-ui/cli typegen ./theme/index.ts",
+    "snippet": "npx @chakra-ui/cli snippet add",
     "snippet-list": "npx @chakra-ui/cli snippet list"
   },
   "dependencies": {
