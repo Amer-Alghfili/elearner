@@ -1,7 +1,17 @@
 import { auth } from "@/auth";
 import { EditIcon } from "@/components/Icons";
 import { prisma } from "@/prisma";
-import { Button, Card, Flex, Heading, Stack, Text } from "@chakra-ui/react";
+import {
+  Button,
+  Card,
+  Flex,
+  Heading,
+  Link,
+  LinkBox,
+  LinkOverlay,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 
 export async function Learns() {
   const data = await auth();
@@ -16,13 +26,19 @@ export async function Learns() {
   });
 
   //TODO: empty state
-  return learns.map(({ id, title, description }) => {
-    return (
-      <Card.Root key={id} w="full">
+  //TODO: recently created learn doesn't rendered
+  return learns.map(({ id, title, description }) => (
+    <LinkBox key={id} w="full">
+      <Card.Root>
         <Card.Body>
           <Stack gap={0}>
             <Flex alignItems="center" gap="1em" justifyContent="space-between">
-              <Heading as="h4">{title}</Heading>
+              <Heading as="h4">
+                <LinkOverlay href={`/learns/${id}/overview`}>
+                  {title}
+                </LinkOverlay>
+              </Heading>
+              {/* TODO: edit learn modal */}
               <Button
                 variant="plain"
                 p={0}
@@ -35,6 +51,6 @@ export async function Learns() {
           </Stack>
         </Card.Body>
       </Card.Root>
-    );
-  });
+    </LinkBox>
+  ));
 }
