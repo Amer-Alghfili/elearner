@@ -12,7 +12,7 @@ export function LayoutTabs({
   children,
   learn,
 }: {
-  learn: Prisma.learnsModel;
+  learn: Prisma.learnsModel & { todos: Prisma.learns_todosModel[] };
   children: React.ReactNode;
 }) {
   const [tab, setTab] = React.useState<Tab>("overview");

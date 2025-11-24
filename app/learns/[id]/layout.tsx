@@ -25,6 +25,9 @@ export default async function LearnDetailsLayout({
     where: {
       id: Number(id),
     },
+    include: {
+      todos: true,
+    },
   });
 
   //TODO: unauthorized

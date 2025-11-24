@@ -2,10 +2,14 @@ import React from "react";
 
 import { Prisma } from "@/generated/prisma/client";
 
-export const LearnContext = React.createContext<{ learn: Prisma.learnsModel }>(
-  {} as { learn: Prisma.learnsModel }
-);
+type LearnCtx = {
+  learn: Prisma.learnsModel & {
+    todos: Omit<Prisma.learns_todosModel, "learn_id">[];
+  };
+};
 
-export function useLearn(): { learn: Prisma.learnsModel } {
+export const LearnContext = React.createContext<LearnCtx>({} as LearnCtx);
+
+export function useLearn(): LearnCtx {
   return React.useContext(LearnContext);
 }
