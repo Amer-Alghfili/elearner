@@ -26,7 +26,7 @@ export async function signup(input: FormData) {
     }
 
     try {
-      await prisma.users.create({
+      await prisma.user.create({
         data: {
           email,
           password: bcrypt.hashSync(password),

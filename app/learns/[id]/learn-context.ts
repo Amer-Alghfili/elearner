@@ -3,9 +3,7 @@ import React from "react";
 import { Prisma } from "@/generated/prisma/client";
 
 type LearnCtx = {
-  learn: Prisma.learnsModel & {
-    todos: Omit<Prisma.learns_todosModel, "learn_id">[];
-  };
+  learn: Prisma.LearnModel;
 };
 
 export const LearnContext = React.createContext<LearnCtx>({} as LearnCtx);

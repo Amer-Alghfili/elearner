@@ -9,17 +9,17 @@ import { Prisma } from "@/generated/prisma/client";
 export default function OverviewTabPage() {
   const ctx = useLearn();
 
-  const [todos, setTodos] = React.useState<
-    Omit<Prisma.learns_todosModel, "learn_id">[]
-  >(ctx.learn.todos);
+  // const [todos, setTodos] = React.useState<
+  //   Omit<Prisma.TodoModel, "learn_id">[]
+  // >(ctx.learn.todos);
 
-  function draftTodo() {
-    setTodos([...todos, { id: Math.random(), title: "", description: "" }]);
-  }
+  // function draftTodo() {
+  //   setTodos([...todos, { id: Math.random(), title: "", description: "" }]);
+  // }
 
-  return (
-    <Stack alignItems="flex-start">
-      <AddButton onClick={() => draftTodo()}>New todo</AddButton>
-    </Stack>
-  );
+  // return (
+  //   <Stack alignItems="flex-start">
+  //     <AddButton onClick={() => draftTodo()}>New todo</AddButton>
+  //   </Stack>
+  // );
 }

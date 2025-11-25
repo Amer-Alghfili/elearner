@@ -21,7 +21,7 @@ export default async function LearnDetailsLayout({
 
   const { email } = session.user;
 
-  const learn = await prisma.learns.findFirst({
+  const learn = await prisma.learn.findFirst({
     where: {
       id: Number(id),
     },

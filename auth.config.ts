@@ -5,7 +5,7 @@ export async function getUser(
   email: string
 ): Promise<{ email: string; password: string | null } | null> {
   try {
-    return await prisma.users.findFirst({
+    return await prisma.user.findFirst({
       where: {
         email: email,
       },

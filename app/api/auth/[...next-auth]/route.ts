@@ -19,7 +19,7 @@ export const {
       if (account?.provider === "google" && profile?.email) {
         const email = profile.email as string;
         try {
-          await prisma.users.upsert({
+          await prisma.user.upsert({
             where: {
               email: email,
             },

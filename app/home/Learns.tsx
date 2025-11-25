@@ -19,7 +19,7 @@ export async function Learns() {
   //TODO: unauthorized
   if (data == null || data.user == null) return;
 
-  const learns = await prisma.learns.findMany({
+  const learns = await prisma.learn.findMany({
     where: {
       user_id: data?.user?.email as string,
     },

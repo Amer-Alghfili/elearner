@@ -26,7 +26,7 @@ export async function createLearn(
   if (res.success) {
     const email = data?.user?.email as string;
 
-    await prisma.users.update({
+    await prisma.user.update({
       where: {
         email,
       },
@@ -40,7 +40,7 @@ export async function createLearn(
       },
     });
 
-    const learn = await prisma.learns.findFirst({
+    const learn = await prisma.learn.findFirst({
       where: {
         user_id: email,
       },
