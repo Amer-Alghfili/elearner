@@ -11,9 +11,13 @@ type Tab = "overview" | "resources";
 export function LayoutTabs({
   children,
   learn,
+  resources = [],
+  todos = [],
 }: {
-  learn: Prisma.LearnModel;
   children: React.ReactNode;
+  learn: Prisma.LearnModel;
+  resources?: Prisma.ResourceModel[];
+  todos?: Prisma.TodoModel[];
 }) {
   const [tab, setTab] = React.useState<Tab>("overview");
 
@@ -34,7 +38,7 @@ export function LayoutTabs({
           Resources
         </Tabs.Trigger>
       </Tabs.List>
-      <LearnContext.Provider value={{ learn }}>
+      <LearnContext.Provider value={{ ...learn, resources, todos }}>
         <Box mt="2em">{children}</Box>
       </LearnContext.Provider>
     </Tabs.Root>

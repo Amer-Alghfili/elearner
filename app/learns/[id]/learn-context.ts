@@ -2,8 +2,8 @@ import React from "react";
 
 import { Prisma } from "@/generated/prisma/client";
 
-type LearnCtx = {
-  learn: Prisma.LearnModel;
+type LearnCtx = Prisma.LearnModel & { resources?: Prisma.ResourceModel[] } & {
+  todos?: Prisma.TodoModel[];
 };
 
 export const LearnContext = React.createContext<LearnCtx>({} as LearnCtx);

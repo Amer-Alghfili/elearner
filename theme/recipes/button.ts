@@ -32,6 +32,11 @@ export const button = defineRecipe({
         borderColor: "primary",
         color: "primary",
       },
+      tertiary: {
+        p: 0,
+        bg: "transparent",
+        color: "primary",
+      },
     },
   },
   defaultVariants: {

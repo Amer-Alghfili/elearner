@@ -27,6 +27,7 @@ export default async function LearnDetailsLayout({
     },
     include: {
       todos: true,
+      resources: true,
     },
   });
 
@@ -45,7 +46,9 @@ export default async function LearnDetailsLayout({
             {learn.description}
           </Box>
         </Stack>
-        <LayoutTabs learn={learn}>{children}</LayoutTabs>
+        <LayoutTabs learn={learn} resources={learn.resources}>
+          {children}
+        </LayoutTabs>
       </Stack>
     </Scaffold>
   );
