@@ -7,6 +7,8 @@ import {
   Collapsible,
   Flex,
   Heading,
+  Icon,
+  IconButton,
   Input,
   Stack,
   Text,
@@ -15,12 +17,18 @@ import React from "react";
 import { useLearn } from "../learn-context";
 import { Prisma } from "@/generated/prisma/client";
 import { Field } from "@/components/ui/field";
+import { EditIcon } from "@/components/Icons";
+import { LuTrash } from "react-icons/lu";
 
+type Resource = Prisma.ResourceModel & { confirmed: boolean };
 export default function ResourcesTabPage() {
   const ctx = useLearn();
 
-  const [resources, setResources] = React.useState<Prisma.ResourceModel[]>(
-    ctx.resources || []
+  const [resources, setResources] = React.useState<Resource[]>(
+    (ctx.resources as Prisma.ResourceModel[]).map((resources) => ({
+      ...resources,
+      confirmed: true,
+    }))
   );
 
   function draft() {
@@ -35,14 +43,15 @@ export default function ResourcesTabPage() {
         link: null,
         tags: null,
         learn_id: ctx.id,
+        confirmed: false,
       },
     ]);
   }
 
-  function confirm(index: number, resource: Prisma.ResourceModel) {
+  function confirm(index: number, resource: Resource) {
     const copy = [...resources];
 
-    copy[index] = resource;
+    copy[index] = { ...resource, confirmed: true };
 
     setResources(copy);
   }
@@ -52,8 +61,6 @@ export default function ResourcesTabPage() {
 
     setResources(copy);
   }
-
-  console.log(resources);
 
   return (
     <Stack>
@@ -73,8 +80,8 @@ export default function ResourcesTabPage() {
 }
 
 type ResourceProps = {
-  resource: Prisma.ResourceModel;
-  onConfirm: (resource: Prisma.ResourceModel) => void;
+  resource: Resource;
+  onConfirm: (resource: Resource) => void;
   onCancel: VoidFunction;
 };
 function Resource({ resource, onConfirm, onCancel }: ResourceProps) {
@@ -83,9 +90,15 @@ function Resource({ resource, onConfirm, onCancel }: ResourceProps) {
   const [title, setTitle] = React.useState(resource.title);
 
   return (
-    <Stack borderWidth="1px" borderColor="stroke" p="1em" borderRadius="8px">
+    <Stack
+      borderWidth="1px"
+      borderColor="stroke"
+      px="1.5em"
+      py="1em"
+      borderRadius="8px"
+    >
       <Collapsible.Root open={open}>
-        <Collapsible.Trigger>
+        <Collapsible.Trigger w="full">
           {open && (
             <Field>
               <Input
@@ -97,7 +110,27 @@ function Resource({ resource, onConfirm, onCancel }: ResourceProps) {
               />
             </Field>
           )}
-          {!open && <Heading as="h5">{title}</Heading>}
+          {!open && (
+            <Flex alignItems="center" gap="1em" justifyContent="space-between">
+              <Heading as="h5">{title}</Heading>
+              {resource.confirmed && (
+                <Flex gap={0}>
+                  <IconButton
+                    variant="plain"
+                    p={0}
+                    onClick={() => setOpen(true)}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton variant="plain" p={0}>
+                    <Icon color="accent.softCoral">
+                      <LuTrash />
+                    </Icon>
+                  </IconButton>
+                </Flex>
+              )}
+            </Flex>
+          )}
         </Collapsible.Trigger>
         <Collapsible.Content>
           <Stack gap="3em" pt="1em">
@@ -114,11 +147,13 @@ function Resource({ resource, onConfirm, onCancel }: ResourceProps) {
                     setOpen(false);
                   }}
                 >
-                  Create
+                  {resource.confirmed ? "Update" : "Create"}
                 </Button>
                 <Button
                   onClick={() => {
-                    onCancel();
+                    if (!resource.confirmed) onCancel();
+
+                    setTitle(resource.title);
                     setOpen(false);
                   }}
                   variant="secondary"

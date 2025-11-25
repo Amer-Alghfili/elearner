@@ -7,7 +7,7 @@ export const colors = {
   accent: {
     "steel blue": { value: "#3B82F6" },
     "forest green": { value: "#15803D" },
-    "soft coral": { value: "#F87171" },
+    softCoral: { value: "#F87171" },
     "dusty plum": { value: "#8B5CF6" },
   },
   neutral: {
