@@ -5,13 +5,13 @@ import {
   Box,
   Button,
   Collapsible,
+  DialogHeader,
   Flex,
   Heading,
   Icon,
   IconButton,
   Input,
   Stack,
-  Text,
 } from "@chakra-ui/react";
 import React from "react";
 import { useLearn } from "../learn-context";
@@ -19,14 +19,27 @@ import { Prisma } from "@/generated/prisma/client";
 import { Field } from "@/components/ui/field";
 import { EditIcon } from "@/components/Icons";
 import { LuTrash } from "react-icons/lu";
+import {
+  DialogActionTrigger,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogRoot,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { v4 as uuidv4 } from "uuid";
 
-type Resource = Prisma.ResourceModel & { confirmed: boolean };
+type ResourceType = Omit<Prisma.ResourceModel, "id"> & {
+  id: string;
+  confirmed: boolean;
+};
 export default function ResourcesTabPage() {
   const ctx = useLearn();
 
-  const [resources, setResources] = React.useState<Resource[]>(
-    (ctx.resources as Prisma.ResourceModel[]).map((resources) => ({
-      ...resources,
+  const [resources, setResources] = React.useState<ResourceType[]>(
+    (ctx.resources as Prisma.ResourceModel[]).map((resource) => ({
+      ...resource,
+      id: resource.id.toString(),
       confirmed: true,
     }))
   );
@@ -36,7 +49,7 @@ export default function ResourcesTabPage() {
       ...resources,
       {
         // TODO: use uuid
-        id: 1,
+        id: uuidv4(),
         title: "",
         description: "",
         file: null,
@@ -48,7 +61,7 @@ export default function ResourcesTabPage() {
     ]);
   }
 
-  function confirm(index: number, resource: Resource) {
+  function confirm(index: number, resource: ResourceType) {
     const copy = [...resources];
 
     copy[index] = { ...resource, confirmed: true };
@@ -56,8 +69,10 @@ export default function ResourcesTabPage() {
     setResources(copy);
   }
 
-  function cancel(index: number) {
-    const copy = [...resources.slice(0, index), ...resources.slice(index + 1)];
+  function remove(index: number) {
+    const copy = [...resources];
+    console.log(copy);
+    copy.splice(index, 1);
 
     setResources(copy);
   }
@@ -72,7 +87,8 @@ export default function ResourcesTabPage() {
           key={resource.id}
           resource={resource}
           onConfirm={(resource) => confirm(index, resource)}
-          onCancel={() => cancel(index)}
+          onCancel={() => remove(index)}
+          onRemove={() => remove(index)}
         />
       ))}
     </Stack>
@@ -80,11 +96,12 @@ export default function ResourcesTabPage() {
 }
 
 type ResourceProps = {
-  resource: Resource;
-  onConfirm: (resource: Resource) => void;
+  resource: ResourceType;
+  onConfirm: (resource: ResourceType) => void;
   onCancel: VoidFunction;
+  onRemove: VoidFunction;
 };
-function Resource({ resource, onConfirm, onCancel }: ResourceProps) {
+function Resource({ resource, onConfirm, onCancel, onRemove }: ResourceProps) {
   const [open, setOpen] = React.useState(true);
 
   const [title, setTitle] = React.useState(resource.title);
@@ -122,11 +139,34 @@ function Resource({ resource, onConfirm, onCancel }: ResourceProps) {
                   >
                     <EditIcon />
                   </IconButton>
-                  <IconButton variant="plain" p={0}>
-                    <Icon color="accent.softCoral">
-                      <LuTrash />
-                    </Icon>
-                  </IconButton>
+                  <DialogRoot>
+                    <DialogTrigger asChild>
+                      <IconButton variant="plain" p={0}>
+                        <Icon color="accent.softCoral">
+                          <LuTrash />
+                        </Icon>
+                      </IconButton>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <Heading as="h4" lineHeight="1.6">
+                          Are you sure you want to delete {title} ?
+                        </Heading>
+                      </DialogHeader>
+                      <DialogBody textStyle="md">
+                        Are you sure you want to delete this resource ? This
+                        action cannot be undone
+                      </DialogBody>
+                      <DialogFooter>
+                        <DialogActionTrigger asChild>
+                          <Button variant="secondary">Cancel</Button>
+                        </DialogActionTrigger>
+                        <Button bg="feedback.error" onClick={() => onRemove()}>
+                          Delete
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </DialogRoot>
                 </Flex>
               )}
             </Flex>

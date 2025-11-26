@@ -5,10 +5,10 @@ export const colors = {
     thin: { value: "#FFF3DA" },
   },
   accent: {
-    "steel blue": { value: "#3B82F6" },
-    "forest green": { value: "#15803D" },
+    steelBlue: { value: "#3B82F6" },
+    forestGreen: { value: "#15803D" },
     softCoral: { value: "#F87171" },
-    "dusty plum": { value: "#8B5CF6" },
+    dustyPlum: { value: "#8B5CF6" },
   },
   neutral: {
     background: { value: "#FAFAF9" },
