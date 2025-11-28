@@ -31,8 +31,10 @@ import {
 } from "@/components/ui/dialog";
 import { v4 as uuidv4 } from "uuid";
 import {
+  MenuCheckboxItem,
   MenuContent,
   MenuItem,
+  MenuItemGroup,
   MenuRoot,
   MenuTrigger,
 } from "@/components/ui/menu";
@@ -80,7 +82,6 @@ export default function ResourcesTabPage() {
 
   function remove(index: number) {
     const copy = [...resources];
-    console.log(copy);
     copy.splice(index, 1);
 
     setResources(copy);
@@ -219,60 +220,28 @@ function Resource({ resource, onConfirm, onCancel, onRemove }: ResourceProps) {
 }
 
 function Tags() {
-  const [open, setOpen] = React.useState<boolean>(false);
-  const [colorMenuOpen, setColorMenuOpen] = React.useState<boolean>(false);
-  const [tagMenuOpen, setTagMenuOpen] = React.useState<boolean>(false);
-
-  const [search, setSearch] = React.useState<string>("");
-
-  const [tags, setTags] = React.useState<{ label: string; color: string }[]>(
-    []
-  );
-
-  function createTag(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-
-    setColorMenuOpen(true);
-    setTagMenuOpen(false);
-    setOpen(false);
-  }
-
-  function addTag(color: string) {
-    setTags([...tags, { label: search, color }]);
-
-    setColorMenuOpen(false);
-    setTagMenuOpen(true);
-    setOpen(false);
-  }
-
-  React.useEffect(
-    function reopen() {
-      if (!open && (colorMenuOpen || tagMenuOpen)) {
-        setOpen(true);
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [colorMenuOpen, tagMenuOpen]
-  );
+  const {
+    result,
+    open,
+    toggleMenu,
+    colorMenuOpen,
+    tagMenuOpen,
+    addTag,
+    createTag,
+    label,
+    search,
+    canCreate,
+    isChecked,
+    toggleSelection,
+  } = useResourceTag();
 
   return (
     <>
-      <MenuRoot
-        open={open}
-        onOpenChange={({ open }) => {
-          if (!open) {
-            setColorMenuOpen(false);
-            setTagMenuOpen(false);
-          } else {
-            setTagMenuOpen(true);
-          }
-          setOpen(open);
-        }}
-        composite={false}
-      >
+      <MenuRoot open={open} onInteractOutside={toggleMenu} composite={false}>
         <MenuTrigger asChild>
           <Button
             className="group"
+            onClick={toggleMenu}
             variant="plain"
             textStyle="sm-medium"
             p={0}
@@ -300,19 +269,125 @@ function Tags() {
           {tagMenuOpen && (
             <form onSubmit={createTag}>
               <Field>
-                <Input
-                  size="sm"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                />
+                <Input size="sm" value={label} onChange={search} />
               </Field>
-              <AddButton type="submit" w="full" justifyContent="flex-start">
-                Create Tag
-              </AddButton>
+              {result.map((tag) => (
+                <MenuCheckboxItem
+                  key={tag.label}
+                  value={tag.label}
+                  checked={isChecked(tag.label)}
+                  onCheckedChange={(checked) =>
+                    toggleSelection(checked, tag.label)
+                  }
+                >
+                  {tag.label}
+                </MenuCheckboxItem>
+              ))}
+              {canCreate && (
+                <AddButton type="submit" w="full" justifyContent="flex-start">
+                  Create Tag
+                </AddButton>
+              )}
             </form>
           )}
         </MenuContent>
       </MenuRoot>
     </>
   );
+}
+
+function useResourceTag() {
+  const [open, setOpen] = React.useState<boolean>(false);
+  const [colorMenuOpen, setColorMenuOpen] = React.useState<boolean>(false);
+  const [tagMenuOpen, setTagMenuOpen] = React.useState<boolean>(false);
+
+  const [label, setLabel] = React.useState<string>("");
+
+  const [tags, setTags] = React.useState<{ label: string; color: string }[]>(
+    []
+  );
+  const [result, setResult] =
+    React.useState<{ label: string; color: string }[]>(tags);
+  const [selected, setSelected] = React.useState<
+    { label: string; color: string }[]
+  >([]);
+
+  function createTag(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    setColorMenuOpen(true);
+    setTagMenuOpen(false);
+    setOpen(false);
+  }
+
+  function addTag(color: string) {
+    const updated = [...tags, { label, color }];
+    setTags(updated);
+    setResult(updated);
+    setSelected([...tags, { label, color }]);
+
+    setColorMenuOpen(false);
+    setTagMenuOpen(true);
+    setOpen(false);
+  }
+
+  function toggleMenu() {
+    const newOpen = !open;
+
+    if (newOpen) {
+      setTagMenuOpen(true);
+    } else {
+      setColorMenuOpen(false);
+      setTagMenuOpen(false);
+    }
+
+    setOpen(newOpen);
+  }
+
+  function toggleSelection(checked: boolean, label: string) {
+    if (checked) {
+      const tag = tags.find((tag) => tag.label === label);
+
+      if (tag == null) throw Error("tag not found");
+
+      setSelected([...selected, tag]);
+    } else {
+      setSelected(selected.filter((tag) => tag.label !== label));
+    }
+  }
+
+  React.useEffect(
+    function reopen() {
+      if (!open && (colorMenuOpen || tagMenuOpen)) {
+        setOpen(true);
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [colorMenuOpen, tagMenuOpen]
+  );
+
+  function search(e) {
+    const label = e.target.value;
+
+    setLabel(label);
+
+    // search in `tags`
+    setResult(tags.filter((tag) => tag.label.includes(label)));
+  }
+
+  return {
+    open,
+    toggleMenu,
+    colorMenuOpen,
+    tagMenuOpen,
+    addTag,
+    createTag,
+    label,
+    search,
+    result,
+    canCreate:
+      !result.some((r) => label === r.label) && label != null && label !== "",
+    isChecked: (label: string) => selected.some((tag) => tag.label === label),
+    toggleSelection,
+  };
 }
