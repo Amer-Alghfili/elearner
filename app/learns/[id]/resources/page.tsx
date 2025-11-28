@@ -4,7 +4,9 @@ import AddButton from "@/components/button/add";
 import {
   Box,
   Button,
+  Circle,
   Collapsible,
+  ColorPalette,
   DialogHeader,
   Flex,
   Heading,
@@ -17,7 +19,7 @@ import React from "react";
 import { useLearn } from "../learn-context";
 import { Prisma } from "@/generated/prisma/client";
 import { Field } from "@/components/ui/field";
-import { EditIcon } from "@/components/Icons";
+import { EditIcon, TagIcon } from "@/components/Icons";
 import { LuTrash } from "react-icons/lu";
 import {
   DialogActionTrigger,
@@ -28,6 +30,13 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { v4 as uuidv4 } from "uuid";
+import {
+  MenuContent,
+  MenuItem,
+  MenuRoot,
+  MenuTrigger,
+} from "@/components/ui/menu";
+import { colors } from "@/theme/color-palattes";
 
 type ResourceType = Omit<Prisma.ResourceModel, "id"> & {
   id: string;
@@ -179,7 +188,7 @@ function Resource({ resource, onConfirm, onCancel, onRemove }: ResourceProps) {
               <Box>File</Box>
             </Flex>
             <Flex gap="1em" alignItems="center" justifyContent="space-between">
-              <Box>Tags</Box>
+              <Tags />
               <Flex gap="1em">
                 <Button
                   onClick={() => {
@@ -206,5 +215,96 @@ function Resource({ resource, onConfirm, onCancel, onRemove }: ResourceProps) {
         </Collapsible.Content>
       </Collapsible.Root>
     </Stack>
+  );
+}
+
+function Tags() {
+  const [open, setOpen] = React.useState<boolean>(false);
+  const [colorMenuOpen, setColorMenuOpen] = React.useState<boolean>(false);
+  const [tagMenuOpen, setTagMenuOpen] = React.useState<boolean>(false);
+
+  const ref = React.useRef<HTMLInputElement>(null);
+
+  function addTag(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    setColorMenuOpen(true);
+    setTagMenuOpen(false);
+    setOpen(false);
+  }
+
+  React.useEffect(
+    function reopen() {
+      if (!open && (colorMenuOpen || tagMenuOpen)) {
+        setOpen(true);
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [colorMenuOpen, tagMenuOpen]
+  );
+
+  return (
+    <>
+      <MenuRoot
+        open={open}
+        onOpenChange={({ open }) => {
+          if (!open) {
+            setColorMenuOpen(false);
+            setTagMenuOpen(false);
+          } else {
+            setTagMenuOpen(true);
+          }
+          setOpen(open);
+        }}
+        composite={false}
+      >
+        <MenuTrigger asChild>
+          <Button
+            className="group"
+            variant="plain"
+            textStyle="sm-medium"
+            p={0}
+            gap="0.3em"
+            color="text.secondary"
+            _hover={{
+              color: "primary.thick",
+            }}
+          >
+            <TagIcon
+              transition="all 0.2s ease-in-out"
+              _groupHover={{ fill: "primary.thick" }}
+            />
+            Add Tag
+          </Button>
+        </MenuTrigger>
+        <MenuContent>
+          {colorMenuOpen &&
+            colors.map((color) => (
+              <MenuItem
+                key={color}
+                value={color}
+                onClick={() => {
+                  setColorMenuOpen(false);
+                  setTagMenuOpen(true);
+                  setOpen(false);
+                }}
+              >
+                <Circle size="0.5rem" bg={color} />
+                {color}
+              </MenuItem>
+            ))}
+          {tagMenuOpen && (
+            <form onSubmit={addTag}>
+              <Field colorPalette="">
+                <Input size="sm" ref={ref} />
+              </Field>
+              <AddButton type="submit" w="full" justifyContent="flex-start">
+                Create Tag
+              </AddButton>
+            </form>
+          )}
+        </MenuContent>
+      </MenuRoot>
+    </>
   );
 }

@@ -16,13 +16,14 @@ model User {
 }
 
 model Learn {
-  id          Int         @id @default(autoincrement())
-  title       String      @db.VarChar(255)
-  description String?     @db.VarChar(255)
-  user_id     String
-  user        User       @relation(fields: [user_id], references: [email])
-  todos       Todo[]
-  resources   Resource[]
+  id           Int            @id @default(autoincrement())
+  title        String         @db.VarChar(255)
+  description  String?        @db.VarChar(255)
+  user_id      String
+  user         User          @relation(fields: [user_id], references: [email])
+  todos        Todo[]
+  resources    Resource[]
+  resourceTags ResourceTag[]
 
   @@map("learns")
 }
@@ -43,9 +44,19 @@ model Resource {
   description String?  @db.VarChar(255)
   link        String?  @db.VarChar(255)
   file        String?  @db.VarChar(255)
-  tags        Json     @db.Json()
+  tags        Json?    @db.Json()
   learn_id    Int
   learn       Learn   @relation(fields: [learn_id], references: [id])
 
   @@map("learns_resources")
+}
+
+model ResourceTag {
+  id       Int     @id @default(autoincrement())
+  label    String  @db.VarChar(255)
+  color    String  @db.VarChar(255)
+  learn_id Int
+  learn    Learn  @relation(fields: [learn_id], references: [id])
+
+  @@map("resource_tags")
 }
