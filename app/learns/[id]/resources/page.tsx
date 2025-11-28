@@ -223,13 +223,25 @@ function Tags() {
   const [colorMenuOpen, setColorMenuOpen] = React.useState<boolean>(false);
   const [tagMenuOpen, setTagMenuOpen] = React.useState<boolean>(false);
 
-  const ref = React.useRef<HTMLInputElement>(null);
+  const [search, setSearch] = React.useState<string>("");
 
-  function addTag(e: React.FormEvent<HTMLFormElement>) {
+  const [tags, setTags] = React.useState<{ label: string; color: string }[]>(
+    []
+  );
+
+  function createTag(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     setColorMenuOpen(true);
     setTagMenuOpen(false);
+    setOpen(false);
+  }
+
+  function addTag(color: string) {
+    setTags([...tags, { label: search, color }]);
+
+    setColorMenuOpen(false);
+    setTagMenuOpen(true);
     setOpen(false);
   }
 
@@ -280,23 +292,19 @@ function Tags() {
         <MenuContent>
           {colorMenuOpen &&
             colors.map((color) => (
-              <MenuItem
-                key={color}
-                value={color}
-                onClick={() => {
-                  setColorMenuOpen(false);
-                  setTagMenuOpen(true);
-                  setOpen(false);
-                }}
-              >
+              <MenuItem key={color} value={color} onClick={() => addTag(color)}>
                 <Circle size="0.5rem" bg={color} />
                 {color}
               </MenuItem>
             ))}
           {tagMenuOpen && (
-            <form onSubmit={addTag}>
-              <Field colorPalette="">
-                <Input size="sm" ref={ref} />
+            <form onSubmit={createTag}>
+              <Field>
+                <Input
+                  size="sm"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
               </Field>
               <AddButton type="submit" w="full" justifyContent="flex-start">
                 Create Tag
