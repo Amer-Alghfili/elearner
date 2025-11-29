@@ -29,6 +29,7 @@ export const textStyles = defineTextStyles({
     value: {
       fontSize: "1.25rem",
       fontWeight: "bold",
+      lineHeight: 1.5,
     },
   },
   lg: {

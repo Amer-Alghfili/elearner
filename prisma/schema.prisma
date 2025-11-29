@@ -39,14 +39,12 @@ model Todo {
 }
 
 model Resource {
-  id          Int      @id @default(autoincrement())
-  title       String   @db.VarChar(255)
-  description String?  @db.VarChar(255)
-  link        String?  @db.VarChar(255)
-  file        String?  @db.VarChar(255)
-  tags        Json?    @db.Json()
-  learn_id    Int
-  learn       Learn   @relation(fields: [learn_id], references: [id])
+  id       Int     @id @default(autoincrement())
+  title    String  @db.VarChar(255)
+  link     String  @db.VarChar(255)
+  tags     Json?   @db.Json()
+  learn_id Int
+  learn    Learn  @relation(fields: [learn_id], references: [id])
 
   @@map("learns_resources")
 }
