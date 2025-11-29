@@ -53,6 +53,10 @@ export default function ResourcesTabPage() {
     }))
   );
 
+  const [resourceTags, setResourceTags] = React.useState<
+    Prisma.ResourceTagModel[]
+  >(ctx.resourceTags);
+
   function draft() {
     setResources([
       ...resources,
@@ -81,6 +85,7 @@ export default function ResourcesTabPage() {
         confirmed: true,
       };
       setResources(copy);
+      setResourceTags(res.resourceTags);
     } catch (err: any) {
       if (err.message != null)
         toaster.create({
@@ -109,6 +114,7 @@ export default function ResourcesTabPage() {
         <Resource
           key={resource.displayId}
           resource={resource}
+          resourceTags={resourceTags}
           onConfirm={(resource) => confirm(index, resource)}
           onCancel={() => remove(index)}
           onRemove={() => remove(index)}
@@ -122,11 +128,18 @@ export type Tag = { label: string; color: string };
 
 type ResourceProps = {
   resource: ResourceType;
+  resourceTags: Tag[];
   onConfirm: (resource: ResourceType) => Promise<void>;
   onCancel: VoidFunction;
   onRemove: VoidFunction;
 };
-function Resource({ resource, onConfirm, onCancel, onRemove }: ResourceProps) {
+function Resource({
+  resource,
+  resourceTags,
+  onConfirm,
+  onCancel,
+  onRemove,
+}: ResourceProps) {
   const [open, setOpen] = React.useState(resource.id < 0);
 
   const [loading, setLoading] = React.useState(false);

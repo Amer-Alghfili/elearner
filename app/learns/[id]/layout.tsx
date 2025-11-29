@@ -34,6 +34,12 @@ export default async function LearnDetailsLayout({
   //TODO: unauthorized
   if (learn?.user_id !== email) return "unauthorized learn";
 
+  const resourceTags = await prisma.resourceTag.findMany({
+    where: {
+      learn_id: learn.id,
+    },
+  });
+
   return (
     <Scaffold>
       <Header />
@@ -46,7 +52,11 @@ export default async function LearnDetailsLayout({
             {learn.description}
           </Box>
         </Stack>
-        <LayoutTabs learn={learn} resources={learn.resources}>
+        <LayoutTabs
+          learn={learn}
+          resources={learn.resources}
+          resourceTags={resourceTags}
+        >
           {children}
         </LayoutTabs>
       </Stack>

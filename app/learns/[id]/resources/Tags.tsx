@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/menu";
 import { colors } from "@/theme/color-palattes";
 import { Tag } from "./page";
+import { useLearn } from "../learn-context";
 
 export function Tags({
   onTagsChange,
@@ -95,13 +96,15 @@ export function Tags({
 }
 
 function useResourceTag(onTagsChange: (tags: Tag[]) => void) {
+  const { resourceTags } = useLearn();
+
   const [open, setOpen] = React.useState<boolean>(false);
   const [colorMenuOpen, setColorMenuOpen] = React.useState<boolean>(false);
   const [tagMenuOpen, setTagMenuOpen] = React.useState<boolean>(false);
 
   const [label, setLabel] = React.useState<string>("");
 
-  const [tags, setTags] = React.useState<Tag[]>([]);
+  const [tags, setTags] = React.useState<Tag[]>(resourceTags);
   const [result, setResult] = React.useState<Tag[]>(tags);
   const [selected, setSelected] = React.useState<Tag[]>([]);
 

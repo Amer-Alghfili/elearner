@@ -7,9 +7,11 @@ import z from "zod";
 
 //TODO: delete resource
 
-export async function postResource(
-  resource: ResourceType
-): Promise<Omit<Prisma.ResourceModel, "tags"> & { tags: Tag[] }> {
+export async function postResource(resource: ResourceType): Promise<
+  Omit<Prisma.ResourceModel, "tags"> & { tags: Tag[] } & {
+    resourceTags: Prisma.ResourceTagModel[];
+  }
+> {
   const { id, title, link, learn_id, tags } = resource;
 
   // TODO: Validation (valid link, valid title)
@@ -69,6 +71,7 @@ export async function postResource(
     return {
       ...x,
       tags: upsertTags.map((id) => createdTags.find((t) => t.id === id) as Tag),
+      resourceTags: createdTags,
     };
   }
 
