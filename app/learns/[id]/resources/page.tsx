@@ -31,6 +31,7 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { Tags } from "./Tags";
 import { postResource } from "./action";
+import { toaster } from "@/components/ui/toaster";
 
 export type ResourceType = Omit<Prisma.ResourceModel, "id" | "tags"> & {
   id: number;
@@ -80,8 +81,15 @@ export default function ResourcesTabPage() {
         confirmed: true,
       };
       setResources(copy);
-    } catch (err) {
-      console.log(err);
+    } catch (err: any) {
+      if (err.message != null)
+        toaster.create({
+          title: err.message,
+          type: "error",
+          closable: true,
+        });
+
+      throw Error(err);
     }
   }
 
