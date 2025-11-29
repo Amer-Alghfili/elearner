@@ -107,6 +107,7 @@ function useResourceTag(onTagsChange: (tags: Tag[]) => void) {
 
   function createTag(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    e.stopPropagation();
 
     setColorMenuOpen(true);
     setTagMenuOpen(false);

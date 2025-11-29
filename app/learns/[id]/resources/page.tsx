@@ -136,6 +136,29 @@ function Resource({ resource, onConfirm, onCancel, onRemove }: ResourceProps) {
   const [title, setTitle] = React.useState(resource.title);
   const [tags, setTags] = React.useState<Tag[]>([]);
 
+  const formId = React.useId();
+
+  async function confirm(e: React.FormEvent) {
+    e.preventDefault();
+
+    setLoading(true);
+
+    try {
+      await onConfirm({
+        ...resource,
+        title,
+        tags,
+        link,
+      });
+      setOpen(false);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      // TODO: loading is set to false after confirming the resource
+      setLoading(false);
+    }
+  }
+
   return (
     <Collapsible.Root
       open={open}
@@ -200,56 +223,39 @@ function Resource({ resource, onConfirm, onCancel, onRemove }: ResourceProps) {
         )}
       </Collapsible.Trigger>
       <Collapsible.Content>
-        <Stack gap="3em" pt="1em">
-          <Field>
-            <Input
-              variant="plain"
-              value={link}
-              onChange={(e) => setLink(e.target.value)}
-              placeholder="Link"
-              fontWeight="medium"
-              lineHeight={1.4}
-            />
-          </Field>
-          <Flex gap="1em" alignItems="center" justifyContent="space-between">
-            <Tags onTagsChange={setTags} />
-            <Flex gap="1em">
-              <Button
-                loading={loading}
-                onClick={async () => {
-                  setLoading(true);
+        <form id={formId} onSubmit={confirm}>
+          <Stack gap="3em" pt="1em">
+            <Field>
+              <Input
+                variant="plain"
+                value={link}
+                onChange={(e) => setLink(e.target.value)}
+                placeholder="Link"
+                fontWeight="medium"
+                lineHeight={1.4}
+              />
+            </Field>
+            <Flex gap="1em" alignItems="center" justifyContent="space-between">
+              <Tags onTagsChange={setTags} />
+              <Flex gap="1em">
+                <Button type="submit" loading={loading}>
+                  {resource.confirmed ? "Update" : "Create"}
+                </Button>
+                <Button
+                  onClick={() => {
+                    if (!resource.confirmed) onCancel();
 
-                  try {
-                    await onConfirm({
-                      ...resource,
-                      title,
-                      tags,
-                      link,
-                    });
+                    setTitle(resource.title);
                     setOpen(false);
-                  } catch (err) {
-                    console.log(err);
-                  } finally {
-                    setLoading(false);
-                  }
-                }}
-              >
-                {resource.confirmed ? "Update" : "Create"}
-              </Button>
-              <Button
-                onClick={() => {
-                  if (!resource.confirmed) onCancel();
-
-                  setTitle(resource.title);
-                  setOpen(false);
-                }}
-                variant="secondary"
-              >
-                Cancel
-              </Button>
+                  }}
+                  variant="secondary"
+                >
+                  Cancel
+                </Button>
+              </Flex>
             </Flex>
-          </Flex>
-        </Stack>
+          </Stack>
+        </form>
       </Collapsible.Content>
     </Collapsible.Root>
   );

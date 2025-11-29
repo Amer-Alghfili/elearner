@@ -5,6 +5,8 @@ import { ResourceType, Tag } from "./page";
 import { prisma } from "@/prisma";
 import z from "zod";
 
+//TODO: delete resource
+
 export async function postResource(
   resource: ResourceType
 ): Promise<Omit<Prisma.ResourceModel, "tags"> & { tags: Tag[] }> {
