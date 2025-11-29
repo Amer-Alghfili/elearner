@@ -29,10 +29,12 @@ import {
 } from "@/components/ui/dialog";
 import { v4 as uuidv4 } from "uuid";
 import { Tags } from "./Tags";
+import { postResource } from "./action";
 
-type ResourceType = Omit<Prisma.ResourceModel, "id"> & {
+export type ResourceType = Omit<Prisma.ResourceModel, "id" | "tags"> & {
   id: string;
   confirmed: boolean;
+  tags: Tag[];
 };
 export default function ResourcesTabPage() {
   const ctx = useLearn();
@@ -42,6 +44,8 @@ export default function ResourcesTabPage() {
       ...resource,
       id: resource.id.toString(),
       confirmed: true,
+      //TODO:
+      tags: [],
     }))
   );
 
@@ -55,9 +59,9 @@ export default function ResourcesTabPage() {
         description: "",
         file: null,
         link: null,
-        tags: null,
         learn_id: ctx.id,
         confirmed: false,
+        tags: [],
       },
     ]);
   }
@@ -67,7 +71,8 @@ export default function ResourcesTabPage() {
 
     copy[index] = { ...resource, confirmed: true };
 
-    setResources(copy);
+    // setResources(copy);
+    postResource(resource);
   }
 
   function remove(index: number) {
@@ -186,7 +191,7 @@ function Resource({ resource, onConfirm, onCancel, onRemove }: ResourceProps) {
               <Flex gap="1em">
                 <Button
                   onClick={() => {
-                    onConfirm({ ...resource, title });
+                    onConfirm({ ...resource, title, tags });
                     setOpen(false);
                   }}
                 >
