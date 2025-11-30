@@ -1,81 +1,86 @@
 "use server";
 
-import { Prisma } from "@/generated/prisma/client";
-import { ResourceType, Tag } from "./page";
 import { prisma } from "@/prisma";
 import z from "zod";
+import { ResourceType, Tag } from "../learn-context";
 
 //TODO: delete resource
 
-export async function postResource(resource: ResourceType): Promise<
-  Omit<Prisma.ResourceModel, "tags"> & { tags: Tag[] } & {
-    resourceTags: Prisma.ResourceTagModel[];
-  }
-> {
-  const { id, title, link, learn_id, tags } = resource;
+export async function postResource(
+  learnId: number,
+  resource: ResourceType
+): Promise<string> {
+  const { id, title, link, tags } = resource;
 
-  // TODO: Validation (valid link, valid title)
   const parsedResource = z
     .object({
-      title: z.string("Invalid title"),
-      link: z.url("Invalid url"),
+      title: z.string("Invalid title").min(1, "title is required"),
+      link: z.url("Invalid url").min(1, "url is required"),
     })
     .safeParse(resource);
 
   if (parsedResource.success) {
-    // update resource_tags
-    const learnTags = await prisma.resourceTag.findMany({
-      where: {
-        learn_id,
-      },
-    });
+    for (const tag of tags) {
+      const { id, label, color } = tag;
 
-    const updatedTags = [...tags];
-    const existedTags: number[] = [];
-    for (const tag of learnTags) {
-      const index = updatedTags.findIndex((t) => t.label === tag.label);
-
-      if (index > -1) {
-        updatedTags.splice(index, 1);
-        existedTags.push(tag.id);
+      if (id == null) {
+        await prisma.resourceTag.create({
+          data: {
+            label,
+            color,
+            learn_id: learnId,
+          },
+        });
+      } else {
+        await prisma.resourceTag.update({
+          where: {
+            id,
+          },
+          data: {
+            label,
+            color,
+          },
+        });
       }
     }
 
-    const createdTags = await prisma.resourceTag.createManyAndReturn({
-      data: updatedTags.map(({ label, color }) => ({
-        label,
-        color,
-        learn_id,
-      })),
-    });
+    const selectedTags: Tag[] = tags
+      .filter(({ selected }) => selected)
+      .map((tag) => ({ label: tag.label, color: tag.color, id: tag.id }));
 
-    const upsertTags = [...existedTags, ...createdTags.map((tag) => tag.id)];
-    const x = await prisma.resource.upsert({
-      where: {
-        id: isNaN(Number(id)) ? -1 : Number(id),
-        learn_id,
-      },
-      update: {
-        title,
-        link,
-        tags: upsertTags,
-      },
-      create: {
-        title,
-        link,
-        tags: upsertTags,
-        learn_id,
-      },
-    });
+    let resourceId: string;
+    if (isNaN(Number(id))) {
+      const res = await prisma.resource.create({
+        data: {
+          title,
+          link,
+          tags: selectedTags,
+          learn_id: learnId,
+        },
+      });
 
-    return {
-      ...x,
-      tags: upsertTags.map((id) => createdTags.find((t) => t.id === id) as Tag),
-      resourceTags: createdTags,
-    };
+      resourceId = res.id.toString();
+    } else {
+      const res = await prisma.resource.update({
+        where: {
+          id: Number(id),
+        },
+        data: {
+          title,
+          link,
+          tags: selectedTags,
+        },
+      });
+
+      resourceId = res.id.toString();
+    }
+
+    return resourceId;
+  } else if (parsedResource.error) {
+    throw new Error(
+      parsedResource.error.issues.map((issue) => issue.message).join("\n")
+    );
   }
 
-  throw new Error(
-    parsedResource.error.issues.map((issue) => issue.message).join("\n")
-  );
+  throw new Error();
 }

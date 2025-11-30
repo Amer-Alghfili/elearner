@@ -2,7 +2,6 @@
 
 import AddButton from "@/components/button/add";
 import {
-  Box,
   Button,
   Collapsible,
   DialogHeader,
@@ -11,12 +10,10 @@ import {
   Icon,
   IconButton,
   Input,
-  InputGroup,
   Stack,
 } from "@chakra-ui/react";
 import React from "react";
-import { useLearn } from "../learn-context";
-import { Prisma } from "@/generated/prisma/client";
+import { LearnCtx, ResourceType, Tag, useLearn } from "../learn-context";
 import { Field } from "@/components/ui/field";
 import { EditIcon } from "@/components/Icons";
 import { LuTrash } from "react-icons/lu";
@@ -33,40 +30,21 @@ import { Tags } from "./Tags";
 import { postResource } from "./action";
 import { toaster } from "@/components/ui/toaster";
 
-export type ResourceType = Omit<Prisma.ResourceModel, "id" | "tags"> & {
-  id: number;
-  displayId: string;
-  confirmed: boolean;
-  tags: Tag[];
-};
 export default function ResourcesTabPage() {
   const ctx = useLearn();
 
   const [resources, setResources] = React.useState<ResourceType[]>(
-    (ctx.resources as Prisma.ResourceModel[]).map((resource) => ({
-      ...resource,
-      id: resource.id,
-      displayId: resource.id.toString(),
-      confirmed: true,
-      //TODO:
-      tags: [],
-    }))
+    ctx.resources
   );
-
-  const [resourceTags, setResourceTags] = React.useState<
-    Prisma.ResourceTagModel[]
-  >(ctx.resourceTags);
+  const [tags, setTags] = React.useState(ctx.allTags);
 
   function draft() {
     setResources([
       ...resources,
       {
-        // TODO: use uuid
-        displayId: uuidv4(),
-        id: -1,
+        id: uuidv4(),
         title: "",
         link: "",
-        learn_id: ctx.id,
         confirmed: false,
         tags: [],
       },
@@ -75,17 +53,15 @@ export default function ResourcesTabPage() {
 
   async function confirm(index: number, resource: ResourceType) {
     try {
-      const res = await postResource(resource);
+      const id = await postResource(ctx.id, resource);
 
       const copy = [...resources];
       copy[index] = {
-        ...res,
-        displayId: resource.displayId,
-        id: res.id,
+        ...resource,
+        id,
         confirmed: true,
       };
       setResources(copy);
-      setResourceTags(res.resourceTags);
     } catch (err: any) {
       if (err.message != null)
         toaster.create({
@@ -112,9 +88,8 @@ export default function ResourcesTabPage() {
       </AddButton>
       {resources.map((resource, index) => (
         <Resource
-          key={resource.displayId}
+          key={resource.id}
           resource={resource}
-          resourceTags={resourceTags}
           onConfirm={(resource) => confirm(index, resource)}
           onCancel={() => remove(index)}
           onRemove={() => remove(index)}
@@ -124,30 +99,21 @@ export default function ResourcesTabPage() {
   );
 }
 
-export type Tag = { label: string; color: string };
-
 type ResourceProps = {
   resource: ResourceType;
-  resourceTags: Tag[];
   onConfirm: (resource: ResourceType) => Promise<void>;
   onCancel: VoidFunction;
   onRemove: VoidFunction;
 };
-function Resource({
-  resource,
-  resourceTags,
-  onConfirm,
-  onCancel,
-  onRemove,
-}: ResourceProps) {
-  const [open, setOpen] = React.useState(resource.id < 0);
+function Resource({ resource, onConfirm, onCancel, onRemove }: ResourceProps) {
+  const [open, setOpen] = React.useState(!resource.confirmed);
 
   const [loading, setLoading] = React.useState(false);
 
   const [link, setLink] = React.useState<string>(resource.link);
 
   const [title, setTitle] = React.useState(resource.title);
-  const [tags, setTags] = React.useState<Tag[]>([]);
+  const [tags, setTags] = React.useState<Tag[]>(resource.tags);
 
   const formId = React.useId();
 
@@ -164,6 +130,11 @@ function Resource({
         link,
       });
       setOpen(false);
+      toaster.create({
+        title: "resource has been submitted successfully",
+        type: "success",
+        closable: true,
+      });
     } catch (err) {
       console.log(err);
     } finally {
@@ -249,7 +220,7 @@ function Resource({
               />
             </Field>
             <Flex gap="1em" alignItems="center" justifyContent="space-between">
-              <Tags onTagsChange={setTags} />
+              <Tags tags={tags} onTagsChange={setTags} />
               <Flex gap="1em">
                 <Button type="submit" loading={loading}>
                   {resource.confirmed ? "Update" : "Create"}

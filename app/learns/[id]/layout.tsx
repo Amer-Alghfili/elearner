@@ -4,6 +4,7 @@ import { LayoutTabs } from "./LayoutTabs";
 import { Scaffold } from "@/components/Scaffold";
 import Header from "@/components/Header";
 import { Box, Stack } from "@chakra-ui/react";
+import { LearnCtx } from "./learn-context";
 
 export default async function LearnDetailsLayout({
   children,
@@ -40,6 +41,17 @@ export default async function LearnDetailsLayout({
     },
   });
 
+  const data: LearnCtx = {
+    id: learn.id,
+    resources: learn.resources.map((resource) => ({
+      ...resource,
+      id: resource.id.toString(),
+      confirmed: true,
+      tags: resource.tags as [],
+    })),
+    allTags: resourceTags,
+  };
+
   return (
     <Scaffold>
       <Header />
@@ -52,13 +64,7 @@ export default async function LearnDetailsLayout({
             {learn.description}
           </Box>
         </Stack>
-        <LayoutTabs
-          learn={learn}
-          resources={learn.resources}
-          resourceTags={resourceTags}
-        >
-          {children}
-        </LayoutTabs>
+        <LayoutTabs data={data}>{children}</LayoutTabs>
       </Stack>
     </Scaffold>
   );

@@ -11,12 +11,13 @@ import {
   MenuTrigger,
 } from "@/components/ui/menu";
 import { colors } from "@/theme/color-palattes";
-import { Tag } from "./page";
-import { useLearn } from "../learn-context";
+import { Tag } from "../learn-context";
 
 export function Tags({
+  tags,
   onTagsChange,
 }: {
+  tags: Tag[];
   onTagsChange: (tags: Tag[]) => void;
 }) {
   const {
@@ -32,7 +33,7 @@ export function Tags({
     canCreate,
     isChecked,
     toggleSelection,
-  } = useResourceTag(onTagsChange);
+  } = useResourceTag(tags, onTagsChange);
 
   return (
     <>
@@ -95,18 +96,14 @@ export function Tags({
   );
 }
 
-function useResourceTag(onTagsChange: (tags: Tag[]) => void) {
-  const { resourceTags } = useLearn();
-
+function useResourceTag(tags: Tag[], onTagsChange: (tags: Tag[]) => void) {
   const [open, setOpen] = React.useState<boolean>(false);
   const [colorMenuOpen, setColorMenuOpen] = React.useState<boolean>(false);
   const [tagMenuOpen, setTagMenuOpen] = React.useState<boolean>(false);
 
   const [label, setLabel] = React.useState<string>("");
 
-  const [tags, setTags] = React.useState<Tag[]>(resourceTags);
-  const [result, setResult] = React.useState<Tag[]>(tags);
-  const [selected, setSelected] = React.useState<Tag[]>([]);
+  const selected = tags.filter(({ selected }) => selected);
 
   function createTag(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -118,18 +115,11 @@ function useResourceTag(onTagsChange: (tags: Tag[]) => void) {
   }
 
   function addTag(color: string) {
-    const updated = [...tags, { label, color }];
-    const newSelected = [...selected, { label, color }];
-
-    setTags(updated);
-    setResult(updated);
-    setSelected(newSelected);
-
     setColorMenuOpen(false);
     setTagMenuOpen(true);
     setOpen(false);
 
-    onTagsChange(newSelected);
+    onTagsChange([...tags, { label, color, selected: true }]);
   }
 
   function toggleMenu() {
@@ -146,19 +136,12 @@ function useResourceTag(onTagsChange: (tags: Tag[]) => void) {
   }
 
   function toggleSelection(checked: boolean, label: string) {
-    let newSelected = [];
-    if (checked) {
-      const tag = tags.find((tag) => tag.label === label);
-
-      if (tag == null) throw Error("tag not found");
-
-      newSelected = [...selected, tag];
-    } else {
-      newSelected = selected.filter((tag) => tag.label !== label);
-    }
-
-    setSelected(newSelected);
-    onTagsChange(newSelected);
+    onTagsChange(
+      tags.map((tag) => ({
+        ...tag,
+        selected: tag.label === label ? checked : tag.selected,
+      }))
+    );
   }
 
   React.useEffect(
@@ -175,10 +158,9 @@ function useResourceTag(onTagsChange: (tags: Tag[]) => void) {
     const label = e.target.value;
 
     setLabel(label);
-
-    // search in `tags`
-    setResult(tags.filter((tag) => tag.label.includes(label)));
   }
+
+  const result = tags.filter((tag) => tag.label.includes(label));
 
   return {
     open,
