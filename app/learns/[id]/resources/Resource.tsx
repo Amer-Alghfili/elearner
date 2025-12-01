@@ -170,7 +170,7 @@ export function Resource({
               />
             </Field>
             <Flex gap="1em" alignItems="center" justifyContent="space-between">
-              {/* <Tags tags={tags} onTagsChange={setTags} /> */}
+              <Tags tags={tagsOptions} onAddTag={onAddTagOption} />
               <Flex gap="1em">
                 <Button type="submit" loading={loading}>
                   {resource.isDraft ? "Create" : "Update"}

@@ -136,6 +136,7 @@ export default function ResourceList(props: ResourceListProps) {
           <Resource
             key={resource.id}
             resource={resource}
+            tagsOptions={tagsOptions}
             onConfirm={confirm}
             onRemove={remove}
             onDiscard={discard}
