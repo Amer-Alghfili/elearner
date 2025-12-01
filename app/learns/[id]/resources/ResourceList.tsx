@@ -7,7 +7,7 @@ import AddButton from "@/components/button/add";
 import { v4 } from "uuid";
 import { isZodError } from "@/types/error";
 import { toaster } from "@/components/ui/toaster";
-import { deleteResource, postResource } from "./action";
+import { createTag, deleteResource, postResource } from "./action";
 
 export type Resource = {
   id: string;
@@ -17,7 +17,7 @@ export type Resource = {
   isDraft: boolean;
 };
 
-export type Tag = { label: string; color: string };
+export type Tag = { id: number; label: string; color: string };
 
 type ResourceListProps = {
   learnId: number;
@@ -28,6 +28,8 @@ export default function ResourceList(props: ResourceListProps) {
   const { learnId } = props;
 
   const [resources, setResources] = React.useState<Resource[]>(props.resources);
+
+  const [tagsOptions, setTagsOptions] = React.useState<Tag[]>(props.tagOptions);
 
   function draft() {
     setResources([
@@ -90,7 +92,39 @@ export default function ResourceList(props: ResourceListProps) {
     }
   }
 
-  function addTagOption(tag: Tag) {}
+  async function addTagOption(tag: Omit<Tag, "id">): Promise<boolean> {
+    try {
+      const res = await createTag(learnId, tag);
+
+      if (isZodError(res)) {
+        toaster.create({
+          title: res.errorMessage,
+          type: "error",
+          closable: true,
+        });
+
+        return false;
+      }
+
+      setTagsOptions(res);
+
+      return true;
+    } catch (err) {
+      toaster.create({
+        title: "Something went wrong",
+        type: "error",
+        closable: true,
+      });
+    }
+
+    return false;
+  }
+
+  function discard(id: string) {
+    setResources(
+      resources.filter((resource) => resource.id !== id || !resource.isDraft)
+    );
+  }
 
   return (
     <Stack>
@@ -104,13 +138,8 @@ export default function ResourceList(props: ResourceListProps) {
             resource={resource}
             onConfirm={confirm}
             onRemove={remove}
-            onDiscard={(id) =>
-              setResources(
-                resources.filter(
-                  (resource) => resource.id !== id || !resource.isDraft
-                )
-              )
-            }
+            onDiscard={discard}
+            onAddTagOption={addTagOption}
           />
         );
       })}

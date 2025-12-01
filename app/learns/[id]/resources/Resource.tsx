@@ -21,19 +21,24 @@ import {
   DialogRoot,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Resource as ResourceType } from "./ResourceList";
+import { Resource as ResourceType, Tag } from "./ResourceList";
+import { Tags } from "./Tags";
 
 type ResourceProps = {
   resource: ResourceType;
+  tagsOptions: Tag[];
   onConfirm: (resource: ResourceType) => Promise<boolean>;
   onRemove: (id: string) => Promise<void>;
   onDiscard: (id: string) => void;
+  onAddTagOption: (tag: Omit<Tag, "id">) => Promise<boolean>;
 };
 export function Resource({
   resource,
+  tagsOptions,
   onConfirm,
   onRemove,
   onDiscard,
+  onAddTagOption,
 }: ResourceProps) {
   const [open, setOpen] = React.useState(resource.isDraft);
   const [discarded, setDiscarded] = React.useState(false);

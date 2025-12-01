@@ -2,10 +2,45 @@
 
 import { prisma } from "@/prisma";
 import z from "zod";
-import { Resource } from "./ResourceList";
+import { Resource, Tag } from "./ResourceList";
 import { ZodError } from "@/types/error";
 
-//TODO: create tag
+export async function createTag(
+  learnId: number,
+  tag: Omit<Tag, "id">
+): Promise<Tag[] | ZodError> {
+  try {
+    const parsedTag = z
+      .object({
+        label: z.string().min(1, "label is required"),
+        color: z.string().min(1, "color is required"),
+      })
+      .safeParse(tag);
+
+    if (parsedTag.success) {
+      await prisma.resourceTag.create({
+        data: {
+          ...tag,
+          learn_id: learnId,
+        },
+      });
+
+      return await prisma.resourceTag.findMany({
+        where: {
+          learn_id: learnId,
+        },
+      });
+    }
+
+    return {
+      errorMessage: parsedTag.error?.issues
+        .map((issue) => issue.message)
+        .join(", ") as string,
+    };
+  } catch (err) {
+    throw err;
+  }
+}
 
 export async function deleteResource(learnId: number, id: number) {
   try {
