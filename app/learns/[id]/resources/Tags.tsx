@@ -15,17 +15,21 @@ import { Tag } from "./ResourceList";
 
 export function Tags({
   tags,
-  onAddTag,
+  selectedTags,
+  onAdd,
+  onToggle,
 }: {
   tags: Tag[];
-  onAddTag: (tag: Tag) => void;
+  selectedTags: number[];
+  onAdd: (tag: Tag) => Promise<void>;
+  onToggle: (checked: boolean, id: number) => void;
 }) {
   const [open, setOpen] = React.useState(false);
 
   const [showColorOptions, setShowColorOptions] = React.useState(false);
   const [showTagOptions, setShowTagOptions] = React.useState(true);
 
-  const selectedTag = React.useRef<Tag>({} as Tag);
+  const candidate = React.useRef<Tag>({} as Tag);
 
   const [query, setQuery] = React.useState<string>("");
 
@@ -35,18 +39,21 @@ export function Tags({
 
     if (!canAdd) return;
 
-    if (selectedTag.current) selectedTag.current.label = query;
+    if (candidate.current) candidate.current.label = query;
     setShowTagOptions(false);
     setShowColorOptions(true);
   }
 
-  function selectColor(color: string) {
-    if (selectedTag.current) selectedTag.current.color = color;
+  async function selectColor(color: string) {
+    if (candidate.current) candidate.current.color = color;
 
-    onAddTag(selectedTag.current as Tag);
-    setShowColorOptions(false);
-    setShowTagOptions(true);
-    setQuery("");
+    try {
+      await onAdd(candidate.current as Tag);
+
+      setShowColorOptions(false);
+      setShowTagOptions(true);
+      setQuery("");
+    } catch (err) {}
   }
 
   const options = tags.filter(({ label }) => label.includes(query));
@@ -106,20 +113,22 @@ export function Tags({
                 onChange={(e) => setQuery(e.target.value)}
               />
             </Field>
-            {options.map((option) => (
-              <MenuCheckboxItem
-                key={option.label}
-                value={option.label}
-                // checked={isChecked(option.label)}
-                checked={false}
-                onCheckedChange={
-                  (checked) => {}
-                  // toggleSelection(checked, option.label)
-                }
-              >
-                {option.label}
-              </MenuCheckboxItem>
-            ))}
+            {options.map(({ id, label }) => {
+              const isChecked = selectedTags.some(
+                (selectedTagId) => selectedTagId === id
+              );
+
+              return (
+                <MenuCheckboxItem
+                  key={id}
+                  value={label}
+                  checked={isChecked}
+                  onCheckedChange={(checked) => onToggle(checked, id)}
+                >
+                  {label}
+                </MenuCheckboxItem>
+              );
+            })}
             {canAdd && (
               <AddButton type="submit" w="full" justifyContent="flex-start">
                 Create Tag
@@ -130,87 +139,4 @@ export function Tags({
       </MenuContent>
     </MenuRoot>
   );
-}
-
-function useResourceTag(tags: Tag[], onTagsChange: (tags: Tag[]) => void) {
-  const [open, setOpen] = React.useState<boolean>(false);
-  const [colorMenuOpen, setColorMenuOpen] = React.useState<boolean>(false);
-  const [tagMenuOpen, setTagMenuOpen] = React.useState<boolean>(false);
-
-  const [label, setLabel] = React.useState<string>("");
-
-  const selected = tags.filter(({ selected }) => selected);
-
-  function createTag(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    e.stopPropagation();
-
-    setColorMenuOpen(true);
-    setTagMenuOpen(false);
-    setOpen(false);
-  }
-
-  function addTag(color: string) {
-    setColorMenuOpen(false);
-    setTagMenuOpen(true);
-    setOpen(false);
-
-    onTagsChange([...tags, { label, color, selected: true }]);
-  }
-
-  function toggleMenu() {
-    const newOpen = !open;
-
-    if (newOpen) {
-      setTagMenuOpen(true);
-    } else {
-      setColorMenuOpen(false);
-      setTagMenuOpen(false);
-    }
-
-    setOpen(newOpen);
-  }
-
-  function toggleSelection(checked: boolean, label: string) {
-    onTagsChange(
-      tags.map((tag) => ({
-        ...tag,
-        selected: tag.label === label ? checked : tag.selected,
-      }))
-    );
-  }
-
-  React.useEffect(
-    function reopen() {
-      if (!open && (colorMenuOpen || tagMenuOpen)) {
-        setOpen(true);
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [colorMenuOpen, tagMenuOpen]
-  );
-
-  function search(e) {
-    const label = e.target.value;
-
-    setLabel(label);
-  }
-
-  const result = tags.filter((tag) => tag.label.includes(label));
-
-  return {
-    open,
-    toggleMenu,
-    colorMenuOpen,
-    tagMenuOpen,
-    addTag,
-    createTag,
-    label,
-    search,
-    result,
-    canCreate:
-      !result.some((r) => label === r.label) && label != null && label !== "",
-    isChecked: (label: string) => selected.some((tag) => tag.label === label),
-    toggleSelection,
-  };
 }

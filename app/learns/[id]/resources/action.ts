@@ -8,7 +8,7 @@ import { ZodError } from "@/types/error";
 export async function createTag(
   learnId: number,
   tag: Omit<Tag, "id">
-): Promise<Tag[] | ZodError> {
+): Promise<{ id: number; result: Tag[] } | ZodError> {
   try {
     const parsedTag = z
       .object({
@@ -18,18 +18,23 @@ export async function createTag(
       .safeParse(tag);
 
     if (parsedTag.success) {
-      await prisma.resourceTag.create({
+      const { id } = await prisma.resourceTag.create({
         data: {
           ...tag,
           learn_id: learnId,
         },
       });
 
-      return await prisma.resourceTag.findMany({
+      const result = await prisma.resourceTag.findMany({
         where: {
           learn_id: learnId,
         },
       });
+
+      return {
+        id,
+        result,
+      };
     }
 
     return {
@@ -61,7 +66,7 @@ export async function postResource(
   resource: Resource,
   isNew: boolean
 ): Promise<Resource[] | ZodError> {
-  const { id, title, link } = resource;
+  const { id, title, link, tags } = resource;
 
   try {
     const parsedResource = z
@@ -77,6 +82,7 @@ export async function postResource(
           data: {
             title,
             link,
+            tags,
             learn_id: learnId,
           },
         });
@@ -88,6 +94,7 @@ export async function postResource(
           data: {
             title,
             link,
+            tags,
           },
         });
       }

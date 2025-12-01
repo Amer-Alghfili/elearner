@@ -92,7 +92,10 @@ export default function ResourceList(props: ResourceListProps) {
     }
   }
 
-  async function addTagOption(tag: Omit<Tag, "id">): Promise<boolean> {
+  async function addTagOption(
+    tag: Omit<Tag, "id">
+  ): Promise<number | undefined> {
+    console.log(tag);
     try {
       const res = await createTag(learnId, tag);
 
@@ -102,13 +105,13 @@ export default function ResourceList(props: ResourceListProps) {
           type: "error",
           closable: true,
         });
+      } else {
+        const { id, result } = res;
 
-        return false;
+        setTagsOptions(result);
+
+        return id;
       }
-
-      setTagsOptions(res);
-
-      return true;
     } catch (err) {
       toaster.create({
         title: "Something went wrong",
@@ -116,8 +119,6 @@ export default function ResourceList(props: ResourceListProps) {
         closable: true,
       });
     }
-
-    return false;
   }
 
   function discard(id: string) {

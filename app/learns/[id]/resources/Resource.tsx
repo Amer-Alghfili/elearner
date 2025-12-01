@@ -30,7 +30,7 @@ type ResourceProps = {
   onConfirm: (resource: ResourceType) => Promise<boolean>;
   onRemove: (id: string) => Promise<void>;
   onDiscard: (id: string) => void;
-  onAddTagOption: (tag: Omit<Tag, "id">) => Promise<boolean>;
+  onAddTagOption: (tag: Omit<Tag, "id">) => Promise<number | undefined>;
 };
 export function Resource({
   resource,
@@ -45,9 +45,11 @@ export function Resource({
 
   const [loading, setLoading] = React.useState(false);
 
-  const [link, setLink] = React.useState<string>(resource.link);
-
   const [title, setTitle] = React.useState(resource.title);
+  const [link, setLink] = React.useState<string>(resource.link);
+  const [selectedTags, setSelectedTags] = React.useState<number[]>(
+    resource.tags || []
+  );
 
   const formId = React.useId();
 
@@ -62,6 +64,7 @@ export function Resource({
           ...resource,
           title,
           link,
+          tags: selectedTags,
         }))
       );
     } catch (err) {
@@ -69,6 +72,26 @@ export function Resource({
     } finally {
       // TODO: loading is set to false after confirming the resource
       setLoading(false);
+    }
+  }
+
+  function toggleTag(checked: boolean, id: number) {
+    if (checked) {
+      setSelectedTags([...selectedTags, id]);
+    } else {
+      setSelectedTags(
+        selectedTags.filter((selectedTagId) => selectedTagId !== id)
+      );
+    }
+  }
+
+  async function addTagAndToggle(tag: Tag) {
+    try {
+      const res = await onAddTagOption(tag);
+
+      if (typeof res === "number") toggleTag(true, res);
+    } catch (err) {
+      throw err;
     }
   }
 
@@ -170,7 +193,12 @@ export function Resource({
               />
             </Field>
             <Flex gap="1em" alignItems="center" justifyContent="space-between">
-              <Tags tags={tagsOptions} onAddTag={onAddTagOption} />
+              <Tags
+                tags={tagsOptions}
+                selectedTags={selectedTags}
+                onAdd={addTagAndToggle}
+                onToggle={toggleTag}
+              />
               <Flex gap="1em">
                 <Button type="submit" loading={loading}>
                   {resource.isDraft ? "Create" : "Update"}
