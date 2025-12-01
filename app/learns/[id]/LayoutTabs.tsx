@@ -33,9 +33,7 @@ export function LayoutTabs({
           Resources
         </Tabs.Trigger>
       </Tabs.List>
-      <LearnContext.Provider value={{ ...data }}>
-        <Box mt="2em">{children}</Box>
-      </LearnContext.Provider>
+      <Box mt="2em">{children}</Box>
     </Tabs.Root>
   );
 }

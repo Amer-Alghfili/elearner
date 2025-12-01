@@ -2,85 +2,84 @@
 
 import { prisma } from "@/prisma";
 import z from "zod";
-import { ResourceType, Tag } from "../learn-context";
+import { Resource } from "./ResourceList";
+import { ZodError } from "@/types/error";
 
-//TODO: delete resource
+//TODO: create tag
+
+export async function deleteResource(learnId: number, id: number) {
+  try {
+    await prisma.resource.delete({
+      where: {
+        id,
+      },
+    });
+
+    return (await fetchResources(learnId)) as Resource[];
+  } catch (err) {
+    throw err;
+  }
+}
 
 export async function postResource(
   learnId: number,
-  resource: ResourceType
-): Promise<string> {
-  const { id, title, link, tags } = resource;
+  resource: Resource,
+  isNew: boolean
+): Promise<Resource[] | ZodError> {
+  const { id, title, link } = resource;
 
-  const parsedResource = z
-    .object({
-      title: z.string("Invalid title").min(1, "title is required"),
-      link: z.url("Invalid url").min(1, "url is required"),
-    })
-    .safeParse(resource);
+  try {
+    const parsedResource = z
+      .object({
+        title: z.string("Invalid title").min(1, "title is required"),
+        link: z.url("Invalid url").min(1, "url is required"),
+      })
+      .safeParse(resource);
 
-  if (parsedResource.success) {
-    for (const tag of tags) {
-      const { id, label, color } = tag;
-
-      if (id == null) {
-        await prisma.resourceTag.create({
+    if (parsedResource.success) {
+      if (isNew) {
+        await prisma.resource.create({
           data: {
-            label,
-            color,
+            title,
+            link,
             learn_id: learnId,
           },
         });
       } else {
-        await prisma.resourceTag.update({
+        await prisma.resource.update({
           where: {
-            id,
+            id: Number(id),
           },
           data: {
-            label,
-            color,
+            title,
+            link,
           },
         });
       }
+
+      return (await fetchResources(learnId)) as Resource[];
     }
 
-    const selectedTags: Tag[] = tags
-      .filter(({ selected }) => selected)
-      .map((tag) => ({ label: tag.label, color: tag.color, id: tag.id }));
-
-    let resourceId: string;
-    if (isNaN(Number(id))) {
-      const res = await prisma.resource.create({
-        data: {
-          title,
-          link,
-          tags: selectedTags,
-          learn_id: learnId,
-        },
-      });
-
-      resourceId = res.id.toString();
-    } else {
-      const res = await prisma.resource.update({
-        where: {
-          id: Number(id),
-        },
-        data: {
-          title,
-          link,
-          tags: selectedTags,
-        },
-      });
-
-      resourceId = res.id.toString();
-    }
-
-    return resourceId;
-  } else if (parsedResource.error) {
-    throw new Error(
-      parsedResource.error.issues.map((issue) => issue.message).join("\n")
-    );
+    return {
+      errorMessage: parsedResource.error.issues
+        .map((issue) => issue.message)
+        .join(", "),
+    };
+  } catch (err) {
+    throw err;
   }
+}
 
-  throw new Error();
+async function fetchResources(learnId: number): Promise<Resource[]> {
+  const result = await prisma.resource.findMany({
+    where: {
+      learn_id: learnId,
+    },
+  });
+
+  return result.map((resource) => ({
+    ...resource,
+    id: resource.id.toString(),
+    isDraft: false,
+  })) as Resource[];
 }
