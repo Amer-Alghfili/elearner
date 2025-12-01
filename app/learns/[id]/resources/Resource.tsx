@@ -210,7 +210,7 @@ export function Resource({
 
                     setTitle(resource.title);
                     setLink(resource.link);
-                    //TODO: reset tags
+                    setSelectedTags(resource.tags);
                   }}
                   variant="secondary"
                 >

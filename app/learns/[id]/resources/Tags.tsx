@@ -56,6 +56,11 @@ export function Tags({
     } catch (err) {}
   }
 
+  function closeMenu() {
+    setOpen(false);
+    candidate.current = {} as Tag;
+  }
+
   const options = tags.filter(({ label }) => label.includes(query));
 
   const canAdd = options.every(({ label }) => label !== query);
@@ -66,10 +71,11 @@ export function Tags({
       onOpenChange={({ open }) => {
         if (showColorOptions || showTagOptions) return;
 
-        setOpen(open);
+        if (!open) closeMenu();
+        else setOpen(open);
       }}
-      onInteractOutside={() => setOpen(false)}
-      onEscapeKeyDown={() => setOpen(false)}
+      onInteractOutside={closeMenu}
+      onEscapeKeyDown={closeMenu}
       composite={false}
     >
       <MenuTrigger asChild>

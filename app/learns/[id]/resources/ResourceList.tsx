@@ -7,7 +7,7 @@ import AddButton from "@/components/button/add";
 import { v4 } from "uuid";
 import { isZodError } from "@/types/error";
 import { toaster } from "@/components/ui/toaster";
-import { createTag, deleteResource, postResource } from "./action";
+import { createTag, deleteResource, postResource } from "./actions";
 
 export type Resource = {
   id: string;
