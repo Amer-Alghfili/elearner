@@ -132,6 +132,19 @@ export default function ResourceList(props: ResourceListProps) {
     );
   }
 
+  const query = search.toLowerCase();
+  const searchResult = resources.filter(({ title, link, tags }) => {
+    if (title.toLocaleLowerCase().includes(query)) return true;
+
+    if (link.toLocaleLowerCase().includes(query)) return true;
+
+    const tagLabels = tagsOptions
+      .filter(({ id }) => tags.includes(id))
+      .map(({ label }) => label.toLocaleLowerCase());
+
+    return tagLabels.some((label) => label.includes(query));
+  });
+
   return (
     <Stack gap="1em">
       <Flex gap="1em" justifyContent="space-between">
@@ -154,7 +167,7 @@ export default function ResourceList(props: ResourceListProps) {
           </InputGroup>
         </Field>
       </Flex>
-      {resources.map((resource) => {
+      {searchResult.map((resource) => {
         return (
           <Resource
             key={resource.id}
