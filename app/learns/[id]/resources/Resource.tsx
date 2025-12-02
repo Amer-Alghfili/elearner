@@ -8,6 +8,7 @@ import {
   IconButton,
   Input,
   Stack,
+  Wrap,
 } from "@chakra-ui/react";
 import React from "react";
 import { Field } from "@/components/ui/field";
@@ -21,16 +22,17 @@ import {
   DialogRoot,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Resource as ResourceType, Tag } from "./ResourceList";
+import { Resource as ResourceType, Tag as TagType } from "./ResourceList";
 import { Tags } from "./Tags";
+import { Tag } from "@/components/ui/tag";
 
 type ResourceProps = {
   resource: ResourceType;
-  tagsOptions: Tag[];
+  tagsOptions: TagType[];
   onConfirm: (resource: ResourceType) => Promise<boolean>;
   onRemove: (id: string) => Promise<void>;
   onDiscard: (id: string) => void;
-  onAddTagOption: (tag: Omit<Tag, "id">) => Promise<number | undefined>;
+  onAddTagOption: (tag: Omit<TagType, "id">) => Promise<number | undefined>;
 };
 export function Resource({
   resource,
@@ -41,7 +43,6 @@ export function Resource({
   onAddTagOption,
 }: ResourceProps) {
   const [open, setOpen] = React.useState(resource.isDraft);
-  const [discarded, setDiscarded] = React.useState(false);
 
   const [loading, setLoading] = React.useState(false);
 
@@ -80,7 +81,7 @@ export function Resource({
     setSelectedTags(tags);
   }
 
-  async function addTagAndToggle(tag: Tag) {
+  async function addTagAndToggle(tag: TagType) {
     try {
       const res = await onAddTagOption(tag);
 
@@ -91,19 +92,6 @@ export function Resource({
       throw err;
     }
   }
-
-  React.useEffect(
-    function discard() {
-      let timeoutId: NodeJS.Timeout;
-      if (discarded && !open) {
-        timeoutId = setTimeout(() => onDiscard(resource.id), 300);
-        setDiscarded(false);
-      }
-
-      return () => clearTimeout(timeoutId);
-    },
-    [discarded]
-  );
 
   return (
     <Collapsible.Root
@@ -130,6 +118,18 @@ export function Resource({
         {!open && (
           <Flex alignItems="center" gap="1em" justifyContent="space-between">
             <Heading as="h5">{resource.title}</Heading>
+            <Wrap>
+              {selectedTags.map((tagId) => {
+                const tag = tagsOptions.find(({ id }) => tagId === id);
+                if (tag == null) throw Error("tag not found");
+
+                return (
+                  <Tag key={tagId} colorPalette={tag.color}>
+                    {tag.label}
+                  </Tag>
+                );
+              })}
+            </Wrap>
             <Flex gap={0}>
               <IconButton variant="plain" p={0} onClick={() => setOpen(true)}>
                 <EditIcon />
@@ -203,7 +203,7 @@ export function Resource({
                 <Button
                   onClick={() => {
                     setOpen(false);
-                    setDiscarded(true);
+                    onDiscard(resource.id);
 
                     setTitle(resource.title);
                     setLink(resource.link);

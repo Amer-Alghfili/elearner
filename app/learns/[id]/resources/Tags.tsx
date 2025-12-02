@@ -162,11 +162,12 @@ function TagCombobox({
       defaultOpen
       collection={collection}
       value={value}
-      onValueChange={({ value }) => {
-        if (value[value.length - 1] === "new") {
+      onValueChange={({ value: inValue }) => {
+        if (inValue[inValue.length - 1] === "new") {
           onCreate(inputValue);
+          onChange(value.map((v) => Number(v)));
         } else {
-          setValue(value);
+          setValue(inValue);
         }
       }}
       allowCustomValue={true}
