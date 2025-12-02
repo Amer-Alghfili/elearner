@@ -4,6 +4,7 @@ import { textStyles } from "./text-styles";
 import { button } from "./recipes/button";
 import { colors } from "./colors";
 import { input } from "./recipes/input";
+import { checkbox } from "./recipes/checkbox";
 
 const config = defineConfig({
   //TODO: Responsive font size
@@ -40,6 +41,9 @@ const config = defineConfig({
       heading,
       button,
       input,
+    },
+    slotRecipes: {
+      checkbox,
     },
   },
 });

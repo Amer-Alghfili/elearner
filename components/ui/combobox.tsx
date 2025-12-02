@@ -65,13 +65,13 @@ export const ComboboxContent = React.forwardRef<
 
 export const ComboboxItem = React.forwardRef<
   HTMLDivElement,
-  ChakraCombobox.ItemProps
+  ChakraCombobox.ItemProps & { showIndicator?: boolean }
 >(function ComboboxItem(props, ref) {
-  const { item, children, ...rest } = props;
+  const { item, showIndicator = true, children, ...rest } = props;
   return (
     <ChakraCombobox.Item key={item.value} item={item} {...rest} ref={ref}>
       {children}
-      <ChakraCombobox.ItemIndicator />
+      {showIndicator && <ChakraCombobox.ItemIndicator />}
     </ChakraCombobox.Item>
   );
 });

@@ -14,7 +14,7 @@ export const colors = {
     background: { value: "#FAFAF9" },
     surface: { value: "#F4F4F2" },
   },
-  stroke: { DEFAULT: { value: "#D6D3CD" } },
+  stroke: { DEFAULT: { value: "#D6D3CD" }, thick: { value: "#c2bfba" } },
   text: {
     primary: { value: "#1F1F1F" },
     secondary: { value: "#4B4B4B" },

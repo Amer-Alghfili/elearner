@@ -1,5 +1,6 @@
 import {
   Button,
+  Circle,
   createListCollection,
   Flex,
   Input,
@@ -23,6 +24,7 @@ import {
   ComboboxItemText,
   ComboboxRoot,
 } from "@/components/ui/combobox";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export function Tags({
   tags,
@@ -106,6 +108,7 @@ export function Tags({
 type Item = {
   label: string;
   value: any;
+  color?: string;
 };
 
 function TagCombobox({
@@ -126,6 +129,7 @@ function TagCombobox({
     return {
       label: option.label,
       value: option.id.toString(),
+      color: option.color,
     };
   }
 
@@ -192,7 +196,7 @@ function TagCombobox({
       <ComboboxContent>
         {collection.items.map((item) => {
           return (
-            <ComboboxItem key={item.value} item={item}>
+            <ComboboxItem key={item.value} item={item} showIndicator={false}>
               {item.value === "new" ? (
                 <ComboboxItemText>
                   <Flex alignItems="center" gap="0.2em">
@@ -210,7 +214,18 @@ function TagCombobox({
                   </Flex>
                 </ComboboxItemText>
               ) : (
-                <ComboboxItemText>{item.label}</ComboboxItemText>
+                <ComboboxItemText>
+                  <Flex alignItems="center" gap="0.5em">
+                    <Checkbox
+                      checked={value.includes(item.value)}
+                      controlProps={{
+                        w: "1.2em",
+                        h: "1.2em",
+                      }}
+                    />
+                    <Circle size="0.7em" bg={item.color} /> {item.label}
+                  </Flex>
+                </ComboboxItemText>
               )}
             </ComboboxItem>
           );
