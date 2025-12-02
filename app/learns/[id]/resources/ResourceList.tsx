@@ -167,6 +167,7 @@ export default function ResourceList(props: ResourceListProps) {
           </InputGroup>
         </Field>
       </Flex>
+      {/* TODO: empty state and no search result states */}
       {searchResult.map((resource) => {
         return (
           <Resource

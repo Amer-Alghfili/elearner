@@ -9,16 +9,16 @@ export const checkbox = defineSlotRecipe({
     variant: {
       solid: {
         control: {
-          bg: "stroke",
-          border: "none",
+          borderColor: "stroke",
           _checked: {
             bg: "primary",
+            borderColor: "transparent",
             _hover: {
               bg: "primary.thick",
             },
           },
           _hover: {
-            bg: "stroke.thick",
+            borderColor: "stroke.thick",
           },
         },
       },
