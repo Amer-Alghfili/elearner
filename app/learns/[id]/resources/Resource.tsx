@@ -76,6 +76,7 @@ export function Resource({
   }
 
   function replaceTags(tags: number[]) {
+    console.log(tags);
     setSelectedTags(tags);
   }
 
@@ -191,7 +192,7 @@ export function Resource({
             <Flex gap="1em" alignItems="center" justifyContent="space-between">
               <Tags
                 tags={tagsOptions}
-                selectedTags={selectedTags}
+                selectedTags={selectedTags.map((tag) => tag.toString())}
                 onAdd={addTagAndToggle}
                 onChange={replaceTags}
               />

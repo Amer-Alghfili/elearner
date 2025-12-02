@@ -1,7 +1,5 @@
-import AddButton from "@/components/button/add";
 import {
   Button,
-  Circle,
   createListCollection,
   Flex,
   Input,
@@ -9,7 +7,6 @@ import {
   useListCollection,
 } from "@chakra-ui/react";
 import React from "react";
-import { Field } from "@/components/ui/field";
 import { PlusIcon, TagIcon } from "@/components/Icons";
 import { colors } from "@/theme/color-palattes";
 import { Tag } from "./ResourceList";
@@ -21,7 +18,6 @@ import {
 import {
   ComboboxContent,
   ComboboxControl,
-  ComboboxEmpty,
   ComboboxInput,
   ComboboxItem,
   ComboboxItemText,
@@ -35,19 +31,16 @@ export function Tags({
   onChange,
 }: {
   tags: Tag[];
-  selectedTags: number[];
+  selectedTags: string[];
   onAdd: (tag: Tag) => Promise<void>;
   onChange: (tags: number[]) => void;
 }) {
-  // const [open, setOpen] = React.useState(false);
-
   const [showColorOptions, setShowColorOptions] = React.useState(false);
-  const [showTagOptions, setShowTagOptions] = React.useState(true);
+  const [showTagOptions, setShowTagOptions] = React.useState(false);
 
   const candidate = React.useRef<Tag>({} as Tag);
 
   function draft(label: string) {
-    console.log(label);
     if (candidate.current) candidate.current.label = label;
     setShowTagOptions(false);
     setShowColorOptions(true);
@@ -61,32 +54,23 @@ export function Tags({
 
       setShowColorOptions(false);
       setShowTagOptions(true);
-      setQuery("");
     } catch (err) {}
   }
 
-  // function closeMenu() {
-  //   setOpen(false);
-  //   candidate.current = {} as Tag;
-  // }
+  function close() {
+    setShowColorOptions(false);
+    setShowTagOptions(false);
+
+    candidate.current = {} as Tag;
+  }
 
   return (
-    <PopoverRoot
-    // open={open}
-    // onOpenChange={({ open }) => {
-    //   if (showColorOptions || showTagOptions) return;
-
-    //   if (!open) closeMenu();
-    //   else setOpen(open);
-    // }}
-    // onInteractOutside={closeMenu}
-    // onEscapeKeyDown={closeMenu}
-    >
+    <PopoverRoot onInteractOutside={close} onEscapeKeyDown={close}>
       <PopoverTrigger asChild>
         <Button
           className="group"
           variant="plain"
-          // onClick={() => setOpen(true)}
+          onClick={() => setShowTagOptions(true)}
           textStyle="sm-medium"
           p={0}
           gap="0.3em"
@@ -103,25 +87,13 @@ export function Tags({
         </Button>
       </PopoverTrigger>
       <PopoverContent overflow="auto">
-        {
-          showColorOptions && (
-            <ColorCombobox options={colors} onSelect={selectColor} />
-          )
-          // colors.map((color) => (
-          // <MenuItem
-          //   key={color}
-          //   value={color}
-          //   onClick={() => selectColor(color)}
-          // >
-          //   <Circle size="0.5rem" bg={color} />
-          //   {color}
-          // </MenuItem>
-          // ))
-        }
+        {showColorOptions && (
+          <ColorCombobox options={colors} onSelect={selectColor} />
+        )}
         {showTagOptions && (
           <TagCombobox
             options={tags}
-            initialValue={selectedTags.map((s) => s.toString())}
+            initialValue={selectedTags}
             onChange={onChange}
             onCreate={draft}
           />
@@ -150,9 +122,14 @@ function TagCombobox({
   const [value, setValue] = React.useState<string[]>(initialValue);
   const [inputValue, setInputValue] = React.useState<string>("");
 
-  const [items, setItems] = React.useState<Item[]>(
-    options.map((option) => ({ label: option.label, value: option.id }))
-  );
+  function mapFromOption(option: Tag) {
+    return {
+      label: option.label,
+      value: option.id.toString(),
+    };
+  }
+
+  const [items, setItems] = React.useState<Item[]>(options.map(mapFromOption));
 
   const collection = createListCollection({
     items,
@@ -161,13 +138,13 @@ function TagCombobox({
   });
 
   function filter(inputValue: string) {
-    const canAdd =
-      inputValue.trim().length > 0 &&
-      options.some((item) => item.label !== inputValue);
-
     const filteredItems = options
       .filter((option) => option.label.includes(inputValue))
-      .map((option) => ({ label: option.label, value: option.id }));
+      .map(mapFromOption);
+
+    const canAdd =
+      inputValue.trim().length > 0 &&
+      filteredItems.every((item) => item.label !== inputValue);
 
     if (canAdd) {
       setItems([...filteredItems, { label: inputValue, value: "new" }]);
@@ -178,6 +155,8 @@ function TagCombobox({
 
   return (
     <ComboboxRoot
+      defaultOpen
+      collection={collection}
       value={value}
       onValueChange={({ value }) => {
         if (value[value.length - 1] === "new") {
@@ -187,20 +166,29 @@ function TagCombobox({
         }
       }}
       allowCustomValue={true}
-      // alwaysSubmitOnEnter={true}
       onBlur={() => onChange(value.map((v) => Number(v)))}
-      collection={collection}
       inputValue={inputValue}
-      onInputValueChange={(e) => {
-        const value = e.inputValue;
+      onInputValueChange={({ inputValue, reason }) => {
+        if (reason === "item-select") return;
 
-        filter(value);
-        setInputValue(value);
+        filter(inputValue);
+        setInputValue(inputValue);
       }}
       multiple={true}
     >
-      <ComboboxInput />
-      <ComboboxControl />
+      <ComboboxControl showIndicator={false}>
+        <ComboboxInput asChild>
+          <Input
+            variant="plain"
+            border="none"
+            boxShadow="none"
+            _focusVisible={{
+              outline: "none",
+            }}
+            placeholder="Search for tag..."
+          />
+        </ComboboxInput>
+      </ComboboxControl>
       <ComboboxContent>
         {collection.items.map((item) => {
           return (
@@ -248,6 +236,8 @@ function ColorCombobox({
 
   return (
     <ComboboxRoot
+      autoFocus
+      defaultOpen
       onValueChange={({ value }) => {
         onSelect(value[0]);
       }}
@@ -258,8 +248,19 @@ function ColorCombobox({
         filter(value);
       }}
     >
-      <ComboboxInput />
-      <ComboboxControl />
+      <ComboboxControl showIndicator={false}>
+        <ComboboxInput asChild>
+          <Input
+            variant="plain"
+            border="none"
+            boxShadow="none"
+            _focusVisible={{
+              outline: "none",
+            }}
+            placeholder="Search for color..."
+          />
+        </ComboboxInput>
+      </ComboboxControl>
       <ComboboxContent>
         {collection.items.map((item) => {
           return (
