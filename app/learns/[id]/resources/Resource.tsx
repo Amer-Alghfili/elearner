@@ -7,6 +7,8 @@ import {
   Icon,
   IconButton,
   Input,
+  LinkBox,
+  LinkOverlay,
   Stack,
   Wrap,
 } from "@chakra-ui/react";
@@ -25,6 +27,7 @@ import {
 import { Resource as ResourceType, Tag as TagType } from "./ResourceList";
 import { Tags } from "./Tags";
 import { Tag } from "@/components/ui/tag";
+import Link from "next/link";
 
 type ResourceProps = {
   resource: ResourceType;
@@ -116,64 +119,68 @@ export function Resource({
       )}
       <Collapsible.Trigger asChild w="full">
         {!open && (
-          <Flex alignItems="center" gap="1em" justifyContent="space-between">
-            <Heading as="h5">{resource.title}</Heading>
-            <Wrap>
-              {selectedTags.map((tagId) => {
-                const tag = tagsOptions.find(({ id }) => tagId === id);
-                if (tag == null) throw Error("tag not found");
+          <LinkBox>
+            <Flex alignItems="center" gap="1em" justifyContent="space-between">
+              <LinkOverlay href={resource.link} target="_blank">
+                <Heading as="h5">{resource.title}</Heading>
+              </LinkOverlay>
+              <Wrap>
+                {selectedTags.map((tagId) => {
+                  const tag = tagsOptions.find(({ id }) => tagId === id);
+                  if (tag == null) throw Error("tag not found");
 
-                return (
-                  <Tag key={tagId} colorPalette={tag.color}>
-                    {tag.label}
-                  </Tag>
-                );
-              })}
-            </Wrap>
-            <Flex gap={0}>
-              <IconButton variant="plain" p={0} onClick={() => setOpen(true)}>
-                <EditIcon />
-              </IconButton>
-              <DialogRoot>
-                <DialogTrigger asChild>
-                  <IconButton variant="plain" p={0}>
-                    <Icon color="accent.softCoral">
-                      <LuTrash />
-                    </Icon>
-                  </IconButton>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <Heading as="h4" lineHeight="1.6">
-                      Are you sure you want to delete {resource.title} ?
-                    </Heading>
-                  </DialogHeader>
-                  <DialogBody textStyle="md">
-                    Are you sure you want to delete this resource ? This action
-                    cannot be undone
-                  </DialogBody>
-                  <DialogFooter>
-                    <DialogActionTrigger asChild>
-                      <Button variant="secondary">Cancel</Button>
-                    </DialogActionTrigger>
-                    <Button
-                      loading={loading}
-                      bg="feedback.error"
-                      onClick={async () => {
-                        setLoading(true);
+                  return (
+                    <Tag key={tagId} colorPalette={tag.color}>
+                      {tag.label}
+                    </Tag>
+                  );
+                })}
+              </Wrap>
+              <Flex gap={0}>
+                <IconButton variant="plain" p={0} onClick={() => setOpen(true)}>
+                  <EditIcon />
+                </IconButton>
+                <DialogRoot>
+                  <DialogTrigger asChild>
+                    <IconButton variant="plain" p={0}>
+                      <Icon color="accent.softCoral">
+                        <LuTrash />
+                      </Icon>
+                    </IconButton>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <Heading as="h4" lineHeight="1.6">
+                        Are you sure you want to delete {resource.title} ?
+                      </Heading>
+                    </DialogHeader>
+                    <DialogBody textStyle="md">
+                      Are you sure you want to delete this resource ? This
+                      action cannot be undone
+                    </DialogBody>
+                    <DialogFooter>
+                      <DialogActionTrigger asChild>
+                        <Button variant="secondary">Cancel</Button>
+                      </DialogActionTrigger>
+                      <Button
+                        loading={loading}
+                        bg="feedback.error"
+                        onClick={async () => {
+                          setLoading(true);
 
-                        await onRemove(resource.id);
+                          await onRemove(resource.id);
 
-                        setLoading(false);
-                      }}
-                    >
-                      Delete
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </DialogRoot>
+                          setLoading(false);
+                        }}
+                      >
+                        Delete
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </DialogRoot>
+              </Flex>
             </Flex>
-          </Flex>
+          </LinkBox>
         )}
       </Collapsible.Trigger>
       <Collapsible.Content>
