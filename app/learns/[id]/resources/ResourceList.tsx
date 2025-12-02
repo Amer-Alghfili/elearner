@@ -3,6 +3,7 @@
 import React from "react";
 import { Resource } from "./Resource";
 import { Flex, Input, InputGroup, Stack } from "@chakra-ui/react";
+import { DebounceInput } from "react-debounce-input";
 import AddButton from "@/components/button/add";
 import { v4 } from "uuid";
 import { isZodError } from "@/types/error";
@@ -28,6 +29,8 @@ type ResourceListProps = {
 };
 export default function ResourceList(props: ResourceListProps) {
   const { learnId } = props;
+
+  const [search, setSearch] = React.useState<string>("");
 
   const [resources, setResources] = React.useState<Resource[]>(props.resources);
 
@@ -141,7 +144,13 @@ export default function ResourceList(props: ResourceListProps) {
               <SearchIcon w="1.3em" h="1.3em" stroke="stroke.thick" />
             }
           >
-            <Input size="sm" placeholder="Search by name, tag or link" />
+            <DebounceInput
+              onChange={(e) => setSearch(e.target.value)}
+              debounceTimeout={500}
+              size="sm"
+              placeholder="Search by name, tag or link"
+              element={Input}
+            />
           </InputGroup>
         </Field>
       </Flex>
