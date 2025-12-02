@@ -2,12 +2,14 @@
 
 import React from "react";
 import { Resource } from "./Resource";
-import { Stack } from "@chakra-ui/react";
+import { Flex, Input, InputGroup, Stack } from "@chakra-ui/react";
 import AddButton from "@/components/button/add";
 import { v4 } from "uuid";
 import { isZodError } from "@/types/error";
 import { toaster } from "@/components/ui/toaster";
 import { createTag, deleteResource, postResource } from "./actions";
+import { Field } from "@/components/ui/field";
+import { SearchIcon } from "@/components/Icons";
 
 export type Resource = {
   id: string;
@@ -128,10 +130,21 @@ export default function ResourceList(props: ResourceListProps) {
   }
 
   return (
-    <Stack>
-      <AddButton alignSelf="flex-start" onClick={draft}>
-        New Resource
-      </AddButton>
+    <Stack gap="1em">
+      <Flex gap="1em" justifyContent="space-between">
+        <AddButton alignSelf="flex-start" onClick={draft}>
+          New Resource
+        </AddButton>
+        <Field maxW="22em">
+          <InputGroup
+            startElement={
+              <SearchIcon w="1.3em" h="1.3em" stroke="stroke.thick" />
+            }
+          >
+            <Input size="sm" placeholder="Search by name, tag or link" />
+          </InputGroup>
+        </Field>
+      </Flex>
       {resources.map((resource) => {
         return (
           <Resource
