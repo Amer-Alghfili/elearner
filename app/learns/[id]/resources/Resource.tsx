@@ -75,21 +75,17 @@ export function Resource({
     }
   }
 
-  function toggleTag(checked: boolean, id: number) {
-    if (checked) {
-      setSelectedTags([...selectedTags, id]);
-    } else {
-      setSelectedTags(
-        selectedTags.filter((selectedTagId) => selectedTagId !== id)
-      );
-    }
+  function replaceTags(tags: number[]) {
+    setSelectedTags(tags);
   }
 
   async function addTagAndToggle(tag: Tag) {
     try {
       const res = await onAddTagOption(tag);
 
-      if (typeof res === "number") toggleTag(true, res);
+      if (typeof res === "number") {
+        setSelectedTags([...selectedTags, res]);
+      }
     } catch (err) {
       throw err;
     }
@@ -197,7 +193,7 @@ export function Resource({
                 tags={tagsOptions}
                 selectedTags={selectedTags}
                 onAdd={addTagAndToggle}
-                onToggle={toggleTag}
+                onChange={replaceTags}
               />
               <Flex gap="1em">
                 <Button type="submit" loading={loading}>
