@@ -1,4 +1,4 @@
-export default function LearnsLoading() {
+export default function loading() {
   // TODO: loading
   return <div>loading</div>;
 }

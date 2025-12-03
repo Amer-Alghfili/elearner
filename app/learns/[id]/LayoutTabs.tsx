@@ -1,13 +1,23 @@
 "use client";
 
 import { Box, Tabs } from "@chakra-ui/react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 
 type Tab = "overview" | "resources";
 
 export function LayoutTabs({ children }: { children: React.ReactNode }) {
-  const [tab, setTab] = React.useState<Tab>("overview");
+  const pathname = usePathname();
+
+  const tabByPathname = pathname.split("/").at(-1) as Tab;
+  const [tab, setTab] = React.useState<Tab>(tabByPathname);
+
+  React.useEffect(
+    function updateTabOnNavigation() {
+      setTab(tabByPathname);
+    },
+    [pathname]
+  );
 
   const router = useRouter();
 
