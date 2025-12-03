@@ -5,7 +5,7 @@ import CreateLearn from "./CreateLearn";
 import { Learns } from "./Learns";
 import { Learn } from "./actions";
 import { Heading, Stack, Text } from "@chakra-ui/react";
-import { Empty } from "@/components/Empty";
+import { Empty } from "@/components/empty-state/Empty";
 
 export default function LearnsContainer(props: { learns: Learn[] }) {
   const [learns, setLearns] = React.useState<Learn[]>(props.learns);

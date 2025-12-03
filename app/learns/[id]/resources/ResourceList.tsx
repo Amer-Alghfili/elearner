@@ -2,7 +2,14 @@
 
 import React from "react";
 import { Resource } from "./Resource";
-import { Flex, Input, InputGroup, Stack } from "@chakra-ui/react";
+import {
+  Flex,
+  Heading,
+  Input,
+  InputGroup,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import { DebounceInput } from "react-debounce-input";
 import AddButton from "@/components/button/add";
 import { v4 } from "uuid";
@@ -11,6 +18,8 @@ import { toaster } from "@/components/ui/toaster";
 import { createTag, deleteResource, postResource } from "./actions";
 import { Field } from "@/components/ui/field";
 import { SearchIcon } from "@/components/Icons";
+import { NotFound } from "@/components/empty-state/NotFound";
+import { Empty } from "@/components/empty-state/Empty";
 
 export type Resource = {
   id: string;
@@ -145,6 +154,73 @@ export default function ResourceList(props: ResourceListProps) {
     return tagLabels.some((label) => label.includes(query));
   });
 
+  let content;
+
+  if (searchResult.length > 0) {
+    content = searchResult.map((resource) => {
+      return (
+        <Resource
+          key={resource.id}
+          resource={resource}
+          tagsOptions={tagsOptions}
+          onConfirm={confirm}
+          onRemove={remove}
+          onDiscard={discard}
+          onAddTagOption={addTagOption}
+        />
+      );
+    });
+  } else if (query) {
+    content = (
+      <Stack mt="4.5em" w="full" gap={0} alignItems="center">
+        <NotFound />
+        <Stack alignItems="center">
+          <Heading as="h4" color="text.primary">
+            No resources found
+          </Heading>
+          <Stack gap={0}>
+            <Text color="text.secondary">
+              {`Your search ${query} did not match any resource.`}
+            </Text>
+            <Text color="text.secondary">
+              {"Please try to search either by resource's title, link or tag"}
+            </Text>
+          </Stack>
+        </Stack>
+      </Stack>
+    );
+  } else {
+    content = (
+      <Stack w="full" gap={0} alignItems="center">
+        <Empty />
+        <Stack gap={0} alignItems="center">
+          <Heading as="h4" color="text.primary">
+            Your learn does not have any resource
+          </Heading>
+          <Text color="text.secondary">
+            You can add any resource related to your learn
+          </Text>
+        </Stack>
+        <AddButton
+          variant="primary"
+          color="white"
+          mt="2em"
+          textStyle="h5"
+          iconProps={{
+            w: "1.5rem",
+            h: "1.5rem",
+            fill: "white",
+            _groupHover: {},
+          }}
+          _hover={{ bg: "primary.thick" }}
+          onClick={draft}
+        >
+          New Resource
+        </AddButton>
+      </Stack>
+    );
+  }
+
   return (
     <Stack gap="1em">
       <Flex gap="1em" justifyContent="space-between">
@@ -167,20 +243,7 @@ export default function ResourceList(props: ResourceListProps) {
           </InputGroup>
         </Field>
       </Flex>
-      {/* TODO: empty state and no search result states */}
-      {searchResult.map((resource) => {
-        return (
-          <Resource
-            key={resource.id}
-            resource={resource}
-            tagsOptions={tagsOptions}
-            onConfirm={confirm}
-            onRemove={remove}
-            onDiscard={discard}
-            onAddTagOption={addTagOption}
-          />
-        );
-      })}
+      {content}
     </Stack>
   );
 }
