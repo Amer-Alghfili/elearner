@@ -18,6 +18,7 @@ export const input = defineRecipe({
     },
     variant: {
       outline: {
+        transition: "all 0.1s ease-in-out",
         borderRadius: "8px",
         textStyle: "md-medium",
         borderColor: "stroke",
@@ -26,6 +27,9 @@ export const input = defineRecipe({
         color: "text.primary",
         _placeholder: {
           color: "#6C6C6C",
+        },
+        _hover: {
+          bg: "stroke.transparent",
         },
       },
       plain: {

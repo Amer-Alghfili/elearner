@@ -58,7 +58,11 @@ export function Learns({
                   <Update learn={learn} onUpdate={onUpdate} />
                   <DialogRoot>
                     <DialogTrigger asChild>
-                      <IconButton variant="plain" p={0}>
+                      <IconButton
+                        variant="plain"
+                        p={0}
+                        _hover={{ bg: "accent.softCoral.transparent" }}
+                      >
                         <Icon color="accent.softCoral">
                           <LuTrash />
                         </Icon>
@@ -149,7 +153,7 @@ function Update({
   return (
     <DialogRoot open={open} onOpenChange={({ open }) => setOpen(open)}>
       <DialogTrigger asChild>
-        <Button variant="plain" p={0} _hover={{ bg: "rgb(152, 109, 0, 0.2)" }}>
+        <Button variant="plain" p={0} _hover={{ bg: "primary.transparent" }}>
           <EditIcon w="24px" h="24px" />
         </Button>
       </DialogTrigger>

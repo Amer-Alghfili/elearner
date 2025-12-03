@@ -137,12 +137,21 @@ export function Resource({
                 })}
               </Wrap>
               <Flex gap={0}>
-                <IconButton variant="plain" p={0} onClick={() => setOpen(true)}>
+                <IconButton
+                  variant="plain"
+                  p={0}
+                  onClick={() => setOpen(true)}
+                  _hover={{ bg: "primary.transparent" }}
+                >
                   <EditIcon />
                 </IconButton>
                 <DialogRoot>
                   <DialogTrigger asChild>
-                    <IconButton variant="plain" p={0}>
+                    <IconButton
+                      variant="plain"
+                      p={0}
+                      _hover={{ bg: "accent.softCoral.transparent" }}
+                    >
                       <Icon color="accent.softCoral">
                         <LuTrash />
                       </Icon>
