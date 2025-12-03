@@ -1,33 +1,18 @@
-import { auth } from "@/auth";
 import { EditIcon } from "@/components/Icons";
-import { prisma } from "@/prisma";
 import {
   Button,
   Card,
   Flex,
   Heading,
-  Link,
   LinkBox,
   LinkOverlay,
   Stack,
-  Text,
 } from "@chakra-ui/react";
+import { Learn } from "./actions";
 
-export async function Learns() {
-  const data = await auth();
-
-  //TODO: unauthorized
-  if (data == null || data.user == null) return;
-
-  const learns = await prisma.learn.findMany({
-    where: {
-      user_id: data?.user?.email as string,
-    },
-  });
-
-  //TODO: empty state
+export function Learns({ learns }: { learns: Learn[] }) {
   //TODO: recently created learn doesn't rendered
-  return learns.map(({ id, title, description }) => (
+  return learns.map(({ id, title }) => (
     <LinkBox key={id} w="full">
       <Card.Root>
         <Card.Body>
@@ -47,7 +32,6 @@ export async function Learns() {
                 <EditIcon w="24px" h="24px" />
               </Button>
             </Flex>
-            <Text maxW="31.25rem">{description}</Text>
           </Stack>
         </Card.Body>
       </Card.Root>

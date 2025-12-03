@@ -1,5 +1,3 @@
-"use client";
-
 import AddButton from "@/components/button/add";
 import {
   DialogBody,
@@ -11,10 +9,15 @@ import {
 import { Field } from "@/components/ui/field";
 import { Button, Input } from "@chakra-ui/react";
 import React from "react";
-import { createLearn } from "./actions";
+import { createLearn, Learn } from "./actions";
 import { toaster } from "@/components/ui/toaster";
+import { isZodError } from "@/types/error";
 
-export default function CreateLearn() {
+export default function CreateLearn({
+  onCreate,
+}: {
+  onCreate: (learns: Learn[]) => void;
+}) {
   const [open, setOpen] = React.useState<boolean>();
 
   const [state, formAction, isPending] = React.useActionState(
@@ -26,13 +29,15 @@ export default function CreateLearn() {
     function handleDialogState() {
       if (state == null) return;
 
-      if (Array.isArray(state)) {
+      if (isZodError(state)) {
         toaster.create({
-          title: "Something went wrong",
+          title: state.errorMessage,
           type: "error",
           closable: true,
         });
       } else {
+        onCreate(state as Learn[]);
+
         toaster.create({
           title: "Learn has been created successfully 🎉",
           type: "success",
@@ -49,7 +54,7 @@ export default function CreateLearn() {
     <>
       <AddButton
         onClick={() => setOpen(true)}
-        textStyle="h3"
+        textStyle="h4"
         iconProps={{ w: "1.9375rem", h: "1.9375rem" }}
       >
         New Learn
