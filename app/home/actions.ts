@@ -5,8 +5,29 @@ import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/prisma";
 import { ZodError } from "@/types/error";
 import z from "zod";
+import { da } from "zod/v4/locales";
 
 export type Learn = { id: number; title: string; description: string | null };
+
+export async function deleteLearn(id: number) {
+  try {
+    const data = await auth();
+
+    await prisma.learn.delete({
+      where: {
+        id,
+      },
+    });
+
+    return await prisma.learn.findMany({
+      where: {
+        user_id: data?.user?.email as string,
+      },
+    });
+  } catch (err) {
+    throw err;
+  }
+}
 
 export async function postLearn(
   _: unknown,

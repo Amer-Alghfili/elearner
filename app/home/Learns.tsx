@@ -4,12 +4,14 @@ import {
   Card,
   Flex,
   Heading,
+  Icon,
+  IconButton,
   Input,
   LinkBox,
   LinkOverlay,
   Stack,
 } from "@chakra-ui/react";
-import { Learn, postLearn } from "./actions";
+import { deleteLearn, Learn, postLearn } from "./actions";
 import {
   DialogActionTrigger,
   DialogBody,
@@ -23,6 +25,7 @@ import React from "react";
 import { Field } from "@/components/ui/field";
 import { isZodError } from "@/types/error";
 import { toaster } from "@/components/ui/toaster";
+import { LuTrash } from "react-icons/lu";
 
 export function Learns({
   learns,
@@ -31,6 +34,8 @@ export function Learns({
   learns: Learn[];
   onUpdate: (learns: Learn[]) => void;
 }) {
+  const [loading, setLoading] = React.useState(false);
+
   return learns.map((learn) => {
     const { id, title } = learn;
 
@@ -49,7 +54,48 @@ export function Learns({
                     {title}
                   </LinkOverlay>
                 </Heading>
-                <Update learn={learn} onUpdate={onUpdate} />
+                <Flex>
+                  <Update learn={learn} onUpdate={onUpdate} />
+                  <DialogRoot>
+                    <DialogTrigger asChild>
+                      <IconButton variant="plain" p={0}>
+                        <Icon color="accent.softCoral">
+                          <LuTrash />
+                        </Icon>
+                      </IconButton>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <Heading as="h4" lineHeight="1.6">
+                          Are you sure you want to delete {title} ?
+                        </Heading>
+                      </DialogHeader>
+                      <DialogBody textStyle="md">
+                        Are you sure you want to delete this learn ? This action
+                        cannot be undone
+                      </DialogBody>
+                      <DialogFooter>
+                        <DialogActionTrigger asChild>
+                          <Button variant="secondary">Cancel</Button>
+                        </DialogActionTrigger>
+                        <Button
+                          loading={loading}
+                          bg="feedback.error"
+                          onClick={async () => {
+                            setLoading(true);
+
+                            const res = await deleteLearn(id);
+
+                            setLoading(false);
+                            onUpdate(res);
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </DialogRoot>
+                </Flex>
               </Flex>
             </Stack>
           </Card.Body>
