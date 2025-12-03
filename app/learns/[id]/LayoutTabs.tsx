@@ -3,17 +3,10 @@
 import { Box, Tabs } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import React from "react";
-import { LearnContext, LearnCtx } from "./learn-context";
 
 type Tab = "overview" | "resources";
 
-export function LayoutTabs({
-  children,
-  data,
-}: {
-  children: React.ReactNode;
-  data: LearnCtx;
-}) {
+export function LayoutTabs({ children }: { children: React.ReactNode }) {
   const [tab, setTab] = React.useState<Tab>("overview");
 
   const router = useRouter();

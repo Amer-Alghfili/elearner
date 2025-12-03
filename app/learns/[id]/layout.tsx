@@ -4,7 +4,6 @@ import { LayoutTabs } from "./LayoutTabs";
 import { Scaffold } from "@/components/Scaffold";
 import Header from "@/components/Header";
 import { Box, Stack } from "@chakra-ui/react";
-import { LearnCtx } from "./learn-context";
 
 export default async function LearnDetailsLayout({
   children,
@@ -35,23 +34,6 @@ export default async function LearnDetailsLayout({
   //TODO: unauthorized
   if (learn?.user_id !== email) return "unauthorized learn";
 
-  const resourceTags = await prisma.resourceTag.findMany({
-    where: {
-      learn_id: learn.id,
-    },
-  });
-
-  const data: LearnCtx = {
-    id: learn.id,
-    resources: learn.resources.map((resource) => ({
-      ...resource,
-      id: resource.id.toString(),
-      confirmed: true,
-      tags: resource.tags as [],
-    })),
-    allTags: resourceTags,
-  };
-
   return (
     <Scaffold>
       <Header />
@@ -64,7 +46,7 @@ export default async function LearnDetailsLayout({
             {learn.description}
           </Box>
         </Stack>
-        <LayoutTabs data={data}>{children}</LayoutTabs>
+        <LayoutTabs>{children}</LayoutTabs>
       </Stack>
     </Scaffold>
   );
