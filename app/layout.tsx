@@ -14,7 +14,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    // TODO: Change `lang`
     <html
       className={`${manrope.className} ${inter.variable}`}
       lang="en"

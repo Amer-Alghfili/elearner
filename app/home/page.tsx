@@ -8,9 +8,6 @@ import LearnsContainer from "./LearnsContainer";
 export default async function HomePage() {
   const data = await auth();
 
-  //TODO: unauthorized
-  if (data == null || data.user == null) return;
-
   const learns = await prisma.learn.findMany({
     where: {
       user_id: data?.user?.email as string,
