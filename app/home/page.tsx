@@ -1,8 +1,6 @@
 import Header from "@/components/Header";
 import { Scaffold } from "@/components/Scaffold";
 import { Stack } from "@chakra-ui/react";
-import CreateLearn from "./CreateLearn";
-import { Learns } from "./Learns";
 import { auth } from "@/auth";
 import { prisma } from "@/prisma";
 import LearnsContainer from "./LearnsContainer";

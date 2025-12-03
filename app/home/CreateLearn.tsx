@@ -9,7 +9,7 @@ import {
 import { Field } from "@/components/ui/field";
 import { Button, Input } from "@chakra-ui/react";
 import React from "react";
-import { createLearn, Learn } from "./actions";
+import { postLearn, Learn } from "./actions";
 import { toaster } from "@/components/ui/toaster";
 import { isZodError } from "@/types/error";
 
@@ -21,7 +21,7 @@ export default function CreateLearn({
   const [open, setOpen] = React.useState<boolean>();
 
   const [state, formAction, isPending] = React.useActionState(
-    createLearn,
+    postLearn,
     undefined
   );
 

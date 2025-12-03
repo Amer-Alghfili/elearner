@@ -11,7 +11,7 @@ export default function LearnsContainer(props: { learns: Learn[] }) {
   return (
     <>
       <CreateLearn onCreate={setLearns} />
-      <Learns learns={learns} />
+      <Learns learns={learns} onUpdate={setLearns} />
     </>
   );
 }

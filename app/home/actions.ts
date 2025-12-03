@@ -1,33 +1,22 @@
 "use server";
 
 import { auth } from "@/auth";
+import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/prisma";
 import { ZodError } from "@/types/error";
 import z from "zod";
 
 export type Learn = { id: number; title: string; description: string | null };
 
-export async function createLearn(
+export async function postLearn(
   _: unknown,
   formData: FormData
-): Promise<Learn[] | ZodError> {
+): Promise<Learn[] | ZodError | undefined> {
   const data = await auth();
 
+  const id = formData.get("id") as string;
   const title = formData.get("title") as string;
   const description = formData.get("description") as string;
-
-  const duplicate = await prisma.learn.count({
-    where: {
-      user_id: data?.user?.email as string,
-      title,
-    },
-  });
-
-  if (duplicate) {
-    return {
-      errorMessage: `learn ${title} already exist, please use another name to proceed`,
-    };
-  }
 
   const res = z
     .object({
@@ -42,30 +31,54 @@ export async function createLearn(
   if (res.success) {
     const email = data?.user?.email as string;
 
-    await prisma.user.update({
-      where: {
-        email,
-      },
-      data: {
-        learns: {
-          create: {
+    try {
+      console.log(id);
+      if (id) {
+        await prisma.learn.update({
+          where: {
+            id: Number(id),
+          },
+          data: {
             title,
             description,
           },
+        });
+      } else {
+        await prisma.user.update({
+          where: {
+            email,
+          },
+          data: {
+            learns: {
+              create: {
+                title,
+                description,
+              },
+            },
+          },
+        });
+      }
+
+      return await prisma.learn.findMany({
+        where: {
+          user_id: email,
         },
-      },
-    });
-
-    return await prisma.learn.findMany({
-      where: {
-        user_id: email,
-      },
-    });
+      });
+    } catch (err) {
+      if (err instanceof Prisma.PrismaClientKnownRequestError) {
+        if (err.code === "P2002") {
+          return {
+            errorMessage:
+              "Learn title is already used, please use another name",
+          };
+        }
+      }
+    }
+  } else {
+    return {
+      errorMessage: res.error.issues
+        .map((issue) => issue.message)
+        .join(", ") as string,
+    };
   }
-
-  return {
-    errorMessage: res.error.issues
-      .map((issue) => issue.message)
-      .join(", ") as string,
-  };
 }
