@@ -1,14 +1,21 @@
 import { domine } from "@/fonts";
-import { Box, Button, Flex } from "@chakra-ui/react";
+import { Button, Flex, Link } from "@chakra-ui/react";
 import { ExitIcon } from "./Icons";
 import { signOut } from "@/auth";
 
 export default function Header() {
   return (
     <Flex alignItems="center" gap="2em" justifyContent="space-between">
-      <Box {...domine} fontSize="3.625rem" fontWeight="bold" color="primary">
+      <Link
+        href="/home"
+        {...domine}
+        fontSize="3.625rem"
+        fontWeight="bold"
+        color="primary"
+        textDecoration="none"
+      >
         Elearner
-      </Box>
+      </Link>
       <form
         action={async () => {
           "use server";
