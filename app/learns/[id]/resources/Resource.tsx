@@ -28,6 +28,7 @@ import { Resource as ResourceType, Tag as TagType } from "./ResourceList";
 import { Tags } from "./Tags";
 import { Tag } from "@/components/ui/tag";
 import Link from "next/link";
+import { inter } from "@/fonts";
 
 type ResourceProps = {
   resource: ResourceType;
@@ -113,6 +114,7 @@ export function Resource({
             placeholder="Title"
             textStyle="h5"
             h="full"
+            {...inter}
           />
         </Field>
       )}

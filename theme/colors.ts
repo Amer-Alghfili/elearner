@@ -9,7 +9,7 @@ export const colors = {
     steelBlue: { value: "#3B82F6" },
     forestGreen: { value: "#15803D" },
     softCoral: {
-      DEFAULT: "#F87171",
+      DEFAULT: { value: "#F87171" },
       transparent: { value: "rgba(248, 113, 113, 0.2)" },
     },
     dustyPlum: { value: "#8B5CF6" },
