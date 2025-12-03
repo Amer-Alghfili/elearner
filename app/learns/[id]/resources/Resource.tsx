@@ -74,7 +74,6 @@ export function Resource({
     } catch (err) {
       console.log(err);
     } finally {
-      // TODO: loading is set to false after confirming the resource
       setLoading(false);
     }
   }

@@ -1,5 +1,6 @@
 import { EditIcon } from "@/components/Icons";
 import {
+  Box,
   Button,
   Card,
   Flex,
@@ -10,6 +11,7 @@ import {
   LinkBox,
   LinkOverlay,
   Stack,
+  Text,
 } from "@chakra-ui/react";
 import { deleteLearn, Learn, postLearn } from "./actions";
 import {

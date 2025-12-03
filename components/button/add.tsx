@@ -2,19 +2,22 @@ import { Button, ButtonProps, IconProps } from "@chakra-ui/react";
 import React from "react";
 import { PlusIcon } from "../Icons";
 
+export type AddButtonProps = {
+  iconProps?: IconProps;
+  startWithIcon?: boolean;
+} & ButtonProps;
 export default function AddButton({
   children,
   iconProps,
   startWithIcon = true,
   ...props
-}: { iconProps?: IconProps; startWithIcon?: boolean } & ButtonProps) {
+}: AddButtonProps) {
   return (
     <Button
       variant="plain"
       className="group"
       color="text.caption"
       fontWeight="bold"
-      px={0}
       _hover={{ color: "text.primary" }}
       {...props}
     >

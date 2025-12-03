@@ -1,4 +1,4 @@
-import AddButton from "@/components/button/add";
+import AddButton, { AddButtonProps } from "@/components/button/add";
 import {
   DialogBody,
   DialogContent,
@@ -7,7 +7,7 @@ import {
   DialogRoot,
 } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
-import { Button, Input } from "@chakra-ui/react";
+import { Button, ButtonProps, Input } from "@chakra-ui/react";
 import React from "react";
 import { postLearn, Learn } from "./actions";
 import { toaster } from "@/components/ui/toaster";
@@ -15,9 +15,10 @@ import { isZodError } from "@/types/error";
 
 export default function CreateLearn({
   onCreate,
+  ...props
 }: {
   onCreate: (learns: Learn[]) => void;
-}) {
+} & AddButtonProps) {
   const [open, setOpen] = React.useState<boolean>();
 
   const [state, formAction, isPending] = React.useActionState(
@@ -56,6 +57,7 @@ export default function CreateLearn({
         onClick={() => setOpen(true)}
         textStyle="h4"
         iconProps={{ w: "1.9375rem", h: "1.9375rem" }}
+        {...props}
       >
         New Learn
       </AddButton>

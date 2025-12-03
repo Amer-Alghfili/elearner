@@ -17,7 +17,6 @@ export default async function HomePage() {
     },
   });
 
-  //TODO: empty state
   return (
     <Scaffold>
       <Header />
