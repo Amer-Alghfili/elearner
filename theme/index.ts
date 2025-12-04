@@ -7,7 +7,6 @@ import { input } from "./recipes/input";
 import { checkbox } from "./recipes/checkbox";
 
 const config = defineConfig({
-  //TODO: Responsive font size
   globalCss: {
     body: {
       bg: "black",

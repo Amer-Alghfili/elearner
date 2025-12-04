@@ -4,15 +4,15 @@ export const input = defineRecipe({
   variants: {
     size: {
       sm: {
-        fontSize: "1rem",
+        fontSize: "clamp(0.875rem, 1.5625vw, 1rem)",
         py: "0.65625rem",
       },
       md: {
-        fontSize: "1.125rem",
+        fontSize: "clamp(1rem, 1.7578vw, 1.125rem)",
         py: "0.78125rem",
       },
       lg: {
-        fontSize: "1.25rem",
+        fontSize: "clamp(1rem, 1.9531vw, 1.25rem)",
         py: "0.9375rem",
       },
     },

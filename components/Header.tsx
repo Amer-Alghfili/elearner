@@ -9,7 +9,7 @@ export default function Header() {
       <Link
         href="/home"
         {...domine}
-        fontSize="3.625rem"
+        fontSize="clamp(2rem, 3vw, 3.625rem)"
         fontWeight="bold"
         color="primary"
         textDecoration="none"
