@@ -27,7 +27,13 @@ export function LayoutTabs({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <Tabs.Root value={tab} onValueChange={({ value }) => onTabChange(value)}>
+    <Tabs.Root
+      value={tab}
+      onValueChange={({ value }) => onTabChange(value)}
+      display="flex"
+      flexDirection="column"
+      gap="3em"
+    >
       <Tabs.List>
         <Tabs.Trigger value="overview" fontWeight="semibold">
           Overview
@@ -36,7 +42,7 @@ export function LayoutTabs({ children }: { children: React.ReactNode }) {
           Resources
         </Tabs.Trigger>
       </Tabs.List>
-      <Box mt="2em">{children}</Box>
+      <Box>{children}</Box>
     </Tabs.Root>
   );
 }

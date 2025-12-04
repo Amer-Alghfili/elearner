@@ -222,9 +222,9 @@ export default function ResourceList(props: ResourceListProps) {
   }
 
   return (
-    <Stack gap="1em">
-      <Flex gap="1em" justifyContent="space-between">
-        <AddButton alignSelf="flex-start" onClick={draft}>
+    <Stack gap="1.5em">
+      <Flex gap="1em" alignItems="center" justifyContent="space-between">
+        <AddButton textStyle="h5" alignSelf="flex-start" onClick={draft}>
           New Resource
         </AddButton>
         <Field maxW="22em">

@@ -1,6 +1,5 @@
 import { EditIcon } from "@/components/Icons";
 import {
-  Box,
   Button,
   Card,
   Flex,
@@ -11,7 +10,6 @@ import {
   LinkBox,
   LinkOverlay,
   Stack,
-  Text,
 } from "@chakra-ui/react";
 import { deleteLearn, Learn, postLearn } from "./actions";
 import {
@@ -51,7 +49,7 @@ export function Learns({
                 gap="1em"
                 justifyContent="space-between"
               >
-                <Heading as="h4">
+                <Heading as="h5">
                   <LinkOverlay href={`/learns/${id}/overview`}>
                     {title}
                   </LinkOverlay>
@@ -65,7 +63,7 @@ export function Learns({
                         p={0}
                         _hover={{ bg: "accent.softCoral.transparent" }}
                       >
-                        <Icon color="accent.softCoral">
+                        <Icon color="accent.softCoral" w="1.3rem" h="1.3rem">
                           <LuTrash />
                         </Icon>
                       </IconButton>
@@ -156,7 +154,7 @@ function Update({
     <DialogRoot open={open} onOpenChange={({ open }) => setOpen(open)}>
       <DialogTrigger asChild>
         <Button variant="plain" p={0} _hover={{ bg: "primary.transparent" }}>
-          <EditIcon w="24px" h="24px" />
+          <EditIcon w="1.3rem" h="1.3rem" />
         </Button>
       </DialogTrigger>
       <DialogContent

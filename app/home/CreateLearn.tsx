@@ -7,7 +7,7 @@ import {
   DialogRoot,
 } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
-import { Button, ButtonProps, Input } from "@chakra-ui/react";
+import { Button, Input } from "@chakra-ui/react";
 import React from "react";
 import { postLearn, Learn } from "./actions";
 import { toaster } from "@/components/ui/toaster";
@@ -55,8 +55,8 @@ export default function CreateLearn({
     <>
       <AddButton
         onClick={() => setOpen(true)}
-        textStyle="h4"
-        iconProps={{ w: "1.9375rem", h: "1.9375rem" }}
+        textStyle="h5"
+        iconProps={{ w: "1.5rem", h: "1.5rem" }}
         {...props}
       >
         New Learn

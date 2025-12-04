@@ -27,7 +27,6 @@ import {
 import { Resource as ResourceType, Tag as TagType } from "./ResourceList";
 import { Tags } from "./Tags";
 import { Tag } from "@/components/ui/tag";
-import Link from "next/link";
 import { inter } from "@/fonts";
 
 type ResourceProps = {
@@ -121,7 +120,7 @@ export function Resource({
       <Collapsible.Trigger asChild w="full">
         {!open && (
           <LinkBox>
-            <Flex alignItems="center" gap="1em" justifyContent="space-between">
+            <Wrap alignItems="center" gap="1em" justifyContent="space-between">
               <LinkOverlay href={resource.link} target="_blank">
                 <Heading as="h5">{resource.title}</Heading>
               </LinkOverlay>
@@ -189,7 +188,7 @@ export function Resource({
                   </DialogContent>
                 </DialogRoot>
               </Flex>
-            </Flex>
+            </Wrap>
           </LinkBox>
         )}
       </Collapsible.Trigger>
