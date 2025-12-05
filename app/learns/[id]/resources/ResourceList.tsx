@@ -178,7 +178,7 @@ export default function ResourceList(props: ResourceListProps) {
           <Heading as="h4" color="text.primary">
             No resources found
           </Heading>
-          <Stack gap={0}>
+          <Stack alignItems="center" gap={0}>
             <Text color="text.secondary">
               {`Your search ${query} did not match any resource.`}
             </Text>
