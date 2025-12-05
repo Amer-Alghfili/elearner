@@ -16,14 +16,15 @@ model User {
 }
 
 model Learn {
-  id           Int            @id @default(autoincrement())
-  title        String         @db.VarChar(255) @unique
-  description  String?        @db.VarChar(255)
-  user_id      String
-  user         User          @relation(fields: [user_id], references: [email])
-  todos        Todo[]
-  resources    Resource[]
-  resourceTags ResourceTag[]
+  id             Int              @id @default(autoincrement())
+  title          String           @unique @db.VarChar(255)
+  description    String?          @db.VarChar(255)
+  user_id        String
+  user           User            @relation(fields: [user_id], references: [email])
+  todos          Todo[]
+  resources      Resource[]
+  resourceTags   ResourceTag[]
+  knowledgeTests KnowledgeTest[]
 
   @@map("learns")
 }
@@ -39,12 +40,14 @@ model Todo {
 }
 
 model Resource {
-  id       Int     @id @default(autoincrement())
-  title    String  @db.VarChar(255)
-  link     String  @db.VarChar(255)
-  tags     Json?   @db.Json()
-  learn_id Int
-  learn    Learn  @relation(fields: [learn_id], references: [id])
+  id                Int             @id @default(autoincrement())
+  title             String          @db.VarChar(255)
+  link              String          @db.VarChar(255)
+  tags              Json?           @db.Json()
+  learn_id          Int
+  learn             Learn          @relation(fields: [learn_id], references: [id])
+  knowledgeTest     KnowledgeTest? @relation(fields: [knowledge_test_id], references: [id])
+  knowledge_test_id Int?
 
   @@map("learns_resources")
 }
@@ -57,4 +60,19 @@ model ResourceTag {
   learn    Learn  @relation(fields: [learn_id], references: [id])
 
   @@map("resource_tags")
+}
+
+model KnowledgeTest {
+  id          Int         @id @default(autoincrement())
+  title       String      @db.VarChar(255)
+  description String?     @db.VarChar(255)
+  answer      String      @db.VarChar(255)
+  hints       String?     @db.VarChar(255)
+  stage       String      @db.VarChar(255)
+  due         DateTime
+  resources   Resource[]
+  learn_id    Int
+  learn       Learn      @relation(fields: [learn_id], references: [id])
+
+  @@map("learns_knowledge_tests")
 }

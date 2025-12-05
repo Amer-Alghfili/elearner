@@ -4,7 +4,7 @@ import { Box, Tabs } from "@chakra-ui/react";
 import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 
-type Tab = "overview" | "resources";
+type Tab = "overview" | "resources" | "knowledge-test";
 
 export function LayoutTabs({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -40,6 +40,9 @@ export function LayoutTabs({ children }: { children: React.ReactNode }) {
         </Tabs.Trigger>
         <Tabs.Trigger value="resources" fontWeight="semibold">
           Resources
+        </Tabs.Trigger>
+        <Tabs.Trigger value="knowledge-test" fontWeight="semibold">
+          Knowledge Test
         </Tabs.Trigger>
       </Tabs.List>
       <Box>{children}</Box>
