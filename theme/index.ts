@@ -9,7 +9,7 @@ import { checkbox } from "./recipes/checkbox";
 const config = defineConfig({
   globalCss: {
     body: {
-      bg: "black",
+      // bg: "black",
     },
     h1: {
       textStyle: "h1",
