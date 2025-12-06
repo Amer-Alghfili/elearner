@@ -25,6 +25,7 @@ model Learn {
   resources      Resource[]
   resourceTags   ResourceTag[]
   knowledgeTests KnowledgeTest[]
+  noteFiles      NoteFile[]
 
   @@map("learns")
 }
@@ -75,4 +76,28 @@ model KnowledgeTest {
   learn       Learn      @relation(fields: [learn_id], references: [id])
 
   @@map("learns_knowledge_tests")
+}
+
+model NoteFile {
+  id       Int              @id @default(autoincrement())
+  title    String           @db.VarChar(255)
+  emoji    String?          @db.VarChar(255)
+  cover    String?          @db.VarChar(255)
+  learn_id Int
+  learn    Learn           @relation(fields: [learn_id], references: [id])
+  blocks   NoteFileBlock[]
+
+  @@map("learns_note_files")
+}
+
+model NoteFileBlock {
+  id       Int       @id @default(autoincrement())
+  type     String    @db.VarChar(255)
+  content  Json      @db.Json()
+  props    Json      @db.Json()
+  children Json      @db.Json()
+  file_id  Int
+  file     NoteFile @relation(fields: [file_id], references: [id])
+
+  @@map("learns_note_file_blocks")
 }
