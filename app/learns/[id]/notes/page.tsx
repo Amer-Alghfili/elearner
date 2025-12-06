@@ -1,12 +1,35 @@
 import { Editor } from "@/components/editor";
-import { Block } from "@blocknote/core";
+import { prisma } from "@/prisma";
 
 export type File = {
   id: number;
   title: string;
   emoji?: string;
-  blocks: Block[];
+  blocks?: any[];
 };
-export default function NotesTabPage() {
-  return <Editor />;
+export default async function NotesTabPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+
+  const files = await prisma.noteFile.findMany({
+    where: {
+      learn_id: Number(id),
+    },
+    include: {
+      blocks: true,
+    },
+  });
+
+  return (
+    <Editor
+      files={files.reduce((_, curr) => {
+        return {
+          [curr.id]: { ...curr, emoji: curr.emoji as string },
+        };
+      }, {})}
+    />
+  );
 }

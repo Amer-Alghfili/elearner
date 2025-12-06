@@ -55,7 +55,7 @@ const getCustomSlashMenuItems = (editor: any): DefaultReactSuggestionItem[] => [
   ...getDefaultReactSlashMenuItems(editor),
   insertClockItem(editor),
 ];
-export function BlockNoteEditor() {
+export function BlockNoteEditor({ initialContent }: { initialContent: any }) {
   const customBlock = createReactBlockSpec(
     {
       type: "clock",
@@ -105,6 +105,7 @@ export function BlockNoteEditor() {
         style: "min-height: 50vh; padding-top: 1em",
       },
     },
+    initialContent,
     // initialContent: [
     //   {
     //     type: "paragraph",
