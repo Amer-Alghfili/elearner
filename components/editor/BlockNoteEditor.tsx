@@ -1,11 +1,8 @@
-"use client";
-
 import { colors } from "@/theme/colors";
 import {
   BlockNoteEditor,
   BlockNoteSchema,
   defaultBlockSpecs,
-  defaultStyleSpecs,
 } from "@blocknote/core";
 import {
   filterSuggestionItems,
@@ -18,7 +15,6 @@ import {
   ColorStyleButton,
   CreateLinkButton,
   createReactBlockSpec,
-  createReactStyleSpec,
   DefaultReactSuggestionItem,
   FileCaptionButton,
   FileReplaceButton,
@@ -31,7 +27,7 @@ import {
   UnnestBlockButton,
   useCreateBlockNote,
 } from "@blocknote/react";
-import { Box, Flex, Input } from "@chakra-ui/react";
+import { Flex, Input } from "@chakra-ui/react";
 
 //TODO:
 /**
@@ -59,7 +55,7 @@ const getCustomSlashMenuItems = (editor: any): DefaultReactSuggestionItem[] => [
   ...getDefaultReactSlashMenuItems(editor),
   insertClockItem(editor),
 ];
-export default function Editor() {
+export function BlockNoteEditor() {
   const customBlock = createReactBlockSpec(
     {
       type: "clock",
@@ -96,25 +92,6 @@ export default function Editor() {
   );
 
   const schema = BlockNoteSchema.create({
-    styleSpecs: {
-      ...defaultStyleSpecs,
-      backgroundColor: createReactStyleSpec(
-        {
-          type: "backgroundColor",
-          propSchema: "string",
-        },
-        {
-          render: (props) => (
-            <Box
-              as="span"
-              ref={props.contentRef}
-              color="green"
-              bg={props.value}
-            />
-          ),
-        }
-      ),
-    },
     blockSpecs: {
       ...defaultBlockSpecs,
       clock: customBlock(),
@@ -123,72 +100,76 @@ export default function Editor() {
 
   const editor = useCreateBlockNote({
     schema,
-    initialContent: [
-      {
-        type: "paragraph",
-        content: [
-          { type: "text", text: "hello world", styles: { bold: true } },
-        ],
+    domAttributes: {
+      editor: {
+        style: "min-height: 50vh; padding-top: 1em",
       },
-      {
-        id: "11",
-        type: "clock",
-        props: {
-          hour: {
-            value: "2",
-            onChange: (e: any) => {
-              editor.updateBlock("11", {
-                props: {
-                  ...editor.getBlock("11")?.props,
-                  hour: {
-                    ...(editor.getBlock("11")?.props as any).hour,
-                    value: e.target.value,
-                  },
-                },
-              });
-            },
-          },
-          min: "11",
-          sec: "44",
-        },
-        content: "",
-      },
-    ],
+    },
+    // initialContent: [
+    //   {
+    //     type: "paragraph",
+    //     content: [
+    //       { type: "text", text: "hello world", styles: { bold: true } },
+    //     ],
+    //   },
+    //   {
+    //     id: "11",
+    //     type: "clock",
+    //     props: {
+    //       hour: {
+    //         value: "2",
+    //         onChange: (e: any) => {
+    //           editor.updateBlock("11", {
+    //             props: {
+    //               ...editor.getBlock("11")?.props,
+    //               hour: {
+    //                 ...(editor.getBlock("11")?.props as any).hour,
+    //                 value: e.target.value,
+    //               },
+    //             },
+    //           });
+    //         },
+    //       },
+    //       min: "11",
+    //       sec: "44",
+    //     },
+    //     content: "",
+    //   },
+    // ],
   });
+
+  const { primary } = colors;
 
   const lightRedTheme = {
     colors: {
       editor: {
         text: colors.text.primary.value,
-        background: colors.primary.thin.value,
+        background: "transparent",
       },
       menu: {
-        text: "#ffffff",
-        background: "#9b0000",
+        text: "white",
+        background: primary.DEFAULT.value,
       },
       tooltip: {
-        text: "#ffffff",
-        background: "#b00000",
+        text: "white",
+        background: primary.DEFAULT.value,
       },
       hovered: {
-        text: "#ffffff",
-        background: "#b00000",
+        text: "white",
+        background: primary.thick.value,
       },
       selected: {
-        text: "#ffffff",
-        background: "#c50000",
+        text: "white",
+        background: primary.thick.value,
       },
       disabled: {
-        text: "#9b0000",
-        background: "#7d0000",
+        text: colors.text.secondary.value,
+        background: colors.stroke.DEFAULT.value,
       },
-      shadow: "#640000",
-      border: "#870000",
+      shadow: "none",
+      border: "none",
       sideMenu: "#bababa",
-      // highlights: lightDefaultTheme.colors!.highlights,
     },
-    // borderRadius: 4,
-    fontFamily: "Helvetica Neue, sans-serif",
   } satisfies Theme;
 
   return (
