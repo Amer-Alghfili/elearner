@@ -4,7 +4,7 @@ import { File } from "@/app/learns/[id]/notes/page";
 import { prisma } from "@/prisma";
 import z from "zod";
 
-export type State = { data: File[]; error: string | null };
+export type State = { data?: File; error?: string | null };
 export async function postFile(
   prev: State,
   formData: FormData
@@ -36,8 +36,9 @@ export async function postFile(
       const emoji = formData.get("emoji") as string;
       const learnId = Number(formData.get("learnId"));
 
+      let file;
       if (id == null) {
-        await prisma.noteFile.create({
+        file = await prisma.noteFile.create({
           data: {
             title: "untitled",
             emoji: "",
@@ -45,7 +46,7 @@ export async function postFile(
           },
         });
       } else {
-        await prisma.noteFile.update({
+        file = await prisma.noteFile.update({
           where: {
             id,
           },
@@ -56,7 +57,7 @@ export async function postFile(
         });
       }
 
-      return { data: await fetchFiles(learnId), error: null };
+      return { data: { ...file, emoji: file.emoji as string }, error: null };
     }
 
     return {
@@ -75,33 +76,16 @@ export async function deleteFile(
   formData: FormData
 ): Promise<State> {
   const id = Number(formData.get("id"));
-  const learnId = Number(formData.get("learnId"));
 
   try {
-    await prisma.noteFile.delete({
+    const file = await prisma.noteFile.delete({
       where: {
         id,
       },
     });
 
-    return { data: (await fetchFiles(learnId)) as File[], error: null };
+    return { data: { ...file, emoji: file.emoji as string }, error: null };
   } catch (err) {
     throw err;
   }
-}
-
-async function fetchFiles(learnId: number): Promise<File[]> {
-  const result = await prisma.noteFile.findMany({
-    where: {
-      learn_id: learnId,
-    },
-    include: {
-      blocks: true,
-    },
-  });
-
-  return result.map((file) => ({
-    ...file,
-    emoji: file.emoji as string,
-  }));
 }

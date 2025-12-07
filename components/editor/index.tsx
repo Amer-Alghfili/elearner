@@ -6,47 +6,30 @@ import { Box, Flex, Input, Stack } from "@chakra-ui/react";
 import { Files } from "./Files";
 import { File } from "@/app/learns/[id]/notes/page";
 import { Field } from "../ui/field";
-import { postFile } from "./actions";
 
-export function Editor(props: { files: File[]; learnId: number }) {
-  const [formState, action, loading] = React.useActionState(postFile, {
-    data: props.files,
-    error: null,
-  });
-  const { data: files, error } = formState;
-
-  const [activeFileId, setActiveFileId] = React.useState(
-    (files as File[]).length ? (files as File[])[0].id : null
+export function Editor({ files, learnId }: { files: File[]; learnId: number }) {
+  const [activeFile, setActiveFile] = React.useState<File | null>(
+    files.length > 0 ? files[files.length - 1] : null
   );
 
-  function post(file: Omit<File, "blocks">) {}
-
-  // function remove(id: number) {}
-
-  // function updateContent(id: number, blocks: any) {}
-
-  const activeFile = files.find(({ id }) => id === activeFileId) as File;
+  React.useEffect(
+    function switchToLastFile() {
+      setActiveFile(files.length > 0 ? files[files.length - 1] : null);
+    },
+    [files.length]
+  );
 
   return (
     <Flex>
       <Files
         flex="25%"
-        files={files as File[]}
-        activeFile={activeFileId}
-        loading={loading}
-        viewContent={(id) => setActiveFileId(id)}
-        onCreate={() => {
-          React.startTransition(() => {
-            const formData = new FormData();
-            formData.append("learnId", props.learnId.toString());
-            formData.append("title", "");
-
-            action(formData);
-          });
-        }}
+        learnId={learnId}
+        files={files}
+        activeFile={activeFile?.id as number}
+        viewContent={setActiveFile}
       />
       <Box flex="75%">
-        {activeFileId && (
+        {activeFile && (
           <Stack>
             <Flex ps="3.375rem" alignItems="center" gap="1em">
               {/* TODO: emoji picker */}
@@ -64,7 +47,7 @@ export function Editor(props: { files: File[]; learnId: number }) {
               </Field>
             </Flex>
             <BlockNoteEditor
-              key={activeFileId}
+              key={activeFile.id}
               initialContent={
                 activeFile.blocks?.length === 0 ? null : activeFile.blocks
               }
