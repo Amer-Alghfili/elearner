@@ -1,3 +1,4 @@
+// TODO: get rid of its usages
 export type ZodError = { errorMessage: string };
 
 export function isZodError(obj: any): obj is ZodError {

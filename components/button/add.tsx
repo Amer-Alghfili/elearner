@@ -12,7 +12,6 @@ export default function AddButton({
   startWithIcon = true,
   ...props
 }: AddButtonProps) {
-  console.log(iconProps);
   return (
     <Button
       variant="plain"

@@ -4,11 +4,17 @@ import AddButton from "../button/add";
 
 export function Files({
   files,
+  activeFile,
+  loading,
   viewContent,
+  onCreate,
   ...rest
 }: {
-  files: (File & { active?: boolean })[];
+  files: File[];
+  activeFile: File["id"] | null;
+  loading: boolean;
   viewContent: (id: number) => void;
+  onCreate: VoidFunction;
 } & StackProps) {
   return (
     <Stack
@@ -20,6 +26,7 @@ export function Files({
       {...rest}
     >
       <AddButton
+        loading={loading}
         color="white"
         textStyle="h5"
         _hover={{ color: "stroke" }}
@@ -32,29 +39,34 @@ export function Files({
           },
         }}
         alignSelf="flex-start"
+        onClick={onCreate}
       >
         Files
       </AddButton>
       <Stack>
-        {files.map((file) => (
-          <Button
-            key={file.id}
-            variant="plain"
-            onClick={() => viewContent(file.id)}
-            color="white"
-            borderRadius="none"
-            justifyContent="flex-start"
-            mx="-1em"
-            px="1.5em"
-            _hover={{
-              bg: "primary",
-            }}
-            bg={file.active ? "primary" : "transparent"}
-          >
-            {file.emoji != null && <Box>{file.emoji}</Box>}
-            <Box>{file.title}</Box>
-          </Button>
-        ))}
+        {files.map((file) => {
+          const isActive = file.id === activeFile;
+
+          return (
+            <Button
+              key={file.id}
+              variant="plain"
+              onClick={() => viewContent(file.id)}
+              color="white"
+              borderRadius="none"
+              justifyContent="flex-start"
+              mx="-1em"
+              px="1.5em"
+              _hover={{
+                bg: "primary",
+              }}
+              bg={isActive ? "primary" : "transparent"}
+            >
+              {file.emoji != null && <Box>{file.emoji}</Box>}
+              <Box>{file.title}</Box>
+            </Button>
+          );
+        })}
       </Stack>
     </Stack>
   );

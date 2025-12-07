@@ -6,50 +6,52 @@ import { Box, Flex, Input, Stack } from "@chakra-ui/react";
 import { Files } from "./Files";
 import { File } from "@/app/learns/[id]/notes/page";
 import { Field } from "../ui/field";
+import { postFile } from "./actions";
 
-export function Editor(props: { files: Record<number, File> }) {
-  const [files, setFiles] = React.useState<Record<number, File>>(
-    Object.keys(props.files).length > 0
-      ? props.files
-      : {
-          1: { title: "Vim", emoji: "🐧", id: 1 },
-          2: { title: "User Permissions", id: 2 },
-        }
+export function Editor(props: { files: File[]; learnId: number }) {
+  const [formState, action, loading] = React.useActionState(postFile, {
+    data: props.files,
+    error: null,
+  });
+  const { data: files, error } = formState;
+
+  const [activeFileId, setActiveFileId] = React.useState(
+    (files as File[]).length ? (files as File[])[0].id : null
   );
 
-  const [activeFile, setActiveFile] = React.useState<number | null>(
-    Object.keys(files).length ? files[Number(Object.keys(files)[0])].id : null
-  );
+  function post(file: Omit<File, "blocks">) {}
 
-  function createFile() {}
+  // function remove(id: number) {}
 
-  function updateFile(file: Omit<File, "blocks">) {}
+  // function updateContent(id: number, blocks: any) {}
 
-  function deleteFile(id: number) {}
-
-  function updateContent(id: number, blocks: any) {}
-
-  function viewFileContent(id: number) {
-    setActiveFile(id);
-  }
+  const activeFile = files.find(({ id }) => id === activeFileId) as File;
 
   return (
     <Flex>
       <Files
         flex="25%"
-        files={Object.values(files).map((file) => ({
-          ...file,
-          active: file.id === activeFile,
-        }))}
-        viewContent={viewFileContent}
+        files={files as File[]}
+        activeFile={activeFileId}
+        loading={loading}
+        viewContent={(id) => setActiveFileId(id)}
+        onCreate={() => {
+          React.startTransition(() => {
+            const formData = new FormData();
+            formData.append("learnId", props.learnId.toString());
+            formData.append("title", "");
+
+            action(formData);
+          });
+        }}
       />
       <Box flex="75%">
-        {activeFile && (
+        {activeFileId && (
           <Stack>
             <Flex ps="3.375rem" alignItems="center" gap="1em">
               {/* TODO: emoji picker */}
-              {files[activeFile].emoji != null && (
-                <Box textStyle="h3">{files[activeFile].emoji}</Box>
+              {activeFile.emoji != null && (
+                <Box textStyle="h3">{activeFile.emoji}</Box>
               )}
               <Field>
                 <Input
@@ -57,13 +59,15 @@ export function Editor(props: { files: Record<number, File> }) {
                   textStyle="h3"
                   placeholder="Title"
                   fontWeight="bold"
-                  value={files[activeFile].title}
+                  value={activeFile.title}
                 />
               </Field>
             </Flex>
             <BlockNoteEditor
-              key={activeFile}
-              initialContent={files[activeFile].blocks}
+              key={activeFileId}
+              initialContent={
+                activeFile.blocks?.length === 0 ? null : activeFile.blocks
+              }
             />
           </Stack>
         )}

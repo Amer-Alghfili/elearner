@@ -25,11 +25,8 @@ export default async function NotesTabPage({
 
   return (
     <Editor
-      files={files.reduce((_, curr) => {
-        return {
-          [curr.id]: { ...curr, emoji: curr.emoji as string },
-        };
-      }, {})}
+      learnId={Number(id)}
+      files={files.map((file) => ({ ...file, emoji: file.emoji as string }))}
     />
   );
 }
