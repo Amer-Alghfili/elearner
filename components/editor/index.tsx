@@ -7,17 +7,44 @@ import { Files } from "./Files";
 import { File } from "@/app/learns/[id]/notes/page";
 import { Field } from "../ui/field";
 
-export function Editor({ files, learnId }: { files: File[]; learnId: number }) {
-  const [activeFile, setActiveFile] = React.useState<File | null>(
-    files.length > 0 ? files[files.length - 1] : null
+export function Editor({
+  files: initialFiles,
+  learnId,
+}: {
+  files: File[];
+  learnId: number;
+}) {
+  const [files, setFiles] = React.useState<File[]>(initialFiles);
+  const [activeFileId, setActiveFileId] = React.useState<number | null>(
+    files.length > 0 ? files[files.length - 1].id : null
   );
 
   React.useEffect(
     function switchToLastFile() {
-      setActiveFile(files.length > 0 ? files[files.length - 1] : null);
+      setActiveFileId(files.length > 0 ? files[files.length - 1].id : null);
     },
     [files.length]
   );
+
+  React.useEffect(
+    function syncServerState() {
+      setFiles(initialFiles);
+    },
+    [initialFiles]
+  );
+
+  function changeFileTitle(value: string) {
+    const copy = [...files];
+    const index = copy.findIndex(({ id }) => id === activeFileId);
+
+    if (index > -1) {
+      copy[index].title = value;
+      setFiles(copy);
+    }
+  }
+
+  const activeFile =
+    activeFileId == null ? null : files.find(({ id }) => id === activeFileId);
 
   return (
     <Flex>
@@ -26,7 +53,7 @@ export function Editor({ files, learnId }: { files: File[]; learnId: number }) {
         learnId={learnId}
         files={files}
         activeFile={activeFile?.id as number}
-        viewContent={setActiveFile}
+        viewContent={({ id }) => setActiveFileId(id)}
       />
       <Box flex="75%">
         {activeFile && (
@@ -43,6 +70,7 @@ export function Editor({ files, learnId }: { files: File[]; learnId: number }) {
                   placeholder="Title"
                   fontWeight="bold"
                   value={activeFile.title}
+                  onChange={({ target }) => changeFileTitle(target.value)}
                 />
               </Field>
             </Flex>
