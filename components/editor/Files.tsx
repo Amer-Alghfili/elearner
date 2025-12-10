@@ -16,6 +16,7 @@ import React from "react";
 import { deleteFile, postFile } from "./actions";
 import { useRouter } from "next/navigation";
 import { LuTrash } from "react-icons/lu";
+import RemoveButton from "../button/remove";
 
 export function Files({
   learnId,
@@ -126,21 +127,26 @@ function RemoveFile({ id }: { id: number }) {
   );
 
   return (
-    <form action={action}>
-      <Input id="id" name="id" value={id} hidden={true} />
-      <IconButton
-        className="group"
-        bg="transparent"
-        loading={loading}
-        type="submit"
-      >
+    <RemoveButton
+      className="group"
+      bg="transparent"
+      _hover={{ bg: "transparent" }}
+      icon={
         <Icon
           transition="all 0.2s ease-in-out"
+          stroke="white"
           _groupHover={{ stroke: "stroke" }}
         >
           <LuTrash />
         </Icon>
-      </IconButton>
-    </form>
+      }
+    >
+      <form action={action}>
+        <Input id="id" name="id" value={id} hidden={true} />
+        <Button type="submit" loading={loading} bg="feedback.error">
+          Delete
+        </Button>
+      </form>
+    </RemoveButton>
   );
 }
