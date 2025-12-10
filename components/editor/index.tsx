@@ -8,6 +8,7 @@ import { File } from "@/app/learns/[id]/notes/page";
 import { Field } from "../ui/field";
 import { Block } from "@blocknote/core";
 import { useDebounce } from "use-debounce";
+import { updateFileTitle } from "./actions";
 
 export function Editor({
   files: initialFiles,
@@ -70,10 +71,19 @@ export function Editor({
 
   React.useEffect(
     function syncDocWithBackend() {
+      if (activeFile == null) return;
+
+      updateFileTitle(activeFile.id, title as string);
+    },
+    [title]
+  );
+
+  React.useEffect(
+    function syncDocWithBackend() {
       //TODO: save changes to db
       console.log(title, document);
     },
-    [title, document]
+    [document]
   );
 
   return (

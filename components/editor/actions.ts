@@ -4,6 +4,17 @@ import { File } from "@/app/learns/[id]/notes/page";
 import { prisma } from "@/prisma";
 import z from "zod";
 
+export async function updateFileTitle(id: number, title: string) {
+  await prisma.noteFile.update({
+    where: {
+      id,
+    },
+    data: {
+      title,
+    },
+  });
+}
+
 export type State = { data?: File; error?: string | null };
 export async function postFile(
   prev: State,
