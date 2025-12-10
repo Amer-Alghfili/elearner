@@ -91,13 +91,11 @@ model NoteFile {
 }
 
 model NoteFileBlock {
-  id       Int       @id @default(autoincrement())
-  type     String    @db.VarChar(255)
-  content  Json      @db.Json()
-  props    Json      @db.Json()
-  children Json      @db.Json()
-  file_id  Int
-  file     NoteFile @relation(fields: [file_id], references: [id])
+  id      String    @id @db.VarChar(255)
+  type    String    @db.VarChar(255)
+  data    Json      @db.Json()
+  file_id Int
+  file    NoteFile @relation(fields: [file_id], references: [id])
 
   @@map("learns_note_file_blocks")
 }

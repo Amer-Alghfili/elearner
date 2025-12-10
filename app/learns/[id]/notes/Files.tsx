@@ -11,12 +11,12 @@ import {
   Stack,
   StackProps,
 } from "@chakra-ui/react";
-import AddButton from "../button/add";
+import AddButton from "../../../../components/button/add";
 import React from "react";
-import { deleteFile, postFile } from "./actions";
+import { deleteFile, createFile } from "./actions";
 import { useRouter } from "next/navigation";
 import { LuTrash } from "react-icons/lu";
-import RemoveButton from "../button/remove";
+import RemoveButton from "../../../../components/button/remove";
 
 export function Files({
   learnId,
@@ -75,7 +75,7 @@ export function Files({
 }
 
 function CreateFile({ learnId }: { learnId: number }) {
-  const [formState, action, loading] = React.useActionState(postFile, {});
+  const [formState, action, loading] = React.useActionState(createFile, {});
   const { error } = formState;
 
   const router = useRouter();

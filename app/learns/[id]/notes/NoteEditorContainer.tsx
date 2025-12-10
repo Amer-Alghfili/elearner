@@ -1,16 +1,20 @@
 "use client";
 
 import React from "react";
-import { NoteEditor, useElearnerCreateBlockNote } from "./BlockNoteEditor";
+import {
+  ElearnerNoteEditor,
+  useElearnerCreateBlockNote,
+} from "../../../../components/editor/ElearnerNoteEditor";
 import { Box, Flex, Input, Stack } from "@chakra-ui/react";
 import { Files } from "./Files";
 import { File } from "@/app/learns/[id]/notes/page";
-import { Field } from "../ui/field";
+import { Field } from "../../../../components/ui/field";
 import { Block } from "@blocknote/core";
 import { useDebounce } from "use-debounce";
-import { updateFileTitle } from "./actions";
+import { updateFileBlocks, updateFileTitle } from "./actions";
+import { useRouter } from "next/navigation";
 
-export function Editor({
+export function NoteEditorContainer({
   files: initialFiles,
   learnId,
 }: {
@@ -53,39 +57,6 @@ export function Editor({
   const activeFile =
     activeFileId == null ? null : files.find(({ id }) => id === activeFileId);
 
-  const editor = useElearnerCreateBlockNote({
-    initialContent:
-      activeFile == null || activeFile.blocks?.length === 0
-        ? null
-        : (activeFile.blocks as any[]),
-  });
-
-  const [documentState, setDocumentState] = React.useState<Block<any>[]>();
-
-  const [title] = useDebounce(activeFile?.title, 300);
-  const [document] = useDebounce(documentState, 300);
-
-  editor.onChange((e: any) => {
-    setDocumentState(e.document);
-  });
-
-  React.useEffect(
-    function syncDocWithBackend() {
-      if (activeFile == null) return;
-
-      updateFileTitle(activeFile.id, title as string);
-    },
-    [title]
-  );
-
-  React.useEffect(
-    function syncDocWithBackend() {
-      //TODO: save changes to db
-      console.log(title, document);
-    },
-    [document]
-  );
-
   return (
     <Flex>
       <Files
@@ -114,10 +85,65 @@ export function Editor({
                 />
               </Field>
             </Flex>
-            <NoteEditor key={activeFile.id} editor={editor} />
+            {activeFile != null && (
+              <NoteEditor
+                key={activeFile.id}
+                fileId={activeFile.id}
+                title={activeFile.title}
+                blocks={activeFile.blocks}
+              />
+            )}
           </Stack>
         )}
       </Box>
     </Flex>
   );
+}
+
+function NoteEditor({
+  fileId,
+  title,
+  blocks,
+}: {
+  fileId: number;
+  title: string;
+  blocks: any;
+}) {
+  const router = useRouter();
+
+  const editor = useElearnerCreateBlockNote({
+    initialContent:
+      blocks.length === 0
+        ? null
+        : (blocks.map((block: any) => block.data) as any[]),
+  });
+
+  const [documentState, setDocumentState] = React.useState<Block<any>[]>();
+
+  const [titleValue] = useDebounce(title, 300);
+  const [document] = useDebounce(documentState, 300);
+
+  editor.onChange((e: any) => {
+    setDocumentState(e.document);
+  });
+
+  React.useEffect(() => {
+    async function syncDocWithBackend() {
+      await updateFileTitle(fileId, titleValue as string);
+      router.refresh();
+    }
+
+    syncDocWithBackend();
+  }, [titleValue]);
+
+  React.useEffect(() => {
+    async function syncDocWithBackend() {
+      await updateFileBlocks(fileId, document);
+      router.refresh();
+    }
+
+    syncDocWithBackend();
+  }, [document]);
+
+  return <ElearnerNoteEditor editor={editor} />;
 }

@@ -1,5 +1,5 @@
-import { Editor } from "@/components/editor";
 import { prisma } from "@/prisma";
+import { NoteEditorContainer } from "./NoteEditorContainer";
 
 export type File = {
   id: number;
@@ -24,7 +24,7 @@ export default async function NotesTabPage({
   });
 
   return (
-    <Editor
+    <NoteEditorContainer
       learnId={Number(id)}
       files={files.map((file) => ({ ...file, emoji: file.emoji as string }))}
     />

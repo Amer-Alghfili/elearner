@@ -1,10 +1,8 @@
 import { colors } from "@/theme/colors";
 import {
-  Block,
   BlockNoteEditor,
   BlockNoteSchema,
   defaultBlockSpecs,
-  PartialBlock,
 } from "@blocknote/core";
 import {
   filterSuggestionItems,
@@ -30,8 +28,6 @@ import {
   useCreateBlockNote,
 } from "@blocknote/react";
 import { Flex, Input } from "@chakra-ui/react";
-import React from "react";
-import { useDebounce } from "use-debounce";
 
 //TODO:
 /**
@@ -59,11 +55,7 @@ const getCustomSlashMenuItems = (editor: any): DefaultReactSuggestionItem[] => [
   ...getDefaultReactSlashMenuItems(editor),
   insertClockItem(editor),
 ];
-export function NoteEditor({
-  editor,
-}: {
-  editor: ReturnType<typeof useElearnerCreateBlockNote>;
-}) {
+export function ElearnerNoteEditor({ editor }: { editor: any }) {
   const { primary } = colors;
 
   const lightRedTheme = {
@@ -156,7 +148,7 @@ export function useElearnerCreateBlockNote({
   initialContent,
 }: {
   initialContent: any[] | null;
-}): any {
+}) {
   const customBlock = createReactBlockSpec(
     {
       type: "clock",
