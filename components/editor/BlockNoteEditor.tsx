@@ -155,7 +155,7 @@ export function NoteEditor({
 export function useElearnerCreateBlockNote({
   initialContent,
 }: {
-  initialContent: PartialBlock[];
+  initialContent: any[] | null;
 }): any {
   const customBlock = createReactBlockSpec(
     {
@@ -199,9 +199,6 @@ export function useElearnerCreateBlockNote({
     },
   });
 
-  const [documentState, setDocumentState] = React.useState<Block<any>[]>();
-  const [document] = useDebounce(documentState, 300);
-
   const editor = useCreateBlockNote({
     schema,
     domAttributes: {
@@ -242,17 +239,6 @@ export function useElearnerCreateBlockNote({
     //   },
     // ],
   });
-
-  editor.onChange((e: any) => {
-    setDocumentState(e.document);
-  });
-
-  React.useEffect(
-    function syncDocToDB() {
-      console.log(document);
-    },
-    [document]
-  );
 
   return editor;
 }

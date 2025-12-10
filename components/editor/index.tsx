@@ -1,11 +1,13 @@
 "use client";
 
 import React from "react";
-import { NoteEditor } from "./BlockNoteEditor";
+import { NoteEditor, useElearnerCreateBlockNote } from "./BlockNoteEditor";
 import { Box, Flex, Input, Stack } from "@chakra-ui/react";
 import { Files } from "./Files";
 import { File } from "@/app/learns/[id]/notes/page";
 import { Field } from "../ui/field";
+import { Block } from "@blocknote/core";
+import { useDebounce } from "use-debounce";
 
 export function Editor({
   files: initialFiles,
@@ -50,6 +52,30 @@ export function Editor({
   const activeFile =
     activeFileId == null ? null : files.find(({ id }) => id === activeFileId);
 
+  const editor = useElearnerCreateBlockNote({
+    initialContent:
+      activeFile == null || activeFile.blocks?.length === 0
+        ? null
+        : (activeFile.blocks as any[]),
+  });
+
+  const [documentState, setDocumentState] = React.useState<Block<any>[]>();
+
+  const [title] = useDebounce(activeFile?.title, 300);
+  const [document] = useDebounce(documentState, 300);
+
+  editor.onChange((e: any) => {
+    setDocumentState(e.document);
+  });
+
+  React.useEffect(
+    function syncDocWithBackend() {
+      //TODO: save changes to db
+      console.log(title, document);
+    },
+    [title, document]
+  );
+
   return (
     <Flex>
       <Files
@@ -78,12 +104,7 @@ export function Editor({
                 />
               </Field>
             </Flex>
-            {/* <NoteEditor
-              key={activeFile.id}
-              initialContent={
-                activeFile.blocks?.length === 0 ? null : activeFile.blocks
-              }
-            /> */}
+            <NoteEditor key={activeFile.id} editor={editor} />
           </Stack>
         )}
       </Box>
