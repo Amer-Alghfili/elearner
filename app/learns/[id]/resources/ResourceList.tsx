@@ -20,6 +20,7 @@ import { Field } from "@/components/ui/field";
 import { SearchIcon } from "@/components/Icons";
 import { NotFound } from "@/components/empty-state/NotFound";
 import { Empty } from "@/components/empty-state/Empty";
+import { useRouter } from "next/navigation";
 
 export type Resource = {
   id: string;
@@ -39,15 +40,23 @@ type ResourceListProps = {
 export default function ResourceList(props: ResourceListProps) {
   const { learnId } = props;
 
+  const router = useRouter();
+
   const [search, setSearch] = React.useState<string>("");
 
   const [resources, setResources] = React.useState<Resource[]>(props.resources);
 
   const [tagsOptions, setTagsOptions] = React.useState<Tag[]>(props.tagOptions);
 
+  React.useEffect(
+    function syncResources() {
+      setResources(props.resources);
+    },
+    [props.resources]
+  );
+
   function draft() {
     setResources([
-      ...resources,
       {
         id: v4(),
         title: "",
@@ -55,6 +64,7 @@ export default function ResourceList(props: ResourceListProps) {
         tags: [],
         isDraft: true,
       },
+      ...resources,
     ]);
   }
 
@@ -71,7 +81,7 @@ export default function ResourceList(props: ResourceListProps) {
 
         return false;
       } else {
-        setResources(res);
+        router.refresh();
 
         toaster.create({
           title: "resource has been submitted successfully",
@@ -94,9 +104,9 @@ export default function ResourceList(props: ResourceListProps) {
 
   async function remove(id: string) {
     try {
-      const res = await deleteResource(learnId, Number(id));
+      await deleteResource(learnId, Number(id));
 
-      setResources(res);
+      router.refresh();
     } catch (err) {
       toaster.create({
         title: "Something went wrong",

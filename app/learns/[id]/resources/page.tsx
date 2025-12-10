@@ -12,6 +12,9 @@ export default async function ResourcesTabPage({
     where: {
       learn_id: Number(id),
     },
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 
   const tagOptions = await prisma.resourceTag.findMany({
