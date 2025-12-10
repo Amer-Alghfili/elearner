@@ -53,7 +53,6 @@ export async function postLearn(
     const email = data?.user?.email as string;
 
     try {
-      console.log(id);
       if (id) {
         await prisma.learn.update({
           where: {

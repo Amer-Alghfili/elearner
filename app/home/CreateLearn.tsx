@@ -9,22 +9,20 @@ import {
 import { Field } from "@/components/ui/field";
 import { Button, Input } from "@chakra-ui/react";
 import React from "react";
-import { postLearn, Learn } from "./actions";
+import { postLearn } from "./actions";
 import { toaster } from "@/components/ui/toaster";
 import { isZodError } from "@/types/error";
+import { useRouter } from "next/navigation";
 
-export default function CreateLearn({
-  onCreate,
-  ...props
-}: {
-  onCreate: (learns: Learn[]) => void;
-} & AddButtonProps) {
+export default function CreateLearn(props: AddButtonProps) {
   const [open, setOpen] = React.useState<boolean>();
 
   const [state, formAction, isPending] = React.useActionState(
     postLearn,
     undefined
   );
+
+  const router = useRouter();
 
   React.useEffect(
     function handleDialogState() {
@@ -37,7 +35,7 @@ export default function CreateLearn({
           closable: true,
         });
       } else {
-        onCreate(state as Learn[]);
+        router.refresh();
 
         toaster.create({
           title: "Learn has been created successfully 🎉",

@@ -79,7 +79,6 @@ export function Resource({
   }
 
   function replaceTags(tags: number[]) {
-    console.log(tags);
     setSelectedTags(tags);
   }
 

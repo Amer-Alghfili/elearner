@@ -19,6 +19,8 @@ model Learn {
   id             Int              @id @default(autoincrement())
   title          String           @unique @db.VarChar(255)
   description    String?          @db.VarChar(255)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
   user_id        String
   user           User            @relation(fields: [user_id], references: [email])
   todos          Todo[]
@@ -49,6 +51,8 @@ model Resource {
   learn             Learn          @relation(fields: [learn_id], references: [id])
   knowledgeTest     KnowledgeTest? @relation(fields: [knowledge_test_id], references: [id])
   knowledge_test_id Int?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
 
   @@map("learns_resources")
 }
@@ -71,6 +75,8 @@ model KnowledgeTest {
   hints       String?     @db.VarChar(255)
   stage       String      @db.VarChar(255)
   due         DateTime
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
   resources   Resource[]
   learn_id    Int
   learn       Learn      @relation(fields: [learn_id], references: [id])
@@ -79,13 +85,15 @@ model KnowledgeTest {
 }
 
 model NoteFile {
-  id       Int              @id @default(autoincrement())
-  title    String           @db.VarChar(255)
-  emoji    String?          @db.VarChar(255)
-  cover    String?          @db.VarChar(255)
-  learn_id Int
-  learn    Learn           @relation(fields: [learn_id], references: [id])
-  blocks   NoteFileBlock[]
+  id        Int              @id @default(autoincrement())
+  title     String           @db.VarChar(255)
+  emoji     String?          @db.VarChar(255)
+  cover     String?          @db.VarChar(255)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  learn_id  Int
+  learn     Learn           @relation(fields: [learn_id], references: [id])
+  blocks    NoteFileBlock[]
 
   @@map("learns_note_files")
 }
@@ -94,6 +102,7 @@ model NoteFileBlock {
   id      String    @id @db.VarChar(255)
   type    String    @db.VarChar(255)
   data    Json      @db.Json()
+  order   Int
   file_id Int
   file    NoteFile @relation(fields: [file_id], references: [id])
 

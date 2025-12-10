@@ -26,15 +26,12 @@ import { Field } from "@/components/ui/field";
 import { isZodError } from "@/types/error";
 import { toaster } from "@/components/ui/toaster";
 import { LuTrash } from "react-icons/lu";
+import { useRouter } from "next/navigation";
 
-export function Learns({
-  learns,
-  onUpdate,
-}: {
-  learns: Learn[];
-  onUpdate: (learns: Learn[]) => void;
-}) {
+export function Learns({ learns }: { learns: Learn[] }) {
   const [loading, setLoading] = React.useState(false);
+
+  const router = useRouter();
 
   return learns.map((learn) => {
     const { id, title } = learn;
@@ -56,7 +53,7 @@ export function Learns({
                   </LinkOverlay>
                 </Heading>
                 <Flex>
-                  <Update learn={learn} onUpdate={onUpdate} />
+                  <Update learn={learn} />
                   <DialogRoot>
                     <DialogTrigger asChild>
                       <IconButton
@@ -89,10 +86,11 @@ export function Learns({
                           onClick={async () => {
                             setLoading(true);
 
-                            const res = await deleteLearn(id);
+                            await deleteLearn(id);
+
+                            router.refresh();
 
                             setLoading(false);
-                            onUpdate(res);
                           }}
                         >
                           Delete
@@ -110,14 +108,10 @@ export function Learns({
   });
 }
 
-function Update({
-  learn,
-  onUpdate,
-}: {
-  learn: Learn;
-  onUpdate: (learns: Learn[]) => void;
-}) {
+function Update({ learn }: { learn: Learn }) {
   const { id, title, description } = learn;
+
+  const router = useRouter();
 
   const [open, setOpen] = React.useState(false);
 
@@ -137,7 +131,7 @@ function Update({
           closable: true,
         });
       } else {
-        onUpdate(state as Learn[]);
+        router.refresh();
 
         toaster.create({
           title: "Learn has been created successfully 🎉",

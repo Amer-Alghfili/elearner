@@ -109,7 +109,6 @@ export default function ResourceList(props: ResourceListProps) {
   async function addTagOption(
     tag: Omit<Tag, "id">
   ): Promise<number | undefined> {
-    console.log(tag);
     try {
       const res = await createTag(learnId, tag);
 

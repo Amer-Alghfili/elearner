@@ -12,6 +12,9 @@ export default async function HomePage() {
     where: {
       user_id: data?.user?.email as string,
     },
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 
   return (
