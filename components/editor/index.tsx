@@ -21,6 +21,10 @@ export function Editor({
 
   React.useEffect(
     function switchToLastFile() {
+      if (activeFileId != null && files.some(({ id }) => id === activeFileId)) {
+        return;
+      }
+
       setActiveFileId(files.length > 0 ? files[files.length - 1].id : null);
     },
     [files.length]
@@ -74,12 +78,12 @@ export function Editor({
                 />
               </Field>
             </Flex>
-            <NoteEditor
+            {/* <NoteEditor
               key={activeFile.id}
               initialContent={
                 activeFile.blocks?.length === 0 ? null : activeFile.blocks
               }
-            />
+            /> */}
           </Stack>
         )}
       </Box>

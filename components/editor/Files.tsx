@@ -48,7 +48,6 @@ export function Files({
             <LinkBox key={file.id} asChild>
               <Button
                 variant="plain"
-                onClick={() => viewContent(file)}
                 color="white"
                 borderRadius="none"
                 justifyContent="space-between"
@@ -61,7 +60,9 @@ export function Files({
               >
                 <Flex>
                   {file.emoji != null && <Box>{file.emoji}</Box>}
-                  <LinkOverlay>{file.title}</LinkOverlay>
+                  <LinkOverlay onClick={() => viewContent(file)}>
+                    {file.title}
+                  </LinkOverlay>
                 </Flex>
                 <RemoveFile id={file.id} />
               </Button>
