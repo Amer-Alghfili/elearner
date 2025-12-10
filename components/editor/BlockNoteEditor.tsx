@@ -1,5 +1,6 @@
 import { colors } from "@/theme/colors";
 import {
+  Block,
   BlockNoteEditor,
   BlockNoteSchema,
   defaultBlockSpecs,
@@ -28,6 +29,8 @@ import {
   useCreateBlockNote,
 } from "@blocknote/react";
 import { Flex, Input } from "@chakra-ui/react";
+import React from "react";
+import { useDebounce } from "use-debounce";
 
 //TODO:
 /**
@@ -55,7 +58,7 @@ const getCustomSlashMenuItems = (editor: any): DefaultReactSuggestionItem[] => [
   ...getDefaultReactSlashMenuItems(editor),
   insertClockItem(editor),
 ];
-export function BlockNoteEditor({ initialContent }: { initialContent: any }) {
+export function NoteEditor({ initialContent }: { initialContent: any }) {
   const customBlock = createReactBlockSpec(
     {
       type: "clock",
@@ -138,6 +141,20 @@ export function BlockNoteEditor({ initialContent }: { initialContent: any }) {
     //   },
     // ],
   });
+
+  const [documentState, setDocumentState] = React.useState<Block<any>[]>();
+  const [document] = useDebounce(documentState, 300);
+
+  editor.onChange((e) => {
+    setDocumentState(e.document);
+  });
+
+  React.useEffect(
+    function syncDocToDB() {
+      console.log(document);
+    },
+    [document]
+  );
 
   const { primary } = colors;
 

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { BlockNoteEditor } from "./BlockNoteEditor";
+import { NoteEditor } from "./BlockNoteEditor";
 import { Box, Flex, Input, Stack } from "@chakra-ui/react";
 import { Files } from "./Files";
 import { File } from "@/app/learns/[id]/notes/page";
@@ -74,7 +74,7 @@ export function Editor({
                 />
               </Field>
             </Flex>
-            <BlockNoteEditor
+            <NoteEditor
               key={activeFile.id}
               initialContent={
                 activeFile.blocks?.length === 0 ? null : activeFile.blocks
