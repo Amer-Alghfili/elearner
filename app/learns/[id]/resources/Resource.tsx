@@ -95,6 +95,7 @@ export function Resource({
     }
   }
 
+  //TODO: hover style
   return (
     <Collapsible.Root
       open={open}

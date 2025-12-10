@@ -39,6 +39,7 @@ export function Learns({
   return learns.map((learn) => {
     const { id, title } = learn;
 
+    //TODO: hover style
     return (
       <LinkBox key={id} w="full">
         <Card.Root>
