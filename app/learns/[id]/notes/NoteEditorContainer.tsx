@@ -69,22 +69,16 @@ export function NoteEditorContainer({
       <Box flex="75%">
         {activeFile && (
           <Stack>
-            <Flex ps="3.375rem" alignItems="center" gap="1em">
-              {/* TODO: emoji picker */}
-              {activeFile.emoji != null && (
-                <Box textStyle="h3">{activeFile.emoji}</Box>
-              )}
-              <Field>
-                <Input
-                  variant="plain"
-                  textStyle="h3"
-                  placeholder="Title"
-                  fontWeight="bold"
-                  value={activeFile.title}
-                  onChange={({ target }) => changeFileTitle(target.value)}
-                />
-              </Field>
-            </Flex>
+            <Field ps="3.375rem">
+              <Input
+                variant="plain"
+                textStyle="h3"
+                placeholder="Title"
+                fontWeight="bold"
+                value={activeFile.title}
+                onChange={({ target }) => changeFileTitle(target.value)}
+              />
+            </Field>
             {activeFile != null && (
               <NoteEditor
                 key={activeFile.id}
@@ -109,8 +103,6 @@ function NoteEditor({
   title: string;
   blocks: any;
 }) {
-  const router = useRouter();
-
   const editor = useElearnerCreateBlockNote({
     initialContent:
       blocks.length === 0
@@ -130,7 +122,6 @@ function NoteEditor({
   React.useEffect(() => {
     async function syncDocWithBackend() {
       await updateFileTitle(fileId, titleValue as string);
-      router.refresh();
     }
 
     syncDocWithBackend();
@@ -138,8 +129,16 @@ function NoteEditor({
 
   React.useEffect(() => {
     async function syncDocWithBackend() {
-      await updateFileBlocks(fileId, document);
-      router.refresh();
+      await updateFileBlocks(
+        fileId,
+        (document as []).map((block: any, order) => ({
+          id: block.id,
+          type: block.type,
+          data: block,
+          file_id: fileId,
+          order,
+        }))
+      );
     }
 
     syncDocWithBackend();

@@ -99,12 +99,13 @@ model NoteFile {
 }
 
 model NoteFileBlock {
-  id      String    @id @db.VarChar(255)
-  type    String    @db.VarChar(255)
-  data    Json      @db.Json()
-  order   Int
-  file_id Int
-  file    NoteFile @relation(fields: [file_id], references: [id])
+  id        String    @id @db.VarChar(255)
+  type      String    @db.VarChar(255)
+  data      Json      @db.Json()
+  order     Int
+  updatedAt DateTime  @updatedAt
+  file_id   Int
+  file      NoteFile @relation(fields: [file_id], references: [id])
 
   @@map("learns_note_file_blocks")
 }

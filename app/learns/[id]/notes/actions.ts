@@ -15,31 +15,27 @@ export async function updateFileTitle(id: number, title: string) {
   });
 }
 
-export async function updateFileBlocks(id: number, blocks: any) {
-  const data = (blocks as []).map((block: any) => ({
-    id: block.id,
-    type: block.type,
-    data: block,
-    file_id: id,
-  }));
+export async function updateFileBlocks(
+  id: number,
+  blocks: {
+    id: string;
+    type: string;
+    data: any;
+    file_id: number;
+    order: number;
+  }[]
+) {
+  if (blocks == null || (blocks as []).length == 0) return;
 
-  for (const block of data) {
-    await prisma.noteFileBlock.upsert({
-      where: {
-        id: block.id,
-      },
-      create: {
-        id: block.id,
-        type: block.type,
-        data: block.data,
-        file_id: id,
-      },
-      update: {
-        type: block.type,
-        data: block.data,
-      },
-    });
-  }
+  await prisma.noteFileBlock.deleteMany({
+    where: {
+      file_id: id,
+    },
+  });
+
+  await prisma.noteFileBlock.createMany({
+    data: blocks,
+  });
 }
 
 export type State = { data?: File; error?: string | null };
@@ -62,6 +58,12 @@ export async function deleteFile(
   formData: FormData
 ): Promise<State> {
   const id = Number(formData.get("id"));
+
+  await prisma.noteFileBlock.deleteMany({
+    where: {
+      file_id: id,
+    },
+  });
 
   const file = await prisma.noteFile.delete({
     where: {

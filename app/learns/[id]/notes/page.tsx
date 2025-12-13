@@ -18,8 +18,16 @@ export default async function NotesTabPage({
     where: {
       learn_id: Number(id),
     },
+    orderBy: {
+      // TODO: allow for re-order files
+      createdAt: "asc",
+    },
     include: {
-      blocks: true,
+      blocks: {
+        orderBy: {
+          order: "asc",
+        },
+      },
     },
   });
 
