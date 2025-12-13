@@ -198,38 +198,7 @@ export function useElearnerCreateBlockNote({
         style: "min-height: 50vh; padding-top: 1em",
       },
     },
-    initialContent,
-    // initialContent: [
-    //   {
-    //     type: "paragraph",
-    //     content: [
-    //       { type: "text", text: "hello world", styles: { bold: true } },
-    //     ],
-    //   },
-    //   {
-    //     id: "11",
-    //     type: "clock",
-    //     props: {
-    //       hour: {
-    //         value: "2",
-    //         onChange: (e: any) => {
-    //           editor.updateBlock("11", {
-    //             props: {
-    //               ...editor.getBlock("11")?.props,
-    //               hour: {
-    //                 ...(editor.getBlock("11")?.props as any).hour,
-    //                 value: e.target.value,
-    //               },
-    //             },
-    //           });
-    //         },
-    //       },
-    //       min: "11",
-    //       sec: "44",
-    //     },
-    //     content: "",
-    //   },
-    // ],
+    initialContent: initialContent as any,
   });
 
   return editor;

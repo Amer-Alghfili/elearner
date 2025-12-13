@@ -4,7 +4,6 @@ import { NoteEditorContainer } from "./NoteEditorContainer";
 export type File = {
   id: number;
   title: string;
-  emoji?: string;
   blocks?: any[];
 };
 export default async function NotesTabPage({
@@ -31,10 +30,5 @@ export default async function NotesTabPage({
     },
   });
 
-  return (
-    <NoteEditorContainer
-      learnId={Number(id)}
-      files={files.map((file) => ({ ...file, emoji: file.emoji as string }))}
-    />
-  );
+  return <NoteEditorContainer learnId={Number(id)} files={files} />;
 }

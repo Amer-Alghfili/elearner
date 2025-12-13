@@ -1,17 +1,11 @@
 "use client";
 
 import React from "react";
-import {
-  ElearnerNoteEditor,
-  useElearnerCreateBlockNote,
-} from "../../../../components/editor/ElearnerNoteEditor";
 import { Box, Flex, Input, Stack } from "@chakra-ui/react";
 import { Files } from "./Files";
 import { File } from "@/app/learns/[id]/notes/page";
 import { Field } from "../../../../components/ui/field";
-import { Block } from "@blocknote/core";
-import { useDebounce } from "use-debounce";
-import { updateFileBlocks, updateFileTitle } from "./actions";
+import { NoteEditor } from "./NoteEditor";
 import { useRouter } from "next/navigation";
 
 export function NoteEditorContainer({
@@ -21,6 +15,8 @@ export function NoteEditorContainer({
   files: File[];
   learnId: number;
 }) {
+  const router = useRouter();
+
   const [files, setFiles] = React.useState<File[]>(initialFiles);
   const [activeFileId, setActiveFileId] = React.useState<number | null>(
     files.length > 0 ? files[files.length - 1].id : null
@@ -42,6 +38,13 @@ export function NoteEditorContainer({
       setFiles(initialFiles);
     },
     [initialFiles]
+  );
+
+  React.useEffect(
+    function refetchFilesBlocksOnSwitch() {
+      router.refresh();
+    },
+    [activeFileId]
   );
 
   function changeFileTitle(value: string) {
@@ -92,57 +95,4 @@ export function NoteEditorContainer({
       </Box>
     </Flex>
   );
-}
-
-function NoteEditor({
-  fileId,
-  title,
-  blocks,
-}: {
-  fileId: number;
-  title: string;
-  blocks: any;
-}) {
-  const editor = useElearnerCreateBlockNote({
-    initialContent:
-      blocks.length === 0
-        ? null
-        : (blocks.map((block: any) => block.data) as any[]),
-  });
-
-  const [documentState, setDocumentState] = React.useState<Block<any>[]>();
-
-  const [titleValue] = useDebounce(title, 300);
-  const [document] = useDebounce(documentState, 300);
-
-  editor.onChange((e: any) => {
-    setDocumentState(e.document);
-  });
-
-  React.useEffect(() => {
-    async function syncDocWithBackend() {
-      await updateFileTitle(fileId, titleValue as string);
-    }
-
-    syncDocWithBackend();
-  }, [titleValue]);
-
-  React.useEffect(() => {
-    async function syncDocWithBackend() {
-      await updateFileBlocks(
-        fileId,
-        (document as []).map((block: any, order) => ({
-          id: block.id,
-          type: block.type,
-          data: block,
-          file_id: fileId,
-          order,
-        }))
-      );
-    }
-
-    syncDocWithBackend();
-  }, [document]);
-
-  return <ElearnerNoteEditor editor={editor} />;
 }
