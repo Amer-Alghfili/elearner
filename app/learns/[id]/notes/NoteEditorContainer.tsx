@@ -63,36 +63,34 @@ export function NoteEditorContainer({
   return (
     <Flex>
       <Files
-        flex="25%"
+        maxW="20em"
         learnId={learnId}
         files={files}
         activeFile={activeFile?.id as number}
         viewContent={({ id }) => setActiveFileId(id)}
       />
-      <Box flex="75%">
-        {activeFile && (
-          <Stack>
-            <Field ps="3.375rem">
-              <Input
-                variant="plain"
-                textStyle="h3"
-                placeholder="Title"
-                fontWeight="bold"
-                value={activeFile.title}
-                onChange={({ target }) => changeFileTitle(target.value)}
-              />
-            </Field>
-            {activeFile != null && (
-              <NoteEditor
-                key={activeFile.id}
-                fileId={activeFile.id}
-                title={activeFile.title}
-                blocks={activeFile.blocks}
-              />
-            )}
-          </Stack>
-        )}
-      </Box>
+      {activeFile && (
+        <Stack w="full">
+          <Field ps="3.375rem">
+            <Input
+              variant="plain"
+              textStyle="h3"
+              placeholder="Title"
+              fontWeight="bold"
+              value={activeFile.title}
+              onChange={({ target }) => changeFileTitle(target.value)}
+            />
+          </Field>
+          {activeFile != null && (
+            <NoteEditor
+              key={activeFile.id}
+              fileId={activeFile.id}
+              title={activeFile.title}
+              blocks={activeFile.blocks}
+            />
+          )}
+        </Stack>
+      )}
     </Flex>
   );
 }

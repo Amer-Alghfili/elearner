@@ -1,8 +1,6 @@
 import { File } from "@/app/learns/[id]/notes/page";
 import {
-  Box,
   Button,
-  Flex,
   Icon,
   Input,
   LinkBox,
@@ -31,11 +29,13 @@ export function Files({
 } & StackProps) {
   return (
     <Stack
-      bg="primary.thick"
+      borderWidth="1px"
+      borderColor="stroke"
       py="1.5em"
       px="1em"
       borderRadius="8px"
       gap="1em"
+      boxShadow="sm"
       {...rest}
     >
       <CreateFile learnId={learnId} />
@@ -47,22 +47,24 @@ export function Files({
             <LinkBox key={file.id} asChild>
               <Button
                 variant="plain"
-                color="white"
                 borderRadius="none"
                 justifyContent="space-between"
                 mx="-1em"
                 px="1.5em"
                 _hover={{
-                  bg: "primary",
+                  bg: "stroke.transparent",
                 }}
-                bg={isActive ? "primary" : "transparent"}
+                color={isActive ? "primary" : "text.primary"}
+                fontWeight={isActive ? "extrabold" : "semibold"}
               >
-                <Flex>
-                  {file.emoji != null && <Box>{file.emoji}</Box>}
-                  <LinkOverlay onClick={() => viewContent(file)}>
-                    {file.title}
-                  </LinkOverlay>
-                </Flex>
+                <LinkOverlay
+                  onClick={() => viewContent(file)}
+                  whiteSpace="nowrap"
+                  overflow="hidden"
+                  textOverflow="ellipsis"
+                >
+                  {file.title}
+                </LinkOverlay>
                 <RemoveFile id={file.id} />
               </Button>
             </LinkBox>
@@ -90,20 +92,28 @@ function CreateFile({ learnId }: { learnId: number }) {
 
   return (
     <form action={action}>
-      <Input id="title" name="title" value="" hidden={true} />
-      <Input id="learnId" name="learnId" value={learnId} hidden={true} />
+      <Input id="title" name="title" value="" hidden={true} readOnly={true} />
+      <Input
+        id="learnId"
+        name="learnId"
+        value={learnId}
+        hidden={true}
+        readOnly={true}
+      />
       <AddButton
         type="submit"
         loading={loading}
-        color="white"
         textStyle="h5"
-        _hover={{ color: "stroke" }}
+        color="text.primary"
+        w="full"
+        justifyContent="flex-start"
+        _hover={{ bg: "stroke.transparent" }}
         iconProps={{
-          fill: "white",
-          stroke: "white",
+          fill: "text.primary",
+          stroke: "text.primary",
           _groupHover: {
-            fill: "primary.thick",
-            stroke: "primary.thick",
+            fill: "text.secondary",
+            stroke: "text.secondary",
           },
         }}
         alignSelf="flex-start"
@@ -129,20 +139,19 @@ function RemoveFile({ id }: { id: number }) {
   return (
     <RemoveButton
       className="group"
-      bg="transparent"
-      _hover={{ bg: "transparent" }}
+      _hover={{ bg: "stroke" }}
       icon={
         <Icon
           transition="all 0.2s ease-in-out"
-          stroke="white"
-          _groupHover={{ stroke: "stroke" }}
+          stroke="text.secondary"
+          _groupHover={{ stroke: "text.primary" }}
         >
           <LuTrash />
         </Icon>
       }
     >
       <form action={action}>
-        <Input id="id" name="id" value={id} hidden={true} />
+        <Input id="id" name="id" value={id} hidden={true} readOnly={true} />
         <Button type="submit" loading={loading} bg="feedback.error">
           Delete
         </Button>
