@@ -5,12 +5,11 @@ import { button } from "./recipes/button";
 import { colors } from "./colors";
 import { input } from "./recipes/input";
 import { checkbox } from "./recipes/checkbox";
+import { blockNoteStyle } from "./block-note";
 
 const config = defineConfig({
   globalCss: {
-    body: {
-      // bg: "black",
-    },
+    ...blockNoteStyle,
     h1: {
       textStyle: "h1",
     },

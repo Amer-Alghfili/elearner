@@ -2,7 +2,9 @@ import { colors } from "@/theme/colors";
 import {
   BlockNoteEditor,
   BlockNoteSchema,
+  createHeadingBlockSpec,
   defaultBlockSpecs,
+  defaultStyleSchema,
 } from "@blocknote/core";
 import {
   filterSuggestionItems,
@@ -29,10 +31,6 @@ import {
 } from "@blocknote/react";
 import { Flex, Input } from "@chakra-ui/react";
 
-//TODO:
-/**
- * - Server side https://www.blocknotejs.org/docs/features/server-processing
- */
 const insertClockItem = (editor: BlockNoteEditor<any>) => {
   return {
     title: "Clock",
@@ -51,7 +49,9 @@ const insertClockItem = (editor: BlockNoteEditor<any>) => {
   };
 };
 
-const getCustomSlashMenuItems = (editor: any): DefaultReactSuggestionItem[] => [
+const getCustomSlashMenuItems = (
+  editor: UseElearnerBlockEditorReturn
+): DefaultReactSuggestionItem[] => [
   ...getDefaultReactSlashMenuItems(editor),
   insertClockItem(editor),
 ];
@@ -110,7 +110,6 @@ export function ElearnerNoteEditor({ editor }: { editor: any }) {
         formattingToolbar={() => (
           <FormattingToolbar>
             <BlockTypeSelect key="blockTypeSelect" />
-            {/* Extra button to toggle blue text & background */}
             <FileCaptionButton key="fileCaptionButton" />
             <FileReplaceButton key="replaceFileButton" />
             <BasicTextStyleButton basicTextStyle="bold" key="boldStyleButton" />
@@ -144,53 +143,63 @@ export function ElearnerNoteEditor({ editor }: { editor: any }) {
   );
 }
 
+const customBlock = createReactBlockSpec(
+  {
+    type: "clock",
+    propSchema: {
+      hour: {
+        default: {
+          value: "22",
+          onChange: (e: any) => console.log(e.target.value),
+        } as any,
+      },
+      min: {
+        default: "10",
+      },
+      sec: {
+        default: "43",
+      },
+      type: {
+        default: "clock",
+      },
+    },
+    content: "none",
+  },
+  {
+    render: (props) => {
+      return (
+        <Flex>
+          <Input placeholder="hour" {...(props.block.props.hour as any)} />
+          <Input placeholder="minute" value={props.block.props.min} />
+          <Input placeholder="second" value={props.block.props.sec} />
+        </Flex>
+      );
+    },
+  }
+);
+
+const schema = BlockNoteSchema.create({
+  blockSpecs: {
+    ...defaultBlockSpecs,
+    heading: createHeadingBlockSpec({
+      defaultLevel: 1,
+      levels: [1, 2, 3, 4],
+      allowToggleHeadings: true,
+    }),
+    clock: customBlock(),
+  },
+});
+
+type UseElearnerBlockEditorReturn = BlockNoteEditor<
+  typeof schema.blockSchema,
+  typeof schema.inlineContentSchema,
+  typeof schema.styleSchema
+>;
 export function useElearnerCreateBlockNote({
   initialContent,
 }: {
   initialContent: any[] | null;
-}) {
-  const customBlock = createReactBlockSpec(
-    {
-      type: "clock",
-      propSchema: {
-        hour: {
-          default: {
-            value: "22",
-            onChange: (e: any) => console.log(e.target.value),
-          } as any,
-        },
-        min: {
-          default: "10",
-        },
-        sec: {
-          default: "43",
-        },
-        type: {
-          default: "clock",
-        },
-      },
-      content: "none",
-    },
-    {
-      render: (props) => {
-        return (
-          <Flex>
-            <Input placeholder="hour" {...(props.block.props.hour as any)} />
-            <Input placeholder="minute" value={props.block.props.min} />
-            <Input placeholder="second" value={props.block.props.sec} />
-          </Flex>
-        );
-      },
-    }
-  );
-
-  const schema = BlockNoteSchema.create({
-    blockSpecs: {
-      ...defaultBlockSpecs,
-      clock: customBlock(),
-    },
-  });
-
+}): UseElearnerBlockEditorReturn {
   const editor = useCreateBlockNote({
     schema,
     domAttributes: {

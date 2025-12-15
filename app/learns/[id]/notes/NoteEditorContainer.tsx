@@ -74,7 +74,7 @@ export function NoteEditorContainer({
           <Field ps="3.375rem">
             <Input
               variant="plain"
-              textStyle="h3"
+              textStyle="h2"
               placeholder="Title"
               fontWeight="bold"
               value={activeFile.title}
