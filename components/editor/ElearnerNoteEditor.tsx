@@ -4,7 +4,6 @@ import {
   BlockNoteSchema,
   createHeadingBlockSpec,
   defaultBlockSpecs,
-  defaultStyleSchema,
 } from "@blocknote/core";
 import {
   filterSuggestionItems,
@@ -30,6 +29,7 @@ import {
   useCreateBlockNote,
 } from "@blocknote/react";
 import { Flex, Input } from "@chakra-ui/react";
+import { Checkbox } from "../ui/checkbox";
 
 const insertClockItem = (editor: BlockNoteEditor<any>) => {
   return {
@@ -198,7 +198,7 @@ type UseElearnerBlockEditorReturn = BlockNoteEditor<
 export function useElearnerCreateBlockNote({
   initialContent,
 }: {
-  initialContent: any[] | null;
+  initialContent: UseElearnerBlockEditorReturn | null;
 }): UseElearnerBlockEditorReturn {
   const editor = useCreateBlockNote({
     schema,
