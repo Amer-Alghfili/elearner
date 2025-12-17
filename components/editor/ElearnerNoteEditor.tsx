@@ -51,13 +51,14 @@ const insertClockItem = (editor: BlockNoteEditor<any>) => {
 
 const getCustomSlashMenuItems = (
   editor: UseElearnerBlockEditorReturn
-): DefaultReactSuggestionItem[] => [
-  ...getDefaultReactSlashMenuItems(editor),
-  insertClockItem(editor),
-];
+): DefaultReactSuggestionItem[] => {
+  const defaultSuggestions = getDefaultReactSlashMenuItems(editor).filter(
+    ({ key }: any) =>
+      key !== "file" && key !== "image" && key !== "video" && key !== "audio"
+  );
+  return [...defaultSuggestions, insertClockItem(editor)];
+};
 export function ElearnerNoteEditor({ editor }: { editor: any }) {
-  const { primary } = colors;
-
   const lightRedTheme = {
     colors: {
       editor: {
