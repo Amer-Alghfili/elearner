@@ -33,16 +33,14 @@ model Learn {
 }
 
 model Resource {
-  id                Int             @id @default(autoincrement())
-  title             String          @db.VarChar(255)
-  link              String          @db.VarChar(255)
-  tags              Json?           @db.Json()
-  learn_id          Int
-  learn             Learn          @relation(fields: [learn_id], references: [id])
-  knowledgeTest     KnowledgeTest? @relation(fields: [knowledge_test_id], references: [id])
-  knowledge_test_id Int?
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
+  id        Int       @id @default(autoincrement())
+  title     String    @db.VarChar(255)
+  link      String    @db.VarChar(255)
+  tags      Json?     @db.Json()
+  learn_id  Int
+  learn     Learn    @relation(fields: [learn_id], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   @@map("learns_resources")
 }
@@ -58,20 +56,40 @@ model ResourceTag {
 }
 
 model KnowledgeTest {
-  id          Int         @id @default(autoincrement())
-  title       String      @db.VarChar(255)
-  description String?     @db.VarChar(255)
-  answer      String      @db.VarChar(255)
-  hints       String?     @db.VarChar(255)
-  stage       String      @db.VarChar(255)
-  due         DateTime
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  resources   Resource[]
-  learn_id    Int
-  learn       Learn      @relation(fields: [learn_id], references: [id])
+  id            Int             @id @default(autoincrement())
+  stage         String          @db.VarChar(255)
+  due           DateTime
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  learn_id      Int
+  learn         Learn          @relation(fields: [learn_id], references: [id])
+  flashCards    FlashCard[]
+  practiceTasks PracticeTask[]
 
   @@map("learns_knowledge_tests")
+}
+
+model FlashCard {
+  id                Int                               @id @default(autoincrement())
+  knowledge_test_id Int
+  question          String                            @db.VarChar(255)
+  answerType        String        @map("answer_type") @db.VarChar(255)
+  answer            String                            @db.VarChar(255)
+  hint              String?                           @db.VarChar(255)
+  options           Json?
+  knowledge_test    KnowledgeTest @relation(fields: [knowledge_test_id], references: [id])
+
+  @@map("flash_cards")
+}
+
+model PracticeTask {
+  id                Int            @id @default(autoincrement())
+  knowledge_test_id Int
+  title             String         @db.VarChar(255)
+  description       String         @db.VarChar(255)
+  knowledge_test    KnowledgeTest @relation(fields: [knowledge_test_id], references: [id])
+
+  @@map("practice_tasks")
 }
 
 model NoteFile {
