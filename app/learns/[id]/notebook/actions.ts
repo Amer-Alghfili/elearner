@@ -49,7 +49,7 @@ export async function createFile(_: State, formData: FormData): Promise<State> {
     },
   });
 
-  return { data: { ...file, emoji: file.emoji as string }, error: null };
+  return { data: file, error: null };
 }
 
 export async function deleteFile(
@@ -70,5 +70,5 @@ export async function deleteFile(
     },
   });
 
-  return { data: { ...file, emoji: file.emoji as string }, error: null };
+  return { data: file, error: null };
 }

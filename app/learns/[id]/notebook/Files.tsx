@@ -1,4 +1,3 @@
-import { File } from "@/app/learns/[id]/notes/page";
 import {
   Button,
   Icon,
@@ -14,6 +13,7 @@ import { deleteFile, createFile } from "./actions";
 import { useRouter } from "next/navigation";
 import { LuTrash } from "react-icons/lu";
 import RemoveButton from "../../../../components/button/remove";
+import { File } from "./page";
 
 export function Files({
   learnId,
