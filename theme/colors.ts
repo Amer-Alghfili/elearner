@@ -20,7 +20,7 @@ export const colors = {
   },
   stroke: {
     DEFAULT: { value: "#D6D3CD" },
-    transparent: { value: "rgba(214, 211, 205, 0.2)" },
+    transparent: { value: "rgba(214, 211, 205, 0.5)" },
     thick: { value: "#c2bfba" },
   },
   text: {

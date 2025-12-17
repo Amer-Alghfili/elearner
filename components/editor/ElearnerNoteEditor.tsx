@@ -65,27 +65,27 @@ export function ElearnerNoteEditor({ editor }: { editor: any }) {
         background: "transparent",
       },
       menu: {
-        text: "white",
-        background: primary.DEFAULT.value,
+        text: colors.text.primary.value,
+        background: colors.neutral.background.value,
       },
       tooltip: {
-        text: "white",
-        background: primary.DEFAULT.value,
-      },
-      hovered: {
-        text: "white",
-        background: primary.thick.value,
-      },
-      selected: {
-        text: "white",
-        background: primary.thick.value,
-      },
-      disabled: {
-        text: colors.text.secondary.value,
+        text: colors.text.primary.value,
         background: colors.stroke.DEFAULT.value,
       },
-      shadow: "none",
-      border: "none",
+      hovered: {
+        text: colors.text.primary.value,
+        background: colors.stroke.transparent.value,
+      },
+      selected: {
+        text: colors.text.secondary.value,
+        background: colors.stroke.thick.value,
+      },
+      disabled: {
+        text: colors.text.caption.value,
+        background: colors.stroke.DEFAULT.value,
+      },
+      shadow: colors.stroke.transparent.value,
+      border: colors.stroke.DEFAULT.value,
       sideMenu: "#bababa",
     },
   } satisfies Theme;
