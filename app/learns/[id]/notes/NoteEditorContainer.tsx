@@ -64,6 +64,8 @@ export function NoteEditorContainer({
     <Flex>
       <Files
         maxW="20em"
+        maxH="55vh"
+        overflow="auto"
         learnId={learnId}
         files={files}
         activeFile={activeFile?.id as number}
