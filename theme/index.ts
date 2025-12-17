@@ -6,6 +6,7 @@ import { colors } from "./colors";
 import { input } from "./recipes/input";
 import { checkbox } from "./recipes/checkbox";
 import { blockNoteStyle } from "./block-note";
+import { tabs } from "./recipes/tabs";
 
 const config = defineConfig({
   globalCss: {
@@ -42,6 +43,7 @@ const config = defineConfig({
     },
     slotRecipes: {
       checkbox,
+      tabs,
     },
   },
 });
