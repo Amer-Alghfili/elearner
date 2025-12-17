@@ -55,6 +55,7 @@ export function Files({
                   bg: "stroke.transparent",
                 }}
                 color={isActive ? "primary" : "text.primary"}
+                bg={isActive ? "primary.transparent" : "none"}
                 fontWeight={isActive ? "extrabold" : "semibold"}
               >
                 <LinkOverlay
