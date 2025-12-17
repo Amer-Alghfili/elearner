@@ -5,6 +5,7 @@ import {
   createHeadingBlockSpec,
   defaultBlockSpecs,
 } from "@blocknote/core";
+import { en } from "@blocknote/core/locales";
 import {
   filterSuggestionItems,
   insertOrUpdateBlockForSlashMenu,
@@ -29,7 +30,6 @@ import {
   useCreateBlockNote,
 } from "@blocknote/react";
 import { Flex, Input } from "@chakra-ui/react";
-import { Checkbox } from "../ui/checkbox";
 
 const insertClockItem = (editor: BlockNoteEditor<any>) => {
   return {
@@ -198,17 +198,32 @@ type UseElearnerBlockEditorReturn = BlockNoteEditor<
 >;
 export function useElearnerCreateBlockNote({
   initialContent,
+  style,
+  placeholder,
 }: {
   initialContent: any | null;
+  style?: string;
+  placeholder?: string;
 }): UseElearnerBlockEditorReturn {
+  const renderedPlaceholder = "Enter text or type '/' for commands";
+
   const editor = useCreateBlockNote({
     schema,
     domAttributes: {
       editor: {
-        style: "min-height: 50vh; padding-top: 1em",
+        style: `min-height: 50vh; padding-top: 1em; ${style}`,
       },
     },
     initialContent: initialContent as any,
+    dictionary: {
+      ...en,
+      placeholders: {
+        default:
+          placeholder == null
+            ? renderedPlaceholder
+            : `${placeholder}. ${renderedPlaceholder}`,
+      },
+    },
   });
 
   return editor;

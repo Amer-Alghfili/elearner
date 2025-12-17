@@ -17,6 +17,8 @@ export default function NoteEditor({
 }) {
   const editor = useElearnerCreateBlockNote({
     initialContent: initialContent.length == 0 ? null : initialContent,
+    style: "padding-inline-start: 1em; padding-top: 0",
+    placeholder: "Drop ideas, thoughts, todos, etc",
   });
 
   const [documentState, setDocumentState] = React.useState<any[]>();

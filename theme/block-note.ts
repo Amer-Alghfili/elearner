@@ -1,4 +1,8 @@
 export const blockNoteStyle = {
+  // editor placeholder
+  ".bn-inline-content:before": {
+    whiteSpace: "pre-wrap",
+  },
   // heading block
   '[data-content-type="heading"]': {
     textStyle: "h2 !important",
