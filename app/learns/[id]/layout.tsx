@@ -3,15 +3,7 @@ import { prisma } from "@/prisma";
 import { LayoutTabs } from "./LayoutTabs";
 import { Scaffold } from "@/components/Scaffold";
 import Header from "@/components/Header";
-import {
-  Box,
-  Button,
-  Flex,
-  Heading,
-  Link,
-  Stack,
-  Text,
-} from "@chakra-ui/react";
+import { Box, Button, Heading, Link, Stack, Text } from "@chakra-ui/react";
 import { Empty } from "@/components/empty-state/Empty";
 
 export default async function LearnDetailsLayout({
@@ -31,10 +23,6 @@ export default async function LearnDetailsLayout({
     where: {
       id: Number(id),
       user_id: email as string,
-    },
-    include: {
-      todos: true,
-      resources: true,
     },
   });
 

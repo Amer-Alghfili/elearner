@@ -199,7 +199,7 @@ type UseElearnerBlockEditorReturn = BlockNoteEditor<
 export function useElearnerCreateBlockNote({
   initialContent,
 }: {
-  initialContent: UseElearnerBlockEditorReturn | null;
+  initialContent: any | null;
 }): UseElearnerBlockEditorReturn {
   const editor = useCreateBlockNote({
     schema,

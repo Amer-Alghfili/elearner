@@ -1,12 +1,12 @@
 "use client";
 
 import React from "react";
-import { Box, Flex, Input, Stack } from "@chakra-ui/react";
+import { Flex, Input, Stack } from "@chakra-ui/react";
 import { Files } from "./Files";
-import { File } from "@/app/learns/[id]/notes/page";
 import { Field } from "../../../../components/ui/field";
 import { NoteEditor } from "./NoteEditor";
 import { useRouter } from "next/navigation";
+import { File } from "./page";
 
 export function NoteEditorContainer({
   files: initialFiles,

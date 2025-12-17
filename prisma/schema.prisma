@@ -16,30 +16,20 @@ model User {
 }
 
 model Learn {
-  id             Int              @id @default(autoincrement())
-  title          String           @unique @db.VarChar(255)
-  description    String?          @db.VarChar(255)
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
+  id             Int               @id @default(autoincrement())
+  title          String            @unique @db.VarChar(255)
+  description    String?           @db.VarChar(255)
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
   user_id        String
-  user           User            @relation(fields: [user_id], references: [email])
-  todos          Todo[]
+  user           User             @relation(fields: [user_id], references: [email])
   resources      Resource[]
   resourceTags   ResourceTag[]
   knowledgeTests KnowledgeTest[]
   noteFiles      NoteFile[]
+  notes          LearnNoteBlock[]
 
   @@map("learns")
-}
-
-model Todo {
-  id          Int      @id @default(autoincrement())
-  title       String   @db.VarChar(255)
-  description String?  @db.VarChar(255)
-  learn_id    Int
-  learn       Learn   @relation(fields: [learn_id], references: [id])
-
-  @@map("learns_todos")
 }
 
 model Resource {
@@ -108,4 +98,16 @@ model NoteFileBlock {
   file      NoteFile @relation(fields: [file_id], references: [id])
 
   @@map("learns_note_file_blocks")
+}
+
+model LearnNoteBlock {
+  id        String    @id @db.VarChar(255)
+  type      String    @db.VarChar(255)
+  data      Json      @db.Json()
+  order     Int
+  updatedAt DateTime  @updatedAt
+  learn_id  Int
+  learn     Learn    @relation(fields: [learn_id], references: [id])
+
+  @@map("learns_note_blocks")
 }

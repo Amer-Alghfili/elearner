@@ -1,15 +1,23 @@
-"use client";
+import { prisma } from "@/prisma";
+import NoteEditor from ".";
 
-export default function OverviewTabPage() {
-  // const [todos, setTodos] = React.useState<
-  //   Omit<Prisma.TodoModel, "learn_id">[]
-  // >(ctx.learn.todos);
-  // function draftTodo() {
-  //   setTodos([...todos, { id: Math.random(), title: "", description: "" }]);
-  // }
-  // return (
-  //   <Stack alignItems="flex-start">
-  //     <AddButton onClick={() => draftTodo()}>New todo</AddButton>
-  //   </Stack>
-  // );
+export default async function OverviewTabPage({
+  params,
+}: {
+  params: Promise<{ id: number }>;
+}) {
+  const { id } = await params;
+
+  const blocks = await prisma.learnNoteBlock.findMany({
+    where: {
+      learn_id: Number(id),
+    },
+  });
+
+  return (
+    <NoteEditor
+      learnId={Number(id)}
+      initialContent={blocks.map((block: any) => block.data) as any[]}
+    />
+  );
 }

@@ -1,8 +1,7 @@
 "use server";
 
-import { File } from "@/app/learns/[id]/notes/page";
 import { prisma } from "@/prisma";
-import z from "zod";
+import { File } from "./page";
 
 export async function updateFileTitle(id: number, title: string) {
   await prisma.noteFile.update({
