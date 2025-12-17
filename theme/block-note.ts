@@ -45,4 +45,10 @@ export const blockNoteStyle = {
     color: "text.caption",
     textDecoration: "none !important",
   },
+  // divider block
+  '[data-content-type="divider"] hr': {
+    borderTop: "2px solid green !important",
+    borderTopColor: "stroke !important",
+    borderRadius: "2px",
+  },
 };
