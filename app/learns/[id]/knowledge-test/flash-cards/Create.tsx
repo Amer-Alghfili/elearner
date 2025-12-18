@@ -28,6 +28,7 @@ import {
   RadioCardRoot,
 } from "@/components/ui/radio-card";
 import { CheckboxIcon, PaperWriteIcon, TickIcon } from "@/components/Icons";
+import { Radio, RadioGroup } from "@/components/ui/radio";
 
 export function Create({ learnId }: { learnId: number }) {
   const router = useRouter();
@@ -152,7 +153,7 @@ function AnswerForm() {
           <RadioCardItem
             alignItems="center"
             indicator={<></>}
-            value="true/false"
+            value="true-false"
             label={
               <RadioCardItemText mt="1em" textAlign="center">
                 True/False
@@ -199,11 +200,25 @@ function AnswerForm() {
       >
         <Input name="hint" />
       </Field>
+      {answerType === "true-false" && <TrueFalseAnswerForm />}
       {answerType === "open-ended" && (
         <Field id="answer" label="Answer" required={true}>
           <Textarea name="answer" />
         </Field>
       )}
     </Stack>
+  );
+}
+
+function TrueFalseAnswerForm() {
+  return (
+    <Field id="answer" label="Answer" required={true}>
+      <RadioGroup name="answer">
+        <Flex gap="2em">
+          <Radio value="true">True</Radio>
+          <Radio value="false">False</Radio>
+        </Flex>
+      </RadioGroup>
+    </Field>
   );
 }
