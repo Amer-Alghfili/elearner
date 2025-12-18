@@ -7,6 +7,7 @@ import { input } from "./recipes/input";
 import { checkbox } from "./recipes/checkbox";
 import { blockNoteStyle } from "./block-note";
 import { tabs } from "./recipes/tabs";
+import { radioCard } from "./recipes/radio-card";
 
 const config = defineConfig({
   globalCss: {
@@ -44,6 +45,7 @@ const config = defineConfig({
     slotRecipes: {
       checkbox,
       tabs,
+      radioCard,
     },
   },
 });
