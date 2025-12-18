@@ -3,9 +3,12 @@
 import { prisma } from "@/prisma";
 import z from "zod";
 
+export type AnswerType = "multiple-choices" | "true-false" | "open-ended";
 export type FlashCard = {
   id: number;
   question: string;
+  answerType: AnswerType;
+  answer: string;
   stage: string;
   due: Date;
 };

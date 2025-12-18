@@ -6,15 +6,9 @@ import {
   DialogHeader,
   DialogRoot,
 } from "@/components/ui/dialog";
-import {
-  Button,
-  Input,
-  RadioCardItemText,
-  Stack,
-  Wrap,
-} from "@chakra-ui/react";
+import { Button, Input, RadioCardItemText, Wrap } from "@chakra-ui/react";
 import React from "react";
-import { postFlashCard } from "./actions";
+import { AnswerType, postFlashCard } from "./actions";
 import { toaster } from "@/components/ui/toaster";
 import { useRouter } from "next/navigation";
 import { Field } from "@/components/ui/field";
@@ -29,6 +23,8 @@ export function Create({ learnId }: { learnId: number }) {
   const router = useRouter();
 
   const [open, setOpen] = React.useState(false);
+
+  const [answerType, setAnswerType] = React.useState<AnswerType>();
 
   const [state, action, loading] = React.useActionState(
     postFlashCard,
@@ -88,7 +84,20 @@ export function Create({ learnId }: { learnId: number }) {
                 value={learnId}
                 readOnly={true}
               />
-              <RadioCardRoot gap="1.2em">
+              <Input
+                id="answerType"
+                name="answerType"
+                hidden={true}
+                value={learnId}
+                readOnly={true}
+              />
+              <RadioCardRoot
+                value={answerType}
+                onValueChange={({ value }) =>
+                  setAnswerType(value as AnswerType)
+                }
+                gap="1.2em"
+              >
                 <RadioCardLabel mt="1em">Choose answer type</RadioCardLabel>
                 <Wrap gap="1.5em">
                   <RadioCardItem
