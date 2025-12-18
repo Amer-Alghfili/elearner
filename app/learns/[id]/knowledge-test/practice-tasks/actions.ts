@@ -30,7 +30,6 @@ export async function deletePracticeTask(
   }
 }
 
-//TODO: update practice task
 export async function postPracticeTask(
   _: unknown,
   formData: FormData
@@ -46,17 +45,29 @@ export async function postPracticeTask(
     const { data } = validate;
 
     const learnId = Number(formData.get("learnId"));
+    const id = Number(formData.get("id"));
 
-    const created = await prisma.practiceTask.create({
-      data: {
-        ...data,
-        due: new Date(),
-        stage: "0",
-        learn_id: learnId,
-      },
-    });
+    if (id == null) {
+      const created = await prisma.practiceTask.create({
+        data: {
+          ...data,
+          due: new Date(),
+          stage: "0",
+          learn_id: learnId,
+        },
+      });
 
-    return { data: created };
+      return { data: created };
+    } else {
+      const updated = await prisma.practiceTask.update({
+        where: {
+          id,
+        },
+        data,
+      });
+
+      return { data: updated };
+    }
   } else {
     return { error: validate.error.issues.map((i) => i.message).join("\n") };
   }

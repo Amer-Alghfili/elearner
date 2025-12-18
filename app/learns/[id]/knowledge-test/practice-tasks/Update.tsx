@@ -10,7 +10,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogRoot,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
 import { Button, IconButton, Input } from "@chakra-ui/react";
@@ -18,6 +17,7 @@ import { postPracticeTask, PracticeTask } from "./actions";
 import React from "react";
 import { toaster } from "@/components/ui/toaster";
 import { useRouter } from "next/navigation";
+import { useEditorChange } from "@blocknote/react";
 
 export function Update({
   learnId,
@@ -27,6 +27,8 @@ export function Update({
   practiceTask: PracticeTask;
 }) {
   const router = useRouter();
+
+  const [open, setOpen] = React.useState(false);
 
   const [state, action, loading] = React.useActionState(
     postPracticeTask,
@@ -42,31 +44,20 @@ export function Update({
     style: "padding-top: 0; padding-bottom: 0; padding-inline-start: 1.5em",
   });
 
-  editor.onChange((editor) => setDescription(editor.blocksToMarkdownLossy()));
-
-  React.useEffect(function initEditor() {
-    const blocks = editor.tryParseMarkdownToBlocks(practiceTask.description);
-
-    editor.replaceBlocks(editor.document, blocks);
-  }, []);
+  useEditorChange((editor) => {
+    const html = editor.blocksToFullHTML(editor.document);
+    setDescription(html);
+  }, editor);
 
   React.useEffect(
     function resetEditor() {
       if (!open) {
-        if (editor.document && editor.document.length > 1) {
-          let notFound = false;
+        const blocks = editor.tryParseHTMLToBlocks(practiceTask.description);
 
-          for (const block of editor.document) {
-            notFound = editor.getBlock(block.id) == null;
-
-            if (notFound) return;
-          }
-
-          editor.removeBlocks(editor.document.map(({ id }) => id));
-        }
+        editor.replaceBlocks(editor.document, blocks);
       }
     },
-    [open]
+    [open, practiceTask.description]
   );
 
   React.useEffect(
@@ -87,37 +78,39 @@ export function Update({
           type: "success",
           closable: true,
         });
+
+        setOpen(false);
       }
     },
     [state]
   );
 
   return (
-    <DialogRoot>
-      <DialogTrigger asChild>
-        <IconButton
-          variant="plain"
-          p={0}
-          _hover={{ bg: "primary.transparent" }}
-        >
-          <EditIcon />
-        </IconButton>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <Field>
-            <Input
-              id="title"
-              name="title"
-              defaultValue={practiceTask.title}
-              variant="plain"
-              textStyle="h2"
-              placeholder="Practice Task title..."
-              _placeholder={{ color: "#7A7A7A" }}
-            />
-          </Field>
-        </DialogHeader>
-        <form>
+    <DialogRoot open={open} onOpenChange={({ open }) => setOpen(open)}>
+      <IconButton
+        onClick={() => setOpen(true)}
+        variant="plain"
+        p={0}
+        _hover={{ bg: "primary.transparent" }}
+      >
+        <EditIcon />
+      </IconButton>
+      <DialogContent minW="70vw">
+        <form action={action}>
+          <DialogHeader>
+            <Field>
+              <Input
+                id="title"
+                name="title"
+                defaultValue={practiceTask.title}
+                variant="plain"
+                textStyle="h2"
+                placeholder="Practice Task title..."
+                _placeholder={{ color: "#7A7A7A" }}
+              />
+            </Field>
+          </DialogHeader>
+
           <DialogBody>
             <ElearnerNoteEditor key={open.toString()} editor={editor} />
             <Input
@@ -125,6 +118,13 @@ export function Update({
               name="description"
               hidden={true}
               value={description}
+              readOnly={true}
+            />
+            <Input
+              id="id"
+              name="id"
+              hidden={true}
+              value={practiceTask.id}
               readOnly={true}
             />
             <Input
@@ -139,7 +139,9 @@ export function Update({
             <DialogActionTrigger asChild>
               <Button variant="secondary">Cancel</Button>
             </DialogActionTrigger>
-            <Button type="submit">Update</Button>
+            <Button loading={loading} type="submit">
+              Update
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

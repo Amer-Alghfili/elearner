@@ -21,7 +21,6 @@ import {
   CarouselRoot,
 } from "@/components/ui/carousel";
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
-import { EditIcon } from "@/components/Icons";
 import { Update } from "./Update";
 import { Remove } from "./Remove";
 
