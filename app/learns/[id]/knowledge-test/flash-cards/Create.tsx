@@ -6,7 +6,17 @@ import {
   DialogHeader,
   DialogRoot,
 } from "@/components/ui/dialog";
-import { Button, Input, RadioCardItemText, Wrap } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  FieldLabel,
+  Flex,
+  Input,
+  RadioCardItemText,
+  Stack,
+  Textarea,
+  Wrap,
+} from "@chakra-ui/react";
 import React from "react";
 import { AnswerType, postFlashCard } from "./actions";
 import { toaster } from "@/components/ui/toaster";
@@ -23,8 +33,6 @@ export function Create({ learnId }: { learnId: number }) {
   const router = useRouter();
 
   const [open, setOpen] = React.useState(false);
-
-  const [answerType, setAnswerType] = React.useState<AnswerType>();
 
   const [state, action, loading] = React.useActionState(
     postFlashCard,
@@ -67,8 +75,8 @@ export function Create({ learnId }: { learnId: number }) {
             <DialogHeader px="3rem">
               <Field>
                 <Input
-                  id="title"
-                  name="title"
+                  id="question"
+                  name="question"
                   variant="plain"
                   textStyle="h2"
                   placeholder="Flash Card question..."
@@ -84,75 +92,7 @@ export function Create({ learnId }: { learnId: number }) {
                 value={learnId}
                 readOnly={true}
               />
-              <Input
-                id="answerType"
-                name="answerType"
-                hidden={true}
-                value={learnId}
-                readOnly={true}
-              />
-              <RadioCardRoot
-                value={answerType}
-                onValueChange={({ value }) =>
-                  setAnswerType(value as AnswerType)
-                }
-                gap="1.2em"
-              >
-                <RadioCardLabel mt="1em">Choose answer type</RadioCardLabel>
-                <Wrap gap="1.5em">
-                  <RadioCardItem
-                    alignItems="center"
-                    indicator={<></>}
-                    icon={<CheckboxIcon w="5rem" h="5rem" />}
-                    value="multiple-choices"
-                    label={
-                      <RadioCardItemText mt="1em" textAlign="center">
-                        Multiple Choices
-                      </RadioCardItemText>
-                    }
-                    boxShadow="md"
-                    _checked={{
-                      bg: "primary.transparent",
-                      borderColor: "primary.transparent",
-                      boxShadow: "2xl",
-                    }}
-                  />
-                  <RadioCardItem
-                    alignItems="center"
-                    indicator={<></>}
-                    value="true/false"
-                    label={
-                      <RadioCardItemText mt="1em" textAlign="center">
-                        True/False
-                      </RadioCardItemText>
-                    }
-                    icon={<TickIcon w="5rem" h="5rem" />}
-                    boxShadow="md"
-                    _checked={{
-                      bg: "primary.transparent",
-                      borderColor: "primary.transparent",
-                      boxShadow: "2xl",
-                    }}
-                  />
-                  <RadioCardItem
-                    alignItems="center"
-                    indicator={<></>}
-                    value="open-ended"
-                    label={
-                      <RadioCardItemText textAlign="center">
-                        Open ended
-                      </RadioCardItemText>
-                    }
-                    icon={<PaperWriteIcon w="5rem" h="5rem" />}
-                    boxShadow="md"
-                    _checked={{
-                      bg: "primary.transparent",
-                      borderColor: "primary.transparent",
-                      boxShadow: "2xl",
-                    }}
-                  />
-                </Wrap>
-              </RadioCardRoot>
+              <AnswerForm />
             </DialogBody>
             <DialogFooter>
               <Button
@@ -171,5 +111,99 @@ export function Create({ learnId }: { learnId: number }) {
         </DialogContent>
       </DialogRoot>
     </>
+  );
+}
+
+function AnswerForm() {
+  const [answerType, setAnswerType] = React.useState<AnswerType>();
+
+  return (
+    <Stack gap="3em">
+      <RadioCardRoot
+        value={answerType}
+        onValueChange={({ value }) => setAnswerType(value as AnswerType)}
+        gap="1.2em"
+      >
+        <Input
+          id="answerType"
+          name="answerType"
+          hidden={true}
+          value={answerType}
+        />
+        <RadioCardLabel mt="1em">Choose answer type</RadioCardLabel>
+        <Wrap gap="1.5em">
+          <RadioCardItem
+            alignItems="center"
+            indicator={<></>}
+            icon={<CheckboxIcon w="5rem" h="5rem" />}
+            value="multiple-choices"
+            label={
+              <RadioCardItemText mt="1em" textAlign="center">
+                Multiple Choices
+              </RadioCardItemText>
+            }
+            boxShadow="md"
+            _checked={{
+              bg: "primary.transparent",
+              borderColor: "primary.transparent",
+              boxShadow: "2xl",
+            }}
+          />
+          <RadioCardItem
+            alignItems="center"
+            indicator={<></>}
+            value="true/false"
+            label={
+              <RadioCardItemText mt="1em" textAlign="center">
+                True/False
+              </RadioCardItemText>
+            }
+            icon={<TickIcon w="5rem" h="5rem" />}
+            boxShadow="md"
+            _checked={{
+              bg: "primary.transparent",
+              borderColor: "primary.transparent",
+              boxShadow: "2xl",
+            }}
+          />
+          <RadioCardItem
+            alignItems="center"
+            indicator={<></>}
+            value="open-ended"
+            label={
+              <RadioCardItemText textAlign="center">
+                Open ended
+              </RadioCardItemText>
+            }
+            icon={<PaperWriteIcon w="5rem" h="5rem" />}
+            boxShadow="md"
+            _checked={{
+              bg: "primary.transparent",
+              borderColor: "primary.transparent",
+              boxShadow: "2xl",
+            }}
+          />
+        </Wrap>
+      </RadioCardRoot>
+      <Field
+        id="hint"
+        helperText="Hint that can be toggled when trying to answer"
+        label={
+          <Flex gap="0.2em">
+            <Box>Hint</Box>
+            <Box color="text.caption" textStyle="sm">
+              (optional)
+            </Box>
+          </Flex>
+        }
+      >
+        <Input name="hint" />
+      </Field>
+      {answerType === "open-ended" && (
+        <Field id="answer" label="Answer" required={true}>
+          <Textarea name="answer" />
+        </Field>
+      )}
+    </Stack>
   );
 }

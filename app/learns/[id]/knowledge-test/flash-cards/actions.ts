@@ -26,7 +26,9 @@ export async function deleteFlashCard(
         id,
       },
     });
-    return { data: res };
+    return { data: { ...res, answerType: res.answerType as AnswerType } };
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (_) {
     return { error: "Something went wrong" };
   }
@@ -38,8 +40,13 @@ export async function postFlashCard(
 ): Promise<State> {
   const validate = z
     .object({
-      title: z.string("Invalid title"),
-      description: z.string("Invalid description"),
+      question: z.string("Invalid question"),
+      answer: z.string("Invalid answer"),
+      answerType: z.enum(["multiple-choices", "true-false", "open-ended"]),
+      hint: z.string("Invalid hint").optional(),
+      options: z
+        .array(z.string("Invalid option item"), "Invalid options")
+        .optional(),
     })
     .safeParse(Object.fromEntries(formData.entries()));
 
@@ -62,7 +69,9 @@ export async function postFlashCard(
         },
       });
 
-      return { data: created };
+      return {
+        data: { ...created, answerType: created.answerType as AnswerType },
+      };
     } else {
       const updated = await prisma.flashCard.update({
         where: {
@@ -71,7 +80,9 @@ export async function postFlashCard(
         data,
       });
 
-      return { data: updated };
+      return {
+        data: { ...updated, answerType: updated.answerType as AnswerType },
+      };
     }
   } else {
     return { error: validate.error.issues.map((i) => i.message).join("\n") };
