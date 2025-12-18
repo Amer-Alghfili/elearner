@@ -74,7 +74,7 @@ export function Update({
         router.refresh();
 
         toaster.create({
-          title: "Practice task has been created successfully 🎉",
+          title: "Practice task has been updated successfully 🎉",
           type: "success",
           closable: true,
         });
