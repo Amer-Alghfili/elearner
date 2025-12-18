@@ -91,9 +91,11 @@ export function Update({
         onClick={() => setOpen(true)}
         variant="plain"
         p={0}
+        minW="2rem"
+        h="2rem"
         _hover={{ bg: "primary.transparent" }}
       >
-        <EditIcon />
+        <EditIcon w="1rem" h="1rem" />
       </IconButton>
       <DialogContent minW="70vw">
         <form action={action}>
