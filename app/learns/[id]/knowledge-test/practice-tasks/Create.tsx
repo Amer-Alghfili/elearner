@@ -16,6 +16,7 @@ import {
   ElearnerNoteEditor,
   useElearnerCreateBlockNote,
 } from "@/components/editor/ElearnerNoteEditor";
+import { useEditorChange } from "@blocknote/react";
 
 export function Create({ learnId }: { learnId: number }) {
   const router = useRouter();
@@ -34,7 +35,10 @@ export function Create({ learnId }: { learnId: number }) {
     style: "padding-top: 0; padding-bottom: 0; padding-inline-start: 1.5em",
   });
 
-  editor.onChange((editor) => setDescription(editor.blocksToMarkdownLossy()));
+  useEditorChange((editor) => {
+    const html = editor.blocksToFullHTML(editor.document);
+    setDescription(html);
+  }, editor);
 
   React.useEffect(
     function resetEditor() {

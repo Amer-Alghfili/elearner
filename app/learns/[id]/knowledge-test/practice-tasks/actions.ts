@@ -12,14 +12,29 @@ export type PracticeTask = {
 };
 export type State = { data?: PracticeTask; error?: string | null };
 
+export async function deletePracticeTask(
+  _: unknown,
+  formData: FormData
+): Promise<State> {
+  const id = Number(formData.get("id"));
+
+  try {
+    const res = await prisma.practiceTask.delete({
+      where: {
+        id,
+      },
+    });
+    return { data: res };
+  } catch (_) {
+    return { error: "Something went wrong" };
+  }
+}
+
 //TODO: update practice task
 export async function postPracticeTask(
   _: unknown,
   formData: FormData
 ): Promise<State> {
-  console.log(formData.get("title"));
-  console.log(formData.get("description"));
-
   const validate = z
     .object({
       title: z.string("Invalid title"),

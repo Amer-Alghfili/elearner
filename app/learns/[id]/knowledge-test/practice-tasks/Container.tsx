@@ -21,6 +21,9 @@ import {
   CarouselRoot,
 } from "@/components/ui/carousel";
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
+import { EditIcon } from "@/components/Icons";
+import { Update } from "./Update";
+import { Remove } from "./Remove";
 
 export function Container(props: {
   learnId: number;
@@ -88,9 +91,19 @@ export function Container(props: {
                     </Box>
                   </Card.Header>
                   <Card.Body>
-                    <Box textStyle="sm-medium" color="text.caption">
-                      Due: {p.due.toLocaleDateString()}
-                    </Box>
+                    <Wrap
+                      gap="1em"
+                      alignItems="center"
+                      justifyContent="space-between"
+                    >
+                      <Box textStyle="sm-medium" color="text.caption">
+                        Due: {p.due.toLocaleDateString()}
+                      </Box>
+                      <Flex alignItems="center">
+                        <Update learnId={props.learnId} practiceTask={p} />
+                        <Remove id={p.id} />
+                      </Flex>
+                    </Wrap>
                   </Card.Body>
                 </Card.Root>
               </CarouselItem>
