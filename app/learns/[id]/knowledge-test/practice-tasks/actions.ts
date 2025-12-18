@@ -45,13 +45,16 @@ export async function postPracticeTask(
     const { data } = validate;
 
     const learnId = Number(formData.get("learnId"));
-    const id = Number(formData.get("id"));
+    const id = formData.get("id");
 
     if (id == null) {
+      const due = new Date();
+      due.setDate(due.getDate() + 3);
+
       const created = await prisma.practiceTask.create({
         data: {
           ...data,
-          due: new Date(),
+          due,
           stage: "0",
           learn_id: learnId,
         },
@@ -61,7 +64,7 @@ export async function postPracticeTask(
     } else {
       const updated = await prisma.practiceTask.update({
         where: {
-          id,
+          id: Number(id),
         },
         data,
       });
