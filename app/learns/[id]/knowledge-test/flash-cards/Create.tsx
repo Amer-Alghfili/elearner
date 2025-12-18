@@ -6,7 +6,13 @@ import {
   DialogHeader,
   DialogRoot,
 } from "@/components/ui/dialog";
-import { Button, Input, Stack, Wrap } from "@chakra-ui/react";
+import {
+  Button,
+  Input,
+  RadioCardItemText,
+  Stack,
+  Wrap,
+} from "@chakra-ui/react";
 import React from "react";
 import { postFlashCard } from "./actions";
 import { toaster } from "@/components/ui/toaster";
@@ -82,18 +88,18 @@ export function Create({ learnId }: { learnId: number }) {
                 value={learnId}
                 readOnly={true}
               />
-              <RadioCardRoot>
+              <RadioCardRoot gap="1.2em">
                 <RadioCardLabel mt="1em">Choose answer type</RadioCardLabel>
-                <Wrap>
+                <Wrap gap="1.5em">
                   <RadioCardItem
                     alignItems="center"
-                    indicator={<Stack alignItems="center" />}
+                    indicator={<></>}
                     icon={<CheckboxIcon w="5rem" h="5rem" />}
                     value="multiple-choices"
                     label={
-                      <RadioCardLabel mt="1em" textAlign="center">
+                      <RadioCardItemText mt="1em" textAlign="center">
                         Multiple Choices
-                      </RadioCardLabel>
+                      </RadioCardItemText>
                     }
                     boxShadow="md"
                     _checked={{
@@ -104,12 +110,12 @@ export function Create({ learnId }: { learnId: number }) {
                   />
                   <RadioCardItem
                     alignItems="center"
-                    indicator={<Stack alignItems="center" />}
+                    indicator={<></>}
                     value="true/false"
                     label={
-                      <RadioCardLabel mt="1em" textAlign="center">
+                      <RadioCardItemText mt="1em" textAlign="center">
                         True/False
-                      </RadioCardLabel>
+                      </RadioCardItemText>
                     }
                     icon={<TickIcon w="5rem" h="5rem" />}
                     boxShadow="md"
@@ -121,12 +127,12 @@ export function Create({ learnId }: { learnId: number }) {
                   />
                   <RadioCardItem
                     alignItems="center"
-                    indicator={<Stack alignItems="center" />}
+                    indicator={<></>}
                     value="open-ended"
                     label={
-                      <RadioCardLabel mt="1em" textAlign="center">
+                      <RadioCardItemText textAlign="center">
                         Open ended
-                      </RadioCardLabel>
+                      </RadioCardItemText>
                     }
                     icon={<PaperWriteIcon w="5rem" h="5rem" />}
                     boxShadow="md"
