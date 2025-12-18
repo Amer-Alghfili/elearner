@@ -6,12 +6,18 @@ import {
   DialogHeader,
   DialogRoot,
 } from "@/components/ui/dialog";
-import { Button, Input } from "@chakra-ui/react";
+import { Button, Input, Stack, Wrap } from "@chakra-ui/react";
 import React from "react";
 import { postFlashCard } from "./actions";
 import { toaster } from "@/components/ui/toaster";
 import { useRouter } from "next/navigation";
 import { Field } from "@/components/ui/field";
+import {
+  RadioCardItem,
+  RadioCardLabel,
+  RadioCardRoot,
+} from "@/components/ui/radio-card";
+import { CheckboxIcon, PaperWriteIcon, TickIcon } from "@/components/Icons";
 
 export function Create({ learnId }: { learnId: number }) {
   const router = useRouter();
@@ -76,6 +82,62 @@ export function Create({ learnId }: { learnId: number }) {
                 value={learnId}
                 readOnly={true}
               />
+              <RadioCardRoot>
+                <RadioCardLabel mt="1em">Choose answer type</RadioCardLabel>
+                <Wrap>
+                  <RadioCardItem
+                    alignItems="center"
+                    indicator={<Stack alignItems="center" />}
+                    icon={<CheckboxIcon w="5rem" h="5rem" />}
+                    value="multiple-choices"
+                    label={
+                      <RadioCardLabel mt="1em" textAlign="center">
+                        Multiple Choices
+                      </RadioCardLabel>
+                    }
+                    boxShadow="md"
+                    _checked={{
+                      bg: "primary.transparent",
+                      borderColor: "primary.transparent",
+                      boxShadow: "2xl",
+                    }}
+                  />
+                  <RadioCardItem
+                    alignItems="center"
+                    indicator={<Stack alignItems="center" />}
+                    value="true/false"
+                    label={
+                      <RadioCardLabel mt="1em" textAlign="center">
+                        True/False
+                      </RadioCardLabel>
+                    }
+                    icon={<TickIcon w="5rem" h="5rem" />}
+                    boxShadow="md"
+                    _checked={{
+                      bg: "primary.transparent",
+                      borderColor: "primary.transparent",
+                      boxShadow: "2xl",
+                    }}
+                  />
+                  <RadioCardItem
+                    alignItems="center"
+                    indicator={<Stack alignItems="center" />}
+                    value="open-ended"
+                    label={
+                      <RadioCardLabel mt="1em" textAlign="center">
+                        Open ended
+                      </RadioCardLabel>
+                    }
+                    icon={<PaperWriteIcon w="5rem" h="5rem" />}
+                    boxShadow="md"
+                    _checked={{
+                      bg: "primary.transparent",
+                      borderColor: "primary.transparent",
+                      boxShadow: "2xl",
+                    }}
+                  />
+                </Wrap>
+              </RadioCardRoot>
             </DialogBody>
             <DialogFooter>
               <Button
