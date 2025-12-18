@@ -6,7 +6,10 @@ export async function PracticeTasks({ learnId }: { learnId: number }) {
     where: {
       learn_id: learnId,
     },
+    orderBy: {
+      due: "desc",
+    },
   });
 
-  return <Container learnId={learnId} />;
+  return <Container practiceTasks={res} learnId={learnId} />;
 }

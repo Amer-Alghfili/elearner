@@ -3,10 +3,12 @@
 import { prisma } from "@/prisma";
 import z from "zod";
 
-type PracticeTask = {
+export type PracticeTask = {
   id: number;
   title: string;
   description: string;
+  stage: string;
+  due: Date;
 };
 export type State = { data?: PracticeTask; error?: string | null };
 
