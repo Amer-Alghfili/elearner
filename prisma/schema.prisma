@@ -16,18 +16,19 @@ model User {
 }
 
 model Learn {
-  id             Int               @id @default(autoincrement())
-  title          String            @unique @db.VarChar(255)
-  description    String?           @db.VarChar(255)
-  createdAt      DateTime          @default(now())
-  updatedAt      DateTime          @updatedAt
-  user_id        String
-  user           User             @relation(fields: [user_id], references: [email])
-  resources      Resource[]
-  resourceTags   ResourceTag[]
-  knowledgeTests KnowledgeTest[]
-  noteFiles      NoteFile[]
-  notes          LearnNoteBlock[]
+  id            Int               @id @default(autoincrement())
+  title         String            @unique @db.VarChar(255)
+  description   String?           @db.VarChar(255)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  user_id       String
+  user          User             @relation(fields: [user_id], references: [email])
+  resources     Resource[]
+  resourceTags  ResourceTag[]
+  noteFiles     NoteFile[]
+  notes         LearnNoteBlock[]
+  flashCards    FlashCard[]
+  practiceTasks PracticeTask[]
 
   @@map("learns")
 }
@@ -55,41 +56,35 @@ model ResourceTag {
   @@map("resource_tags")
 }
 
-model KnowledgeTest {
-  id            Int             @id @default(autoincrement())
-  stage         String          @db.VarChar(255)
-  due           DateTime
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  learn_id      Int
-  learn         Learn          @relation(fields: [learn_id], references: [id])
-  flashCards    FlashCard[]
-  practiceTasks PracticeTask[]
-
-  @@map("learns_knowledge_tests")
-}
-
 model FlashCard {
-  id                Int                               @id @default(autoincrement())
-  knowledge_test_id Int
-  question          String                            @db.VarChar(255)
-  answerType        String        @map("answer_type") @db.VarChar(255)
-  answer            String                            @db.VarChar(255)
-  hint              String?                           @db.VarChar(255)
-  options           Json?
-  knowledge_test    KnowledgeTest @relation(fields: [knowledge_test_id], references: [id])
+  id         Int                          @id @default(autoincrement())
+  stage      String                       @db.VarChar(255)
+  due        DateTime
+  createdAt  DateTime                     @default(now())
+  updatedAt  DateTime                     @updatedAt
+  learn_id   Int
+  question   String                       @db.VarChar(255)
+  answerType String   @map("answer_type") @db.VarChar(255)
+  answer     String                       @db.VarChar(255)
+  hint       String?                      @db.VarChar(255)
+  options    Json?
+  learn      Learn    @relation(fields: [learn_id], references: [id])
 
-  @@map("flash_cards")
+  @@map("learns_flash_cards")
 }
 
 model PracticeTask {
-  id                Int            @id @default(autoincrement())
-  knowledge_test_id Int
-  title             String         @db.VarChar(255)
-  description       String         @db.VarChar(255)
-  knowledge_test    KnowledgeTest @relation(fields: [knowledge_test_id], references: [id])
+  id          Int       @id @default(autoincrement())
+  learn_id    Int
+  stage       String    @db.VarChar(255)
+  due         DateTime
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  title       String    @db.VarChar(255)
+  description String
+  learn       Learn    @relation(fields: [learn_id], references: [id])
 
-  @@map("practice_tasks")
+  @@map("learns_practice_tasks")
 }
 
 model NoteFile {

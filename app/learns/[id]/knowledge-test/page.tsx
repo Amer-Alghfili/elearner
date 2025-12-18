@@ -1,6 +1,6 @@
-import { prisma } from "@/prisma";
-import React from "react";
-import KnowledgeTestList from "./KnowledgeTestList";
+import { Stack } from "@chakra-ui/react";
+import { FlashCards } from "./flash-cards";
+import { PracticeTasks } from "./practice-tasks";
 
 export default async function KnowledgeTestTabPage({
   params,
@@ -9,24 +9,12 @@ export default async function KnowledgeTestTabPage({
 }) {
   const { id } = await params;
 
-  const knowledgeTests = await prisma.knowledgeTest.findMany({
-    where: {
-      learn_id: Number(id),
-    },
-  });
+  const learnId = Number(id);
 
   return (
-    <KnowledgeTestList
-      knowledgeTests={knowledgeTests.map((test) => ({
-        ...test,
-        id: test.id.toString(),
-        description: test.description as string,
-        due: test.due as Date,
-        stage: test.stage as string,
-        answer: test.answer as string,
-        hints: test.hints as string,
-        isDraft: false,
-      }))}
-    />
+    <Stack gap="2em">
+      <FlashCards learnId={learnId} />
+      <PracticeTasks learnId={learnId} />
+    </Stack>
   );
 }
