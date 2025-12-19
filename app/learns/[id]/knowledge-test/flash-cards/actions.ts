@@ -13,6 +13,7 @@ export type FlashCard = {
   due: Date;
   hint: string | null;
   learn_id: number;
+  options: string[] | null;
 };
 export type State = { data?: FlashCard; error?: string | null };
 
@@ -31,6 +32,7 @@ export async function deleteFlashCard(
     return {
       data: {
         ...res,
+        options: res.options as any,
         answerType: res.answerType as AnswerType,
       },
     };
@@ -53,6 +55,9 @@ export async function postFlashCard(flashCard: FlashCard): Promise<State> {
         .string("Invalid hint")
         .optional()
         .transform((val) => (val === "" ? null : val)),
+      options: z
+        .array(z.string("Invalid Option"), "Invalid Options")
+        .optional(),
     })
     .safeParse(flashCard);
 
@@ -75,6 +80,7 @@ export async function postFlashCard(flashCard: FlashCard): Promise<State> {
       return {
         data: {
           ...created,
+          options: created.options as any,
           answerType: created.answerType as AnswerType,
         },
       };
@@ -89,6 +95,7 @@ export async function postFlashCard(flashCard: FlashCard): Promise<State> {
       return {
         data: {
           ...updated,
+          options: updated.options as any,
           answerType: updated.answerType as AnswerType,
         },
       };

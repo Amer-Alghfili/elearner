@@ -218,7 +218,7 @@ function AnswerForm() {
       >
         <Input {...register("hint")} />
       </Field>
-      {/* {field.value === "multiple-choices" && <MultipleChoiceAnswerForm />} */}
+      {field.value === "multiple-choices" && <MultipleChoiceAnswerForm />}
       {field.value === "true-false" && <TrueFalseAnswerForm />}
       {field.value === "open-ended" && (
         <Field
@@ -234,20 +234,35 @@ function AnswerForm() {
 }
 
 function MultipleChoiceAnswerForm() {
+  const { control } = useFormContext<FlashCard>();
+  const { field } = useController({
+    control,
+    name: "answer",
+  });
+
+  const { field: optionsField } = useController({
+    control,
+    name: "options",
+  });
+  const { onChange } = optionsField;
   const [options, setOptions] = React.useState<
     { key: string; value: string }[]
-  >([]);
-
-  const [answer, setAnswer] = React.useState<string>("");
+  >((optionsField.value || []).map((v) => ({ key: v4(), value: v })));
 
   const collection = createListCollection({
-    items: options.filter(({ value }) => value.trim()),
+    items: (options || []).filter(({ value }) => value.trim()),
   });
+
+  function addOption() {
+    onChange([...options.map(({ value }) => value), ""]);
+    setOptions([...options, { key: v4(), value: "" }]);
+  }
 
   function editOption(index: number, value: string) {
     const copy = [...options];
-    copy[index].value = value;
+    copy[index] = { ...copy[index], value };
 
+    onChange(copy.map(({ value }) => value));
     setOptions(copy);
   }
 
@@ -255,22 +270,20 @@ function MultipleChoiceAnswerForm() {
     const copy = [...options];
     copy.splice(index, 1);
 
+    onChange(copy.map(({ value }) => value));
     setOptions(copy);
   }
 
   return (
     <Stack gap="1.5em">
       <Stack gap={0}>
-        <AddButton
-          alignSelf="flex-start"
-          onClick={() => setOptions([{ key: v4(), value: "" }, ...options])}
-        >
+        <AddButton alignSelf="flex-start" onClick={addOption}>
           New Option
         </AddButton>
         <Stack>
-          {options.map(({ key, value }, index) => (
+          {options.map((option, index) => (
             <InputGroup
-              key={key}
+              key={option.key}
               endElement={
                 <IconButton className="group" variant="plain" p={0}>
                   <Icon
@@ -286,7 +299,7 @@ function MultipleChoiceAnswerForm() {
               }
             >
               <Input
-                value={value}
+                value={option.value}
                 onChange={(e) => editOption(index, e.target.value)}
                 size="sm"
               />
@@ -294,20 +307,16 @@ function MultipleChoiceAnswerForm() {
           ))}
         </Stack>
       </Stack>
-      <Input
-        hidden={true}
-        value={JSON.stringify(options)}
-        name="options"
-        id="options"
-      />
       <SelectRoot
         size="sm"
+        disabled={field.disabled}
         collection={collection}
-        value={[answer]}
-        onValueChange={({ value }) => setAnswer(value[0])}
+        value={[field.value]}
+        onValueChange={({ value }) => field.onChange(value[0])}
+        onBlur={field.onBlur}
       >
         <SelectLabel textStyle="sm-semibold">Answer</SelectLabel>
-        <SelectTrigger>{answer}</SelectTrigger>
+        <SelectTrigger>{field.value}</SelectTrigger>
         <SelectContent portalled={false}>
           {collection.items.map((option) => {
             return (
@@ -318,7 +327,6 @@ function MultipleChoiceAnswerForm() {
           })}
         </SelectContent>
       </SelectRoot>
-      <Input hidden={true} value={answer} name="answer" id="answer" />
     </Stack>
   );
 }
