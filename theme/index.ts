@@ -8,6 +8,7 @@ import { checkbox } from "./recipes/checkbox";
 import { blockNoteStyle } from "./block-note";
 import { tabs } from "./recipes/tabs";
 import { radioCard } from "./recipes/radio-card";
+import { select } from "./recipes/select";
 
 const config = defineConfig({
   globalCss: {
@@ -46,6 +47,7 @@ const config = defineConfig({
       checkbox,
       tabs,
       radioCard,
+      select,
     },
   },
 });
