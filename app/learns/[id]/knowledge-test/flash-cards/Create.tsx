@@ -21,7 +21,7 @@ import {
   Wrap,
 } from "@chakra-ui/react";
 import React from "react";
-import { AnswerType, postFlashCard } from "./actions";
+import { FlashCard, postFlashCard } from "./actions";
 import { toaster } from "@/components/ui/toaster";
 import { useRouter } from "next/navigation";
 import { Field } from "@/components/ui/field";
@@ -41,41 +41,47 @@ import {
   SelectTrigger,
 } from "@/components/ui/select";
 import { LuTrash } from "react-icons/lu";
+import {
+  FormProvider,
+  useController,
+  useForm,
+  useFormContext,
+} from "react-hook-form";
 
 export function Create({ learnId }: { learnId: number }) {
   const router = useRouter();
 
+  const methods = useForm<FlashCard>({
+    defaultValues: {
+      learn_id: learnId,
+    },
+  });
+  const { formState, handleSubmit, register } = methods;
+
   const [open, setOpen] = React.useState(false);
 
-  const [state, action, loading] = React.useActionState(
-    postFlashCard,
-    undefined
-  );
+  async function submit(flashCard: FlashCard) {
+    const { error } = await postFlashCard(flashCard);
 
-  React.useEffect(
-    function refreshAfterMutation() {
-      if (state == null) return;
+    if (error) {
+      toaster.create({
+        title: error,
+        type: "error",
+        closable: true,
+      });
+    } else {
+      router.refresh();
 
-      if (state.error) {
-        toaster.create({
-          title: state.error,
-          type: "error",
-          closable: true,
-        });
-      } else {
-        router.refresh();
+      toaster.create({
+        title: "Flash card has been created successfully 🎉",
+        type: "success",
+        closable: true,
+      });
 
-        toaster.create({
-          title: "Flash card has been created successfully 🎉",
-          type: "success",
-          closable: true,
-        });
-
-        setOpen(false);
-      }
-    },
-    [state]
-  );
+      setOpen(false);
+      methods.reset();
+    }
+  }
 
   return (
     <>
@@ -84,43 +90,42 @@ export function Create({ learnId }: { learnId: number }) {
       </AddButton>
       <DialogRoot open={open} onOpenChange={({ open }) => setOpen(open)}>
         <DialogContent minW="70vw">
-          <form action={action}>
-            <DialogHeader px="3rem">
-              <Field>
-                <Input
-                  id="question"
-                  name="question"
-                  variant="plain"
-                  textStyle="h2"
-                  placeholder="Flash Card question..."
-                  _placeholder={{ color: "#7A7A7A" }}
-                />
-              </Field>
-            </DialogHeader>
-            <DialogBody px="3rem">
-              <Input
-                id="learnId"
-                name="learnId"
-                hidden={true}
-                value={learnId}
-                readOnly={true}
-              />
-              <AnswerForm />
-            </DialogBody>
-            <DialogFooter>
-              <Button
-                w="100%"
-                maxW="12.5rem"
-                variant="secondary"
-                onClick={() => setOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button loading={loading} type="submit" w="100%" maxW="12.5rem">
-                Add
-              </Button>
-            </DialogFooter>
-          </form>
+          <FormProvider {...methods}>
+            <form onSubmit={handleSubmit(submit)}>
+              <DialogHeader px="3rem">
+                <Field required={true} invalid={!!formState.errors.question}>
+                  <Input
+                    {...register("question")}
+                    variant="plain"
+                    textStyle="h2"
+                    placeholder="Flash Card question..."
+                    _placeholder={{ color: "#7A7A7A" }}
+                  />
+                </Field>
+              </DialogHeader>
+              <DialogBody px="3rem">
+                <AnswerForm />
+              </DialogBody>
+              <DialogFooter>
+                <Button
+                  w="100%"
+                  maxW="12.5rem"
+                  variant="secondary"
+                  onClick={() => setOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  loading={formState.isSubmitting}
+                  type="submit"
+                  w="100%"
+                  maxW="12.5rem"
+                >
+                  Add
+                </Button>
+              </DialogFooter>
+            </form>
+          </FormProvider>
         </DialogContent>
       </DialogRoot>
     </>
@@ -128,21 +133,22 @@ export function Create({ learnId }: { learnId: number }) {
 }
 
 function AnswerForm() {
-  const [answerType, setAnswerType] = React.useState<AnswerType>();
+  const { formState, register, control } = useFormContext<FlashCard>();
+
+  const { field } = useController({
+    name: "answerType",
+    control,
+  });
 
   return (
     <Stack gap="3em">
       <RadioCardRoot
-        value={answerType}
-        onValueChange={({ value }) => setAnswerType(value as AnswerType)}
+        disabled={field.disabled}
+        value={field.value}
+        onValueChange={({ value }) => field.onChange(value)}
+        onBlur={field.onBlur}
         gap="1.2em"
       >
-        <Input
-          id="answerType"
-          name="answerType"
-          hidden={true}
-          value={answerType}
-        />
         <RadioCardLabel mt="1em">Choose answer type</RadioCardLabel>
         <Wrap gap="1.5em">
           <RadioCardItem
@@ -199,7 +205,7 @@ function AnswerForm() {
         </Wrap>
       </RadioCardRoot>
       <Field
-        id="hint"
+        invalid={!!formState.errors.hint}
         helperText="Hint that can be toggled when trying to answer"
         label={
           <Flex gap="0.2em">
@@ -210,13 +216,17 @@ function AnswerForm() {
           </Flex>
         }
       >
-        <Input name="hint" />
+        <Input {...register("hint")} />
       </Field>
-      {answerType === "multiple-choices" && <MultipleChoiceAnswerForm />}
-      {answerType === "true-false" && <TrueFalseAnswerForm />}
-      {answerType === "open-ended" && (
-        <Field id="answer" label="Answer" required={true}>
-          <Textarea name="answer" />
+      {/* {field.value === "multiple-choices" && <MultipleChoiceAnswerForm />} */}
+      {/* {field.value === "true-false" && <TrueFalseAnswerForm />} */}
+      {field.value === "open-ended" && (
+        <Field
+          invalid={!!formState.errors.answer}
+          required={true}
+          label="Answer"
+        >
+          <Textarea {...register("answer")} />
         </Field>
       )}
     </Stack>
