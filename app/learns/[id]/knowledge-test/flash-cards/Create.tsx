@@ -219,7 +219,7 @@ function AnswerForm() {
         <Input {...register("hint")} />
       </Field>
       {/* {field.value === "multiple-choices" && <MultipleChoiceAnswerForm />} */}
-      {/* {field.value === "true-false" && <TrueFalseAnswerForm />} */}
+      {field.value === "true-false" && <TrueFalseAnswerForm />}
       {field.value === "open-ended" && (
         <Field
           invalid={!!formState.errors.answer}
@@ -324,9 +324,20 @@ function MultipleChoiceAnswerForm() {
 }
 
 function TrueFalseAnswerForm() {
+  const { control } = useFormContext<FlashCard>();
+
+  const { field } = useController({
+    control,
+    name: "answer",
+  });
+
   return (
-    <Field id="answer" label="Answer" required={true}>
-      <RadioGroup name="answer">
+    <Field label="Answer" required={true}>
+      <RadioGroup
+        value={field.value}
+        onValueChange={({ value }) => field.onChange(value)}
+        onBlur={field.onBlur}
+      >
         <Flex gap="2em">
           <Radio value="true">True</Radio>
           <Radio value="false">False</Radio>
