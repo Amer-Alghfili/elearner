@@ -44,9 +44,9 @@ export async function postFlashCard(
       answer: z.string("Invalid answer"),
       answerType: z.enum(["multiple-choices", "true-false", "open-ended"]),
       hint: z.string("Invalid hint").optional(),
-      options: z
-        .array(z.string("Invalid option item"), "Invalid options")
-        .optional(),
+      // options: z
+      // .array(z.string("Invalid option item"), "Invalid options")
+      // .optional(),
     })
     .safeParse(Object.fromEntries(formData.entries()));
 

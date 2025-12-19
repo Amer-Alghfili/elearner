@@ -9,9 +9,12 @@ import {
 import {
   Box,
   Button,
-  FieldLabel,
+  createListCollection,
   Flex,
+  Icon,
+  IconButton,
   Input,
+  InputGroup,
   RadioCardItemText,
   Stack,
   Textarea,
@@ -29,6 +32,15 @@ import {
 } from "@/components/ui/radio-card";
 import { CheckboxIcon, PaperWriteIcon, TickIcon } from "@/components/Icons";
 import { Radio, RadioGroup } from "@/components/ui/radio";
+import { v4 } from "uuid";
+import {
+  SelectContent,
+  SelectItem,
+  SelectLabel,
+  SelectRoot,
+  SelectTrigger,
+} from "@/components/ui/select";
+import { LuTrash } from "react-icons/lu";
 
 export function Create({ learnId }: { learnId: number }) {
   const router = useRouter();
@@ -200,12 +212,103 @@ function AnswerForm() {
       >
         <Input name="hint" />
       </Field>
+      {answerType === "multiple-choices" && <MultipleChoiceAnswerForm />}
       {answerType === "true-false" && <TrueFalseAnswerForm />}
       {answerType === "open-ended" && (
         <Field id="answer" label="Answer" required={true}>
           <Textarea name="answer" />
         </Field>
       )}
+    </Stack>
+  );
+}
+
+function MultipleChoiceAnswerForm() {
+  const [options, setOptions] = React.useState<
+    { key: string; value: string }[]
+  >([]);
+
+  const [answer, setAnswer] = React.useState<string>("");
+
+  const collection = createListCollection({
+    items: options.filter(({ value }) => value.trim()),
+  });
+
+  function editOption(index: number, value: string) {
+    const copy = [...options];
+    copy[index].value = value;
+
+    setOptions(copy);
+  }
+
+  function deleteOption(index: number) {
+    const copy = [...options];
+    copy.splice(index, 1);
+
+    setOptions(copy);
+  }
+
+  return (
+    <Stack gap="1.5em">
+      <Stack gap={0}>
+        <AddButton
+          alignSelf="flex-start"
+          onClick={() => setOptions([{ key: v4(), value: "" }, ...options])}
+        >
+          New Option
+        </AddButton>
+        <Stack>
+          {options.map(({ key, value }, index) => (
+            <InputGroup
+              key={key}
+              endElement={
+                <IconButton className="group" variant="plain" p={0}>
+                  <Icon
+                    onClick={() => deleteOption(index)}
+                    color="accent.softCoral"
+                    _groupHover={{ color: "feedback.error" }}
+                    w="1.3rem"
+                    h="1.3rem"
+                  >
+                    <LuTrash />
+                  </Icon>
+                </IconButton>
+              }
+            >
+              <Input
+                value={value}
+                onChange={(e) => editOption(index, e.target.value)}
+                size="sm"
+              />
+            </InputGroup>
+          ))}
+        </Stack>
+      </Stack>
+      <Input
+        hidden={true}
+        value={JSON.stringify(options)}
+        name="options"
+        id="options"
+      />
+      <SelectRoot
+        size="sm"
+        collection={collection}
+        value={[answer]}
+        onValueChange={({ value }) => setAnswer(value[0])}
+      >
+        <SelectLabel textStyle="sm-semibold">Answer</SelectLabel>
+        <SelectTrigger>{answer}</SelectTrigger>
+        <SelectContent portalled={false}>
+          {collection.items.map((option) => {
+            return (
+              <SelectItem item={option} key={option.key}>
+                {option.value}
+              </SelectItem>
+            );
+          })}
+        </SelectContent>
+      </SelectRoot>
+      <Input hidden={true} value={answer} name="answer" id="answer" />
     </Stack>
   );
 }
