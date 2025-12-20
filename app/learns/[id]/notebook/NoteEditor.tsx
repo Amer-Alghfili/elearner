@@ -46,7 +46,7 @@ export function NoteEditor({
     async function syncDocWithBackend() {
       await updateFileBlocks(
         fileId,
-        (document as []).map((block: any, order) => ({
+        ((document as []) || []).map((block: any, order) => ({
           id: block.id,
           type: block.type,
           data: block,

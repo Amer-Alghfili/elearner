@@ -32,7 +32,7 @@ export default function NoteEditor({
     async function syncDocWithBackend() {
       await updateLearnBlocks(
         learnId,
-        (document as []).map((block: any, order) => ({
+        ((document as []) || []).map((block: any, order) => ({
           id: block.id,
           type: block.type,
           data: block,
