@@ -143,7 +143,7 @@ export function Resource({
                   onClick={() => setOpen(true)}
                   _hover={{ bg: "primary.transparent" }}
                 >
-                  <EditIcon />
+                  <EditIcon w="1.2rem" h="1.2rem" />
                 </IconButton>
                 <DialogRoot>
                   <DialogTrigger asChild>
@@ -152,7 +152,7 @@ export function Resource({
                       p={0}
                       _hover={{ bg: "accent.softCoral.transparent" }}
                     >
-                      <Icon color="accent.softCoral">
+                      <Icon color="accent.softCoral" w="1.2rem" h="1.2rem">
                         <LuTrash />
                       </Icon>
                     </IconButton>
