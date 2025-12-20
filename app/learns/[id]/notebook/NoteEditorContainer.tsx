@@ -63,6 +63,7 @@ export function NoteEditorContainer({
   return (
     <Flex>
       <Files
+        flex="40%"
         maxW="20em"
         maxH="55vh"
         overflow="auto"
@@ -72,7 +73,7 @@ export function NoteEditorContainer({
         viewContent={({ id }) => setActiveFileId(id)}
       />
       {activeFile && (
-        <Stack w="full">
+        <Stack flex="60%">
           <Field ps="3.375rem">
             <Input
               variant="plain"
