@@ -46,7 +46,7 @@ export function Remove({ id }: { id: number }) {
       minW="2rem"
       h="2rem"
       icon={
-        <Icon color="accent.softCoral" w="1rem" h="1rem">
+        <Icon color="accent.softCoral" w="1.2rem" h="1.2rem">
           <LuTrash />
         </Icon>
       }

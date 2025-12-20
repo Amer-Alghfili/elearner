@@ -75,29 +75,30 @@ export function Container(props: {
             return (
               <CarouselItem key={p.id} index={index}>
                 <Card.Root>
-                  <Card.Header
-                    flexDirection="row"
-                    alignItems="center"
-                    gap="1em"
-                    justifyContent="space-between"
-                  >
-                    <Heading as="h4">{p.title}</Heading>
-                    <Box color="text.secondary">
-                      Stage: #
-                      <Box as="span" fontWeight="bold">
-                        {p.stage}
-                      </Box>
-                    </Box>
+                  <Card.Header>
+                    <Heading
+                      as="h5"
+                      whiteSpace="nowrap"
+                      overflow="hidden"
+                      textOverflow="ellipsis"
+                    >
+                      {p.title}
+                    </Heading>
                   </Card.Header>
                   <Card.Body>
                     <Wrap
                       gap="1em"
-                      alignItems="center"
+                      alignItems="flex-end"
                       justifyContent="space-between"
                     >
-                      <Box textStyle="sm-medium" color="text.caption">
-                        Due: {p.due.toLocaleDateString()}
-                      </Box>
+                      <Stack>
+                        <Box textStyle="sm-medium" color="text.caption">
+                          Due: {p.due.toLocaleDateString()}
+                        </Box>
+                        <Box textStyle="sm-medium" color="text.caption">
+                          Stage: #{p.stage}
+                        </Box>
+                      </Stack>
                       <Flex alignItems="center">
                         <Update learnId={props.learnId} practiceTask={p} />
                         <Remove id={p.id} />

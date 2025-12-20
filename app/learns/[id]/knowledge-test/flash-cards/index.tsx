@@ -16,6 +16,7 @@ export async function FlashCards({ learnId }: { learnId: number }) {
     <Container
       flashCards={res.map((r) => ({
         ...r,
+        options: r.options as string[],
         answerType: r.answerType as AnswerType,
       }))}
       learnId={learnId}

@@ -72,31 +72,32 @@ export function Container(props: { learnId: number; flashCards: FlashCard[] }) {
             return (
               <CarouselItem key={f.id} index={index}>
                 <Card.Root>
-                  <Card.Header
-                    flexDirection="row"
-                    alignItems="center"
-                    gap="1em"
-                    justifyContent="space-between"
-                  >
-                    <Heading as="h4">{f.question}</Heading>
-                    <Box color="text.secondary">
-                      Stage: #
-                      <Box as="span" fontWeight="bold">
-                        {f.stage}
-                      </Box>
-                    </Box>
+                  <Card.Header>
+                    <Heading
+                      as="h5"
+                      whiteSpace="nowrap"
+                      overflow="hidden"
+                      textOverflow="ellipsis"
+                    >
+                      {f.question}
+                    </Heading>
                   </Card.Header>
                   <Card.Body>
                     <Wrap
                       gap="1em"
-                      alignItems="center"
+                      alignItems="flex-end"
                       justifyContent="space-between"
                     >
-                      <Box textStyle="sm-medium" color="text.caption">
-                        Due: {f.due.toLocaleDateString()}
-                      </Box>
+                      <Stack>
+                        <Box textStyle="sm-medium" color="text.caption">
+                          Due: {f.due.toLocaleDateString()}
+                        </Box>
+                        <Box textStyle="sm-medium" color="text.caption">
+                          Stage: #{f.stage}
+                        </Box>
+                      </Stack>
                       <Flex alignItems="center">
-                        <Update learnId={props.learnId} flashCard={f} />
+                        <Update flashCard={f} />
                         <Remove id={f.id} />
                       </Flex>
                     </Wrap>

@@ -95,7 +95,7 @@ export function Update({
         h="2rem"
         _hover={{ bg: "primary.transparent" }}
       >
-        <EditIcon w="1rem" h="1rem" />
+        <EditIcon w="1.2rem" h="1.2rem" />
       </IconButton>
       <DialogContent minW="70vw">
         <form action={action}>
