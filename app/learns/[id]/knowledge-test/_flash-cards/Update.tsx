@@ -22,7 +22,7 @@ import {
   Wrap,
 } from "@chakra-ui/react";
 import React from "react";
-import { FlashCard, postFlashCard } from "./actions";
+import { Flashcard, postFlashCard } from "./actions";
 import { toaster } from "@/components/ui/toaster";
 import { useRouter } from "next/navigation";
 import { Field } from "@/components/ui/field";
@@ -54,10 +54,10 @@ import {
   useFormContext,
 } from "react-hook-form";
 
-export function Update({ flashCard }: { flashCard: FlashCard }) {
+export function Update({ flashCard }: { flashCard: Flashcard }) {
   const router = useRouter();
 
-  const methods = useForm<FlashCard>({
+  const methods = useForm<Flashcard>({
     defaultValues: {
       ...flashCard,
       hint: flashCard.hint || "",
@@ -67,7 +67,7 @@ export function Update({ flashCard }: { flashCard: FlashCard }) {
 
   const [open, setOpen] = React.useState(false);
 
-  async function submit(flashCard: FlashCard) {
+  async function submit(flashCard: Flashcard) {
     const { error, data } = await postFlashCard(flashCard);
 
     if (error) {
@@ -165,7 +165,7 @@ export function Update({ flashCard }: { flashCard: FlashCard }) {
 
 function AnswerForm() {
   const { formState, register, control, setValue } =
-    useFormContext<FlashCard>();
+    useFormContext<Flashcard>();
 
   const { field } = useController({
     name: "answerType",
@@ -256,7 +256,7 @@ function AnswerForm() {
 }
 
 function MultipleChoiceAnswerForm() {
-  const { control } = useFormContext<FlashCard>();
+  const { control } = useFormContext<Flashcard>();
   const { field } = useController({
     control,
     name: "answer",
@@ -356,7 +356,7 @@ function MultipleChoiceAnswerForm() {
 }
 
 function TrueFalseAnswerForm() {
-  const { control } = useFormContext<FlashCard>();
+  const { control } = useFormContext<Flashcard>();
 
   const { field } = useController({
     control,

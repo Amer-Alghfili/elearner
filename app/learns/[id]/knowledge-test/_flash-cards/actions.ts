@@ -5,7 +5,7 @@ import { prisma } from "@/prisma";
 import z from "zod";
 
 export type AnswerType = "multiple-choices" | "true-false" | "open-ended";
-export type FlashCard = {
+export type Flashcard = {
   id: number;
   question: string;
   answerType: AnswerType;
@@ -16,7 +16,7 @@ export type FlashCard = {
   learn_id: number;
   options: string[] | null;
 };
-export type State = { data?: FlashCard; error?: string | null };
+export type State = { data?: Flashcard; error?: string | null };
 
 export async function deleteFlashCard(
   _: unknown,
@@ -44,7 +44,7 @@ export async function deleteFlashCard(
   }
 }
 
-export async function postFlashCard(flashCard: FlashCard): Promise<State> {
+export async function postFlashCard(flashCard: Flashcard): Promise<State> {
   console.log(flashCard);
   const validate = z
     .object({

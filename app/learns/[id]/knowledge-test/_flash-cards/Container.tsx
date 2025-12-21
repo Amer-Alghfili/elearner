@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { Create } from "./Create";
 import React from "react";
-import { FlashCard } from "./actions";
+import { Flashcard } from "./actions";
 import {
   CarouselItem,
   CarouselItemGroup,
@@ -24,8 +24,8 @@ import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
 import { Update } from "./Update";
 import { Remove } from "./Remove";
 
-export function Container(props: { learnId: number; flashCards: FlashCard[] }) {
-  const [flashCards, setFlashCards] = React.useState<FlashCard[]>(
+export function Container(props: { learnId: number; flashCards: Flashcard[] }) {
+  const [flashCards, setFlashCards] = React.useState<Flashcard[]>(
     props.flashCards || []
   );
 
