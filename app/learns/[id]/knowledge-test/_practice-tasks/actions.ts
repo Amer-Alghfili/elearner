@@ -7,10 +7,48 @@ export type PracticeTask = {
   id: number;
   title: string;
   description: string;
-  stage: string;
+  stage: string | null;
   due: Date;
 };
 export type State = { data?: PracticeTask; error?: string | null };
+
+function calculateDueDate(stage: number): Date {
+  const due = new Date();
+  switch (stage) {
+    case 0:
+      due.setDate(due.getDate() + 1);
+      return due;
+    case 1:
+      due.setDate(due.getDate() + 3);
+      return due;
+    case 2:
+      due.setDate(due.getDate() + 7);
+      return due;
+    case 3:
+      due.setDate(due.getDate() + 14);
+      return due;
+    case 4:
+      due.setDate(due.getDate() + 30);
+      return due;
+    default:
+      due.setDate(due.getDate() + 1);
+      return due;
+  }
+}
+
+export async function updateDueDate(id: number, stage: number) {
+  const newDue = calculateDueDate(stage);
+
+  await prisma.practiceTask.update({
+    where: {
+      id,
+    },
+    data: {
+      due: newDue,
+      stage: stage.toString(),
+    },
+  });
+}
 
 export async function deletePracticeTask(
   _: unknown,
@@ -48,8 +86,7 @@ export async function postPracticeTask(
     const id = formData.get("id");
 
     if (id == null) {
-      const due = new Date();
-      due.setDate(due.getDate() + 3);
+      const due = calculateDueDate(0);
 
       const created = await prisma.practiceTask.create({
         data: {

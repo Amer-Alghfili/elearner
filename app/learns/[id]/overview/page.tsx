@@ -13,7 +13,8 @@ export default async function OverviewTabPage({
 
   const learn_id = Number(id);
 
-  //TODO: filter by due date and completion stage
+  const today = new Date();
+
   const [blocks, practiceTasks, flashcards] = await Promise.all([
     await prisma.learnNoteBlock.findMany({
       where: {
@@ -23,11 +24,23 @@ export default async function OverviewTabPage({
     await prisma.practiceTask.findMany({
       where: {
         learn_id,
+        due: {
+          lte: today,
+        },
+        stage: {
+          lte: "4",
+        },
       },
     }),
     await prisma.flashCard.findMany({
       where: {
         learn_id,
+        due: {
+          lte: today,
+        },
+        stage: {
+          lte: "4",
+        },
       },
     }),
   ]);
