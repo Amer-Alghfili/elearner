@@ -9,6 +9,7 @@ import { blockNoteStyle } from "./block-note";
 import { tabs } from "./recipes/tabs";
 import { radioCard } from "./recipes/radio-card";
 import { select } from "./recipes/select";
+import { field } from "./recipes/field";
 
 const config = defineConfig({
   globalCss: {
@@ -48,6 +49,7 @@ const config = defineConfig({
       tabs,
       radioCard,
       select,
+      field,
     },
   },
 });
