@@ -1,6 +1,6 @@
 import { Stack } from "@chakra-ui/react";
-import { PracticeTasks } from "./practice-tasks";
-import { FlashCards } from "./flash-cards";
+import { PracticeTasks } from "./_practice-tasks";
+import { FlashCards } from "./_flash-cards";
 
 export default async function KnowledgeTestTabPage({
   params,
