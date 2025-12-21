@@ -57,13 +57,24 @@ export async function postFlashCard(flashCard: FlashCard): Promise<State> {
         .transform((val) => (val === "" ? null : val)),
       options: z
         .array(z.string("Invalid Option"), "Invalid Options")
+        .min(2, "Please add at least two options")
         .optional(),
     })
     .safeParse(flashCard);
 
   if (validate.success) {
     const { data } = validate;
-    const { id } = data;
+    const { id, answerType } = data;
+
+    if (answerType === "multiple-choices") {
+      const { answer, options } = data;
+
+      if (!options?.includes(answer))
+        return {
+          error:
+            "Your answer is not included in the options, please add it and try again",
+        };
+    }
 
     if (id == null) {
       const due = new Date();
