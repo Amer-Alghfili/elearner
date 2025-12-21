@@ -11,14 +11,13 @@ import {
   Button,
   createListCollection,
   Flex,
+  Heading,
   Icon,
   IconButton,
   Input,
   InputGroup,
-  RadioCardItemText,
   Stack,
   Textarea,
-  Wrap,
 } from "@chakra-ui/react";
 import React from "react";
 import { FlashCard, postFlashCard } from "./actions";
@@ -89,22 +88,42 @@ export function Create({ learnId }: { learnId: number }) {
         New Flash Card
       </AddButton>
       <DialogRoot open={open} onOpenChange={({ open }) => setOpen(open)}>
-        <DialogContent minW="70vw">
+        <DialogContent minW="50vw" h="100vh" overflow="auto" m={0}>
           <FormProvider {...methods}>
             <form onSubmit={handleSubmit(submit)}>
-              <DialogHeader px="3rem">
-                <Field required={true} invalid={!!formState.errors.question}>
-                  <Input
-                    {...register("question")}
-                    variant="plain"
-                    textStyle="h2"
-                    placeholder="Flash Card question..."
-                    _placeholder={{ color: "#7A7A7A" }}
-                  />
-                </Field>
+              <DialogHeader px="3rem" py="5em" justifyContent="center">
+                <Heading as="h2">New Flashcard</Heading>
               </DialogHeader>
-              <DialogBody px="3rem">
-                <AnswerForm />
+              <DialogBody px="3rem" pt="2em">
+                <Stack gap="1em">
+                  <Field
+                    required={true}
+                    invalid={!!formState.errors.question}
+                    label="Question"
+
+                    // helperText="e.g. What is the capital of England ?"
+                  >
+                    <Input
+                      {...register("question")}
+                      placeholder="Add Question"
+                    />
+                  </Field>
+                  <Field
+                    invalid={!!formState.errors.hint}
+                    // helperText="Hint that can be toggled when trying to answer"
+                    label={
+                      <Flex gap="0.2em">
+                        <Box>Hint</Box>
+                        <Box color="text.caption" textStyle="sm">
+                          (optional)
+                        </Box>
+                      </Flex>
+                    }
+                  >
+                    <Input {...register("hint")} />
+                  </Field>
+                  <AnswerForm />
+                </Stack>
               </DialogBody>
               <DialogFooter>
                 <Button
@@ -140,84 +159,70 @@ function AnswerForm() {
     control,
   });
 
+  const color = {
+    checked: "primary",
+    default: "text.caption",
+  };
+
   return (
-    <Stack gap="3em">
+    <Stack gap="2em">
       <RadioCardRoot
         disabled={field.disabled}
         value={field.value}
         onValueChange={({ value }) => field.onChange(value)}
         onBlur={field.onBlur}
-        gap="1.2em"
       >
-        <RadioCardLabel mt="1em">Choose answer type</RadioCardLabel>
-        <Wrap gap="1.5em">
+        <RadioCardLabel>Choose answer type</RadioCardLabel>
+        <Stack gap="0.7em">
           <RadioCardItem
-            alignItems="center"
-            indicator={<></>}
-            icon={<CheckboxIcon w="5rem" h="5rem" />}
+            icon={
+              <CheckboxIcon
+                stroke={
+                  field.value === "multiple-choices"
+                    ? color.checked
+                    : color.default
+                }
+                w="1.8rem"
+                h="1.8rem"
+              />
+            }
             value="multiple-choices"
-            label={
-              <RadioCardItemText mt="1em" textAlign="center">
-                Multiple Choices
-              </RadioCardItemText>
-            }
-            boxShadow="md"
-            _checked={{
-              bg: "primary.transparent",
-              borderColor: "primary.transparent",
-              boxShadow: "2xl",
-            }}
+            label="Multiple Choices"
           />
           <RadioCardItem
-            alignItems="center"
-            indicator={<></>}
             value="true-false"
-            label={
-              <RadioCardItemText mt="1em" textAlign="center">
-                True/False
-              </RadioCardItemText>
+            label="True/False"
+            icon={
+              <TickIcon
+                stroke={
+                  field.value === "true-false" ? color.checked : color.default
+                }
+                fill={
+                  field.value === "true-false" ? color.checked : color.default
+                }
+                w="1.5rem"
+                h="1.5rem"
+              />
             }
-            icon={<TickIcon w="5rem" h="5rem" />}
-            boxShadow="md"
-            _checked={{
-              bg: "primary.transparent",
-              borderColor: "primary.transparent",
-              boxShadow: "2xl",
-            }}
           />
           <RadioCardItem
-            alignItems="center"
-            indicator={<></>}
             value="open-ended"
-            label={
-              <RadioCardItemText textAlign="center">
-                Open ended
-              </RadioCardItemText>
+            label="Open ended"
+            icon={
+              <PaperWriteIcon
+                stroke={
+                  field.value === "open-ended" ? color.checked : color.default
+                }
+                fill={
+                  field.value === "open-ended" ? color.checked : color.default
+                }
+                w="1.5rem"
+                h="1.5rem"
+              />
             }
-            icon={<PaperWriteIcon w="5rem" h="5rem" />}
-            boxShadow="md"
-            _checked={{
-              bg: "primary.transparent",
-              borderColor: "primary.transparent",
-              boxShadow: "2xl",
-            }}
           />
-        </Wrap>
+        </Stack>
       </RadioCardRoot>
-      <Field
-        invalid={!!formState.errors.hint}
-        helperText="Hint that can be toggled when trying to answer"
-        label={
-          <Flex gap="0.2em">
-            <Box>Hint</Box>
-            <Box color="text.caption" textStyle="sm">
-              (optional)
-            </Box>
-          </Flex>
-        }
-      >
-        <Input {...register("hint")} />
-      </Field>
       {field.value === "multiple-choices" && <MultipleChoiceAnswerForm />}
       {field.value === "true-false" && <TrueFalseAnswerForm />}
       {field.value === "open-ended" && (
@@ -243,6 +248,7 @@ function MultipleChoiceAnswerForm() {
   const { field: optionsField } = useController({
     control,
     name: "options",
+    defaultValue: [""],
   });
   const { onChange } = optionsField;
   const [options, setOptions] = React.useState<
@@ -301,14 +307,15 @@ function MultipleChoiceAnswerForm() {
               <Input
                 value={option.value}
                 onChange={(e) => editOption(index, e.target.value)}
-                size="sm"
+                placeholder="Enter option"
+                _placeholder={{ textStyle: "md" }}
               />
             </InputGroup>
           ))}
         </Stack>
       </Stack>
       <SelectRoot
-        size="sm"
+        required={true}
         disabled={field.disabled}
         collection={collection}
         value={[field.value]}
