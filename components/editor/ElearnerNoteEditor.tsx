@@ -58,7 +58,13 @@ const getCustomSlashMenuItems = (
   );
   return [...defaultSuggestions, insertClockItem(editor)];
 };
-export function ElearnerNoteEditor({ editor }: { editor: any }) {
+export function ElearnerNoteEditor({
+  editor,
+  editable = true,
+}: {
+  editor: any;
+  editable?: boolean;
+}) {
   const lightRedTheme = {
     colors: {
       editor: {
@@ -100,6 +106,7 @@ export function ElearnerNoteEditor({ editor }: { editor: any }) {
         light: lightRedTheme,
         dark: lightRedTheme,
       }}
+      editable={editable}
     >
       <SuggestionMenuController
         triggerCharacter="/"
