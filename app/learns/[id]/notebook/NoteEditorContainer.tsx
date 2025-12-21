@@ -61,11 +61,11 @@ export function NoteEditorContainer({
     activeFileId == null ? null : files.find(({ id }) => id === activeFileId);
 
   return (
-    <Flex>
+    <Flex alignItems="flex-start">
       <Files
         flex="40%"
+        minH="55vh"
         maxW="20em"
-        maxH="55vh"
         overflow="auto"
         learnId={learnId}
         files={files}

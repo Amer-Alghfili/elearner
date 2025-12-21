@@ -33,9 +33,7 @@ export function Files({
       borderColor="stroke"
       py="1.5em"
       px="1em"
-      borderRadius="8px"
       gap="1em"
-      boxShadow="sm"
       {...rest}
     >
       <CreateFile learnId={learnId} />

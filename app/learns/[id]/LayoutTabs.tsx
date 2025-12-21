@@ -32,7 +32,6 @@ export function LayoutTabs({ children }: { children: React.ReactNode }) {
       onValueChange={({ value }) => onTabChange(value)}
       display="flex"
       flexDirection="column"
-      gap="3em"
     >
       <Tabs.List>
         <Tabs.Trigger value="overview" fontWeight="semibold">
@@ -48,7 +47,7 @@ export function LayoutTabs({ children }: { children: React.ReactNode }) {
           Knowledge Test
         </Tabs.Trigger>
       </Tabs.List>
-      <Box>{children}</Box>
+      <Box pt="3em">{children}</Box>
     </Tabs.Root>
   );
 }
