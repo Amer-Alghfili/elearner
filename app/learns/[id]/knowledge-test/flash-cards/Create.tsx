@@ -152,7 +152,8 @@ export function Create({ learnId }: { learnId: number }) {
 }
 
 function AnswerForm() {
-  const { formState, register, control } = useFormContext<FlashCard>();
+  const { formState, register, control, setValue } =
+    useFormContext<FlashCard>();
 
   const { field } = useController({
     name: "answerType",
@@ -169,7 +170,11 @@ function AnswerForm() {
       <RadioCardRoot
         disabled={field.disabled}
         value={field.value}
-        onValueChange={({ value }) => field.onChange(value)}
+        onValueChange={({ value }) => {
+          field.onChange(value);
+          setValue("options", null);
+          setValue("answer", "");
+        }}
         onBlur={field.onBlur}
       >
         <RadioCardLabel>Choose answer type</RadioCardLabel>

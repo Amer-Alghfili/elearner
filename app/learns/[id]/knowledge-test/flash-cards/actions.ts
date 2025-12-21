@@ -1,5 +1,6 @@
 "use server";
 
+import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/prisma";
 import z from "zod";
 
@@ -44,6 +45,7 @@ export async function deleteFlashCard(
 }
 
 export async function postFlashCard(flashCard: FlashCard): Promise<State> {
+  console.log(flashCard);
   const validate = z
     .object({
       id: z.number("Invalid ID").optional(),
@@ -53,12 +55,12 @@ export async function postFlashCard(flashCard: FlashCard): Promise<State> {
       answerType: z.enum(["multiple-choices", "true-false", "open-ended"]),
       hint: z
         .string("Invalid hint")
-        .optional()
+        .nullish()
         .transform((val) => (val === "" ? null : val)),
       options: z
         .array(z.string("Invalid Option"), "Invalid Options")
         .min(2, "Please add at least two options")
-        .optional(),
+        .nullish(),
     })
     .safeParse(flashCard);
 
@@ -85,6 +87,7 @@ export async function postFlashCard(flashCard: FlashCard): Promise<State> {
           ...data,
           due,
           stage: "0",
+          options: data.options == null ? Prisma.DbNull : (data.options as any),
         },
       });
 
@@ -100,7 +103,10 @@ export async function postFlashCard(flashCard: FlashCard): Promise<State> {
         where: {
           id: Number(id),
         },
-        data,
+        data: {
+          ...data,
+          options: data.options == null ? Prisma.DbNull : (data.options as any),
+        },
       });
 
       return {
