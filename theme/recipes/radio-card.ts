@@ -5,6 +5,11 @@ export const radioCard = defineSlotRecipe({
   className: "chakra-radio-card",
   slots: radioCardAnatomy.keys(),
   base: {
+    item: {
+      boxShadow: "none !important",
+      transition: "all 0.2s ease-in-out",
+      borderRadius: "12px",
+    },
     label: {
       textStyle: "md-medium",
       color: "text.secondary",
@@ -12,15 +17,44 @@ export const radioCard = defineSlotRecipe({
     itemText: {
       textStyle: "sm-semibold",
       color: "text.secondary",
-      textAlign: "center",
       _checked: {
         textStyle: "sm-bold",
         color: "primary.thick",
       },
     },
-    itemContent: {
-      gap: "1.5em",
+    itemControl: {
       alignItems: "center",
     },
+    itemContent: {
+      gap: "1em",
+      alignItems: "center",
+    },
+  },
+  variants: {
+    variant: {
+      outline: {
+        item: {
+          borderWidth: "2px",
+          _checked: {
+            bg: "primary.transparent",
+            borderColor: "primary",
+          },
+        },
+      },
+    },
+    orientation: {
+      vertical: {
+        itemControl: { flexDirection: "column" },
+        itemContent: { flexDirection: "column" },
+      },
+      horizontal: {
+        itemControl: { flexDirection: "row" },
+        itemContent: { flexDirection: "row" },
+      },
+    },
+  },
+  defaultVariants: {
+    variant: "outline",
+    orientation: "horizontal",
   },
 });
