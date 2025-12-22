@@ -16,10 +16,8 @@ import {
   IconButton,
   Input,
   InputGroup,
-  RadioCardItemText,
   Stack,
   Textarea,
-  Wrap,
 } from "@chakra-ui/react";
 import React from "react";
 import { Flashcard, postFlashCard } from "./actions";

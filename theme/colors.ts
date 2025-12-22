@@ -30,7 +30,10 @@ export const colors = {
   },
   feedback: {
     error: { value: "#DC2626" },
-    success: { value: "#22C55E" },
+    success: {
+      DEFAULT: { value: "#22C55E" },
+      transparent: { value: "rgba(34, 197, 94, 0.5)" },
+    },
     warning: { value: "#F59E0B" },
     info: { value: "#0EA5E9" },
   },

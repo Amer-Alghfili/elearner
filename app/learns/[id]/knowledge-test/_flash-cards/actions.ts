@@ -2,6 +2,7 @@
 
 import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/prisma";
+import { calculateDueDate } from "@/service/knowledge-test";
 import z from "zod";
 
 export type AnswerType = "multiple-choices" | "true-false" | "open-ended";
@@ -10,13 +11,27 @@ export type Flashcard = {
   question: string;
   answerType: AnswerType;
   answer: string;
-  stage: string;
+  stage: string | null;
   due: Date;
   hint: string | null;
   learn_id: number;
   options: string[] | null;
 };
 export type State = { data?: Flashcard; error?: string | null };
+
+export async function updateDueDate(id: number, stage: number) {
+  const newDue = calculateDueDate(stage);
+
+  await prisma.flashCard.update({
+    where: {
+      id,
+    },
+    data: {
+      due: newDue,
+      stage: stage.toString(),
+    },
+  });
+}
 
 export async function deleteFlashCard(
   _: unknown,

@@ -18,6 +18,7 @@ import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
 import { PracticeTask } from "../../knowledge-test/_practice-tasks/actions";
 import { Flashcard } from "../../knowledge-test/_flash-cards/actions";
 import { PracticeTaskItem } from "./PracticeTaskItem";
+import { FlashcardItem } from "./FlashcardItem";
 
 export function ReadyToReviewKnowledgeTest({
   practiceTasks,
@@ -61,6 +62,13 @@ export function ReadyToReviewKnowledgeTest({
           return (
             <CarouselItem key={practiceTask.id} index={index}>
               <PracticeTaskItem practiceTask={practiceTask} />
+            </CarouselItem>
+          );
+        })}
+        {flashcards.map((flashcard, index) => {
+          return (
+            <CarouselItem key={flashcard.id} index={index}>
+              <FlashcardItem flashcard={flashcard} />
             </CarouselItem>
           );
         })}

@@ -18,7 +18,6 @@ export const radioCard = defineSlotRecipe({
       textStyle: "sm-semibold",
       color: "text.secondary",
       _checked: {
-        textStyle: "sm-bold",
         color: "primary.thick",
       },
     },
