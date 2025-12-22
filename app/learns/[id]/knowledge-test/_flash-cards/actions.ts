@@ -94,8 +94,7 @@ export async function postFlashCard(flashCard: Flashcard): Promise<State> {
     }
 
     if (id == null) {
-      const due = new Date();
-      due.setDate(due.getDate() + 3);
+      const due = calculateDueDate(0);
 
       const created = await prisma.flashCard.create({
         data: {

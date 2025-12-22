@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Card,
+  createListCollection,
   Heading,
   Stack,
   Text,
@@ -30,6 +31,13 @@ import {
   updateDueDate,
 } from "../../knowledge-test/_flash-cards/actions";
 import { Field } from "@/components/ui/field";
+import {
+  SelectContent,
+  SelectItem,
+  SelectLabel,
+  SelectRoot,
+  SelectTrigger,
+} from "@/components/ui/select";
 
 export function FlashcardItem({ flashcard }: { flashcard: Flashcard }) {
   const { question, answer } = flashcard;
@@ -137,6 +145,9 @@ export function FlashcardItem({ flashcard }: { flashcard: Flashcard }) {
                   </Field>
                 )}
                 {flashcard.answerType === "true-false" && <TrueFalseField />}
+                {flashcard.answerType === "multiple-choices" && (
+                  <MultipleChoicesField options={flashcard.options || []} />
+                )}
               </Stack>
             </DialogBody>
             <DialogFooter>
@@ -335,5 +346,46 @@ function TrueFalseField() {
         label="False"
       />
     </RadioCardRoot>
+  );
+}
+
+function MultipleChoicesField({ options }: { options: readonly string[] }) {
+  const collection = createListCollection({
+    items: options,
+  });
+
+  const { formState, control } = useFormContext<{ answer: string }>();
+
+  const { field } = useController({
+    name: "answer",
+    control,
+  });
+
+  return (
+    <Field
+      invalid={!!formState.errors.answer}
+      errorText={formState.errors.answer?.message}
+    >
+      <SelectRoot
+        required={true}
+        disabled={field.disabled}
+        collection={collection}
+        value={[field.value]}
+        onValueChange={({ value }) => field.onChange(value[0])}
+        onBlur={field.onBlur}
+      >
+        <SelectLabel textStyle="sm-semibold">Answer</SelectLabel>
+        <SelectTrigger>{field.value}</SelectTrigger>
+        <SelectContent portalled={false}>
+          {collection.items.map((option) => {
+            return (
+              <SelectItem key={option} item={option}>
+                {option}
+              </SelectItem>
+            );
+          })}
+        </SelectContent>
+      </SelectRoot>
+    </Field>
   );
 }
