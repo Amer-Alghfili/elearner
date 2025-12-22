@@ -23,6 +23,7 @@ import {
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
 import { Update } from "./Update";
 import { Remove } from "./Remove";
+import { dateDiffInDays } from "@/util/date";
 
 export function Container(props: { learnId: number; flashCards: Flashcard[] }) {
   const [flashCards, setFlashCards] = React.useState<Flashcard[]>(
@@ -89,7 +90,7 @@ export function Container(props: { learnId: number; flashCards: Flashcard[] }) {
                   >
                     <Stack>
                       <Box textStyle="sm-medium" color="text.caption">
-                        Due: {f.due.toLocaleDateString()}
+                        Due: in {dateDiffInDays(f.due, new Date())} days
                       </Box>
                       <Box textStyle="sm-medium" color="text.caption">
                         Stage: #{f.stage}

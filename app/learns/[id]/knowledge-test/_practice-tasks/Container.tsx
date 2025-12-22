@@ -23,6 +23,7 @@ import {
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
 import { Update } from "./Update";
 import { Remove } from "./Remove";
+import { dateDiffInDays } from "@/util/date";
 
 export function Container(props: {
   learnId: number;
@@ -92,7 +93,7 @@ export function Container(props: {
                   >
                     <Stack>
                       <Box textStyle="sm-medium" color="text.caption">
-                        Due: {p.due.toLocaleDateString()}
+                        Due: in {dateDiffInDays(p.due, new Date())} days
                       </Box>
                       <Box textStyle="sm-medium" color="text.caption">
                         Stage: #{p.stage}
