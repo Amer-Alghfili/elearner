@@ -1,5 +1,4 @@
-import { GoogleIcon, OutlookIcon } from "@/components/Icons";
-import { Box, Button, Heading, Stack, Flex } from "@chakra-ui/react";
+import { Box, Heading, Stack, Flex } from "@chakra-ui/react";
 import { CustomForm } from "./CustomForm";
 import { domine, syne } from "@/fonts";
 import { Scaffold } from "@/components/Scaffold";
