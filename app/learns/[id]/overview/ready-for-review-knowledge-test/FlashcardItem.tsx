@@ -16,7 +16,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import React from "react";
-import { useController, useForm } from "react-hook-form";
+import {
+  FormProvider,
+  useController,
+  useForm,
+  useFormContext,
+} from "react-hook-form";
 import { RadioCardItem, RadioCardRoot } from "@/components/ui/radio-card";
 import { toaster } from "@/components/ui/toaster";
 import { useRouter } from "next/navigation";
@@ -103,43 +108,46 @@ export function FlashcardItem({ flashcard }: { flashcard: Flashcard }) {
       right={0}
       backfaceVisibility="hidden"
     >
-      <Box
-        as="form"
-        onSubmit={answerForm.handleSubmit(validateAnswer)}
-        w="full"
-        h="full"
-      >
-        <Stack h="full" w="full">
-          <DialogBody overflow={!flip ? "auto" : "visible"}>
-            <Stack
-              h="full"
-              justifyContent="center"
-              alignItems="center"
-              gap="3em"
-            >
-              <Heading as="h3">{question}</Heading>
-              {/* //TODO: Show hint */}
-              {flashcard.answerType === "open-ended" && (
-                <Field
-                  invalid={!!answerForm.formState.errors.answer}
-                  errorText={answerForm.formState.errors.answer?.message}
-                >
-                  <Textarea
-                    {...answerForm.register("answer")}
-                    placeholder="Add answer..."
-                  />
-                </Field>
-              )}
-            </Stack>
-          </DialogBody>
-          <DialogFooter>
-            <DialogActionTrigger asChild>
-              <Button variant="secondary">Cancel</Button>
-            </DialogActionTrigger>
-            <Button type="submit">Finish</Button>
-          </DialogFooter>
-        </Stack>
-      </Box>
+      <FormProvider {...answerForm}>
+        <Box
+          as="form"
+          onSubmit={answerForm.handleSubmit(validateAnswer)}
+          w="full"
+          h="full"
+        >
+          <Stack h="full" w="full">
+            <DialogBody overflow={!flip ? "auto" : "visible"}>
+              <Stack
+                h="full"
+                justifyContent="center"
+                alignItems="center"
+                gap="3em"
+              >
+                <Heading as="h3">{question}</Heading>
+                {/* //TODO: Show hint */}
+                {flashcard.answerType === "open-ended" && (
+                  <Field
+                    invalid={!!answerForm.formState.errors.answer}
+                    errorText={answerForm.formState.errors.answer?.message}
+                  >
+                    <Textarea
+                      {...answerForm.register("answer")}
+                      placeholder="Add answer..."
+                    />
+                  </Field>
+                )}
+                {flashcard.answerType === "true-false" && <TrueFalseField />}
+              </Stack>
+            </DialogBody>
+            <DialogFooter>
+              <DialogActionTrigger asChild>
+                <Button variant="secondary">Cancel</Button>
+              </DialogActionTrigger>
+              <Button type="submit">Finish</Button>
+            </DialogFooter>
+          </Stack>
+        </Box>
+      </FormProvider>
     </Box>
   );
 
@@ -279,5 +287,53 @@ export function FlashcardItem({ flashcard }: { flashcard: Flashcard }) {
         </DialogRoot>
       </Card.Body>
     </Card.Root>
+  );
+}
+
+function TrueFalseField() {
+  const { formState, control } = useFormContext<{ answer: "true" | "false" }>();
+
+  const { field } = useController({
+    name: "answer",
+    control,
+  });
+
+  React.useEffect(
+    function toastError() {
+      if (formState.errors.answer) {
+        setTimeout(() => {
+          toaster.create({
+            title: "Wrong answer, please try again",
+            type: "error",
+            closable: true,
+          });
+        }, 0);
+      }
+    },
+    [formState.errors.answer]
+  );
+
+  return (
+    <RadioCardRoot
+      w="full"
+      gap={0}
+      flexDirection="row"
+      onValueChange={({ value }) => field.onChange(value)}
+    >
+      <RadioCardItem
+        alignItems="center"
+        borderRadius="none"
+        indicator={null}
+        value="true"
+        label="True"
+      />
+      <RadioCardItem
+        alignItems="center"
+        borderRadius="none"
+        indicator={null}
+        value="false"
+        label="False"
+      />
+    </RadioCardRoot>
   );
 }
