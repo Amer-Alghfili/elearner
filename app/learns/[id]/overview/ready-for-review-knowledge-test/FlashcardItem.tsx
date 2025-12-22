@@ -3,6 +3,7 @@ import {
   Button,
   Card,
   createListCollection,
+  Flex,
   Heading,
   Stack,
   Text,
@@ -38,6 +39,7 @@ import {
   SelectRoot,
   SelectTrigger,
 } from "@/components/ui/select";
+import { Tooltip } from "@/components/ui/tooltip";
 
 export function FlashcardItem({ flashcard }: { flashcard: Flashcard }) {
   const { question, answer } = flashcard;
@@ -132,7 +134,6 @@ export function FlashcardItem({ flashcard }: { flashcard: Flashcard }) {
                 gap="3em"
               >
                 <Heading as="h3">{question}</Heading>
-                {/* //TODO: Show hint */}
                 {flashcard.answerType === "open-ended" && (
                   <Field
                     invalid={!!answerForm.formState.errors.answer}
@@ -150,11 +151,24 @@ export function FlashcardItem({ flashcard }: { flashcard: Flashcard }) {
                 )}
               </Stack>
             </DialogBody>
-            <DialogFooter>
-              <DialogActionTrigger asChild>
-                <Button variant="secondary">Cancel</Button>
-              </DialogActionTrigger>
-              <Button type="submit">Finish</Button>
+            <DialogFooter justifyContent="space-between" px="4em">
+              {flashcard.hint != null && (
+                <Tooltip content={flashcard.hint} showArrow={true}>
+                  <Button
+                    variant="plain"
+                    color="primary"
+                    textDecoration="underline"
+                  >
+                    Show Hint
+                  </Button>
+                </Tooltip>
+              )}
+              <Flex gap="1em">
+                <DialogActionTrigger asChild>
+                  <Button variant="secondary">Cancel</Button>
+                </DialogActionTrigger>
+                <Button type="submit">Finish</Button>
+              </Flex>
             </DialogFooter>
           </Stack>
         </Box>
@@ -365,6 +379,7 @@ function MultipleChoicesField({ options }: { options: readonly string[] }) {
     <Field
       invalid={!!formState.errors.answer}
       errorText={formState.errors.answer?.message}
+      w={{ base: "100%", md: "70%" }}
     >
       <SelectRoot
         required={true}
