@@ -38,7 +38,6 @@ export default function LearnsContainer(props: { learns: Learn[] }) {
             w: "1.5rem",
             h: "1.5rem",
             fill: "white",
-            _groupHover: {},
           }}
           _hover={{ bg: "primary.thick" }}
         />
