@@ -19,7 +19,6 @@ import { createTag, deleteResource, postResource } from "./actions";
 import { Field } from "@/components/ui/field";
 import { SearchIcon } from "@/components/Icons";
 import { NotFound } from "@/components/empty-state/NotFound";
-import { Empty } from "@/components/empty-state/Empty";
 import { useRouter } from "next/navigation";
 
 export type Resource = {
@@ -196,36 +195,6 @@ export default function ResourceList(props: ResourceListProps) {
             </Text>
           </Stack>
         </Stack>
-      </Stack>
-    );
-  } else {
-    content = (
-      <Stack w="full" gap={0} alignItems="center">
-        <Empty />
-        <Stack gap={0} alignItems="center">
-          <Heading as="h4" color="text.primary">
-            Your learn does not have any resource
-          </Heading>
-          <Text color="text.secondary">
-            You can add any resource related to your learn
-          </Text>
-        </Stack>
-        <AddButton
-          variant="primary"
-          color="white"
-          mt="2em"
-          textStyle="h5"
-          iconProps={{
-            w: "1.5rem",
-            h: "1.5rem",
-            fill: "white",
-            _groupHover: {},
-          }}
-          _hover={{ bg: "primary.thick" }}
-          onClick={draft}
-        >
-          New Resource
-        </AddButton>
       </Stack>
     );
   }

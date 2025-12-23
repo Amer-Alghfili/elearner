@@ -18,7 +18,6 @@ export default async function NotesTabPage({
       learn_id: Number(id),
     },
     orderBy: {
-      // TODO: allow for re-order files
       createdAt: "asc",
     },
     include: {

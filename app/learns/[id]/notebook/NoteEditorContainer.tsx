@@ -60,6 +60,7 @@ export function NoteEditorContainer({
   const activeFile =
     activeFileId == null ? null : files.find(({ id }) => id === activeFileId);
 
+  //TODO: empty state
   return (
     <Flex alignItems="flex-start">
       <Files
