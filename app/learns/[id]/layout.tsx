@@ -48,7 +48,7 @@ export default async function LearnDetailsLayout({
         </Stack>
       ) : (
         <Stack mt="3rem" gap="2em">
-          <Stack gap={0}>
+          <Stack gap="1em">
             <Box textStyle="h2" color="text.primary">
               {learn.title}
             </Box>
