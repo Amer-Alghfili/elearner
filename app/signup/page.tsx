@@ -9,6 +9,7 @@ export default function SignupPage() {
     <Scaffold
       pt="5em"
       bg="linear-gradient(127deg, rgba(255, 191, 84, 0.8) 0%, rgba(65, 41, 0, 0.8) 100%)"
+      bgColor="black"
     >
       <Box maxW="38.625em" mx="auto">
         <Stack mb="5.25em" alignItems="center">

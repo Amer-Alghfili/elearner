@@ -30,7 +30,7 @@ export function CustomForm() {
     <form action={formAction}>
       <Stack gap="2.625em">
         <Stack gap="1.875em">
-          <Field label="Email" color="white">
+          <Field label={<Box color="white">Email</Box>}>
             <Input
               id="email"
               name="email"
@@ -39,7 +39,7 @@ export function CustomForm() {
               bg="primary.thin"
             />
           </Field>
-          <Field label="Password" color="white">
+          <Field label={<Box color="white">Password</Box>}>
             <PasswordInput
               id="password"
               name="password"
