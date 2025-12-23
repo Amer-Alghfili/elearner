@@ -10,6 +10,7 @@ import {
   LinkBox,
   LinkOverlay,
   Stack,
+  Textarea,
 } from "@chakra-ui/react";
 import { deleteLearn, Learn, postLearn } from "./actions";
 import {
@@ -174,10 +175,13 @@ function Update({ learn }: { learn: Learn }) {
           </DialogHeader>
           <DialogBody px="3rem">
             <Field>
-              <Input
-                variant="plain"
+              <Textarea
                 id="description"
                 name="description"
+                border="none"
+                px={0}
+                _focusVisible={{ outline: "none" }}
+                resize="none"
                 defaultValue={description || ""}
                 textStyle="h4"
                 fontWeight="medium"

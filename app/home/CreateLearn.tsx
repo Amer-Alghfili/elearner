@@ -7,7 +7,7 @@ import {
   DialogRoot,
 } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
-import { Button, Input } from "@chakra-ui/react";
+import { Button, Input, Textarea } from "@chakra-ui/react";
 import React from "react";
 import { postLearn } from "./actions";
 import { toaster } from "@/components/ui/toaster";
@@ -37,13 +37,14 @@ export default function CreateLearn(props: AddButtonProps) {
       } else {
         router.refresh();
 
-        toaster.create({
-          title: "Learn has been created successfully 🎉",
-          type: "success",
-          closable: true,
-        });
-
-        setOpen(false);
+        setTimeout(() => {
+          toaster.create({
+            title: "Learn has been created successfully 🎉",
+            type: "success",
+            closable: true,
+          });
+          setOpen(false);
+        }, 0);
       }
     },
     [state]
@@ -81,10 +82,13 @@ export default function CreateLearn(props: AddButtonProps) {
             </DialogHeader>
             <DialogBody px="3rem">
               <Field>
-                <Input
+                <Textarea
                   id="description"
                   name="description"
-                  variant="plain"
+                  border="none"
+                  px={0}
+                  _focusVisible={{ outline: "none" }}
+                  resize="none"
                   textStyle="h4"
                   fontWeight="medium"
                   placeholder="Add description..."
