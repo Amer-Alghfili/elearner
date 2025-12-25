@@ -7,6 +7,13 @@ export const blockNoteStyle = defineGlobalStyles({
     cursor: "pointer",
     textDecoration: "underline",
   },
+  // code
+  ".bn-inline-content code": {
+    color: "feedback.error",
+    bg: "rgba(0, 0, 0, 0.15)",
+    borderRadius: "4px",
+    px: "0.2em",
+  },
   // editor placeholder
   ".bn-inline-content:before": {
     whiteSpace: "pre-wrap",
