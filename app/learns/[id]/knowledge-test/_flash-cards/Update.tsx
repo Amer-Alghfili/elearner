@@ -88,6 +88,13 @@ export function Update({ flashCard }: { flashCard: Flashcard }) {
     }
   }
 
+  React.useEffect(
+    function resetFormOnDialogToggle() {
+      methods.reset();
+    },
+    [open]
+  );
+
   return (
     <>
       <IconButton

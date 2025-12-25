@@ -82,6 +82,13 @@ export function Create({ learnId }: { learnId: number }) {
     }
   }
 
+  React.useEffect(
+    function resetFormOnDialogToggle() {
+      methods.reset();
+    },
+    [open]
+  );
+
   return (
     <>
       <AddButton alignSelf="flex-start" onClick={() => setOpen(true)}>
