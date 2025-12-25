@@ -1,4 +1,12 @@
-export const blockNoteStyle = {
+import { defineGlobalStyles } from "@chakra-ui/react";
+
+export const blockNoteStyle = defineGlobalStyles({
+  // links
+  ".bn-inline-content a": {
+    color: "accent.steelBlue",
+    cursor: "pointer",
+    textDecoration: "underline",
+  },
   // editor placeholder
   ".bn-inline-content:before": {
     whiteSpace: "pre-wrap",
@@ -55,4 +63,4 @@ export const blockNoteStyle = {
     borderTopColor: "stroke !important",
     borderRadius: "2px",
   },
-};
+});
