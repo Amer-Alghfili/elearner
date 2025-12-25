@@ -1,9 +1,8 @@
 "use client";
 
 import React from "react";
-import { Flex, Input, Stack } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import { Files } from "./Files";
-import { Field } from "../../../../components/ui/field";
 import { NoteEditor } from "./NoteEditor";
 import { useRouter } from "next/navigation";
 import { File } from "./page";
@@ -74,26 +73,13 @@ export function NoteEditorContainer({
         viewContent={({ id }) => setActiveFileId(id)}
       />
       {activeFile && (
-        <Stack flex="60%">
-          <Field ps="3.375rem">
-            <Input
-              variant="plain"
-              textStyle="h2"
-              placeholder="Title"
-              fontWeight="bold"
-              value={activeFile.title}
-              onChange={({ target }) => changeFileTitle(target.value)}
-            />
-          </Field>
-          {activeFile != null && (
-            <NoteEditor
-              key={activeFile.id}
-              fileId={activeFile.id}
-              title={activeFile.title}
-              blocks={activeFile.blocks}
-            />
-          )}
-        </Stack>
+        <NoteEditor
+          key={activeFile.id}
+          fileId={activeFile.id}
+          title={activeFile.title}
+          blocks={activeFile.blocks}
+          changeFileTitle={changeFileTitle}
+        />
       )}
     </Flex>
   );
