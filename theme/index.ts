@@ -29,6 +29,9 @@ const config = defineConfig({
     h5: {
       textStyle: "h5",
     },
+    em: {
+      fontStyle: "italic",
+    },
   },
   theme: {
     tokens: {
