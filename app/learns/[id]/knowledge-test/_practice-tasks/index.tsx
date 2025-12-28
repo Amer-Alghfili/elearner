@@ -1,5 +1,5 @@
 import { prisma } from "@/prisma";
-import { Container } from "./Container";
+import { PracticeTasksList } from "./List";
 
 export async function PracticeTasks({ learnId }: { learnId: number }) {
   const res = await prisma.practiceTask.findMany({
@@ -11,5 +11,5 @@ export async function PracticeTasks({ learnId }: { learnId: number }) {
     },
   });
 
-  return <Container practiceTasks={res} learnId={learnId} />;
+  return <PracticeTasksList practiceTasks={res} learnId={learnId} />;
 }

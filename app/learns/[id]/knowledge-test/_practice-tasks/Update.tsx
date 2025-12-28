@@ -13,11 +13,12 @@ import {
 } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
 import { Button, IconButton, Input } from "@chakra-ui/react";
-import { postPracticeTask, PracticeTask } from "./actions";
+import { postPracticeTask } from "./actions";
 import React from "react";
 import { toaster } from "@/components/ui/toaster";
 import { useRouter } from "next/navigation";
 import { useEditorChange } from "@blocknote/react";
+import { PracticeTask } from "./types";
 
 export function Update({
   learnId,

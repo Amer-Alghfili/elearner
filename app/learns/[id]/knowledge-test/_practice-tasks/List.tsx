@@ -12,7 +12,6 @@ import {
 } from "@chakra-ui/react";
 import { Create } from "./Create";
 import React from "react";
-import { PracticeTask } from "./actions";
 import {
   CarouselItem,
   CarouselItemGroup,
@@ -24,8 +23,9 @@ import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
 import { Update } from "./Update";
 import { Remove } from "./Remove";
 import { dateDiffInDays } from "@/util/date";
+import { PracticeTask } from "./types";
 
-export function Container(props: {
+export function PracticeTasksList(props: {
   learnId: number;
   practiceTasks: PracticeTask[];
 }) {

@@ -2,16 +2,9 @@
 
 import { prisma } from "@/prisma";
 import { calculateDueDate } from "@/service/knowledge-test";
+import { State } from "@/types/server-state";
 import z from "zod";
-
-export type PracticeTask = {
-  id: number;
-  title: string;
-  description: string;
-  stage: string | null;
-  due: Date;
-};
-export type State = { data?: PracticeTask; error?: string | null };
+import { PracticeTask } from "./types";
 
 export async function updateDueDate(id: number, stage: number) {
   const newDue = calculateDueDate(stage);
@@ -30,7 +23,7 @@ export async function updateDueDate(id: number, stage: number) {
 export async function deletePracticeTask(
   _: unknown,
   formData: FormData
-): Promise<State> {
+): Promise<State<PracticeTask>> {
   const id = Number(formData.get("id"));
 
   try {
@@ -40,6 +33,7 @@ export async function deletePracticeTask(
       },
     });
     return { data: res };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (_) {
     return { error: "Something went wrong" };
   }
@@ -48,7 +42,7 @@ export async function deletePracticeTask(
 export async function postPracticeTask(
   _: unknown,
   formData: FormData
-): Promise<State> {
+): Promise<State<PracticeTask>> {
   const validate = z
     .object({
       title: z.string("Invalid title"),
