@@ -15,7 +15,7 @@ import React from "react";
 import {
   ElearnerNoteEditor,
   useElearnerCreateBlockNote,
-} from "@/components/editor/ElearnerNoteEditor";
+} from "@/components/ElearnerNoteEditor";
 import { useController, useForm } from "react-hook-form";
 import { RadioCardItem, RadioCardRoot } from "@/components/ui/radio-card";
 import { toaster } from "@/components/ui/toaster";

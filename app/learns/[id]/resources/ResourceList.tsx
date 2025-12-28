@@ -18,7 +18,7 @@ import { toaster } from "@/components/ui/toaster";
 import { createTag, deleteResource, postResource } from "./actions";
 import { Field } from "@/components/ui/field";
 import { SearchIcon } from "@/components/Icons";
-import { NotFound } from "@/components/empty-state/NotFound";
+import { NotFound } from "@/components/NotFound";
 import { useRouter } from "next/navigation";
 
 export type Resource = {

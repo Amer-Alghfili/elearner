@@ -1,7 +1,7 @@
 import {
   ElearnerNoteEditor,
   useElearnerCreateBlockNote,
-} from "@/components/editor/ElearnerNoteEditor";
+} from "@/components/ElearnerNoteEditor";
 import { EditIcon } from "@/components/Icons";
 import {
   DialogActionTrigger,

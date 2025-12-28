@@ -3,7 +3,7 @@
 import {
   ElearnerNoteEditor,
   useElearnerCreateBlockNote,
-} from "@/components/editor/ElearnerNoteEditor";
+} from "@/components/ElearnerNoteEditor";
 import { Block } from "@blocknote/core";
 import React from "react";
 import { useDebounce } from "use-debounce";

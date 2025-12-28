@@ -15,7 +15,7 @@ import { Field } from "@/components/ui/field";
 import {
   ElearnerNoteEditor,
   useElearnerCreateBlockNote,
-} from "@/components/editor/ElearnerNoteEditor";
+} from "@/components/ElearnerNoteEditor";
 import { useEditorChange } from "@blocknote/react";
 
 export function Create({ learnId }: { learnId: number }) {
