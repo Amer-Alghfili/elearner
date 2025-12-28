@@ -1,5 +1,7 @@
 export function calculateDueDate(stage: number): Date {
   const due = new Date();
+  due.setHours(0, 0, 0);
+
   switch (stage) {
     case 0:
       due.setDate(due.getDate() + 1);
