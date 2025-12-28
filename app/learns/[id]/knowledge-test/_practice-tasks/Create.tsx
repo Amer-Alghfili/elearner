@@ -28,37 +28,6 @@ export function Create({ learnId }: { learnId: number }) {
     undefined
   );
 
-  const [description, setDescription] = React.useState<string>();
-
-  const editor = useElearnerCreateBlockNote({
-    initialContent: undefined,
-    style: "padding-top: 0; padding-bottom: 0; padding-inline-start: 1.5em",
-  });
-
-  useEditorChange((editor) => {
-    const html = editor.blocksToFullHTML(editor.document);
-    setDescription(html);
-  }, editor);
-
-  React.useEffect(
-    function resetEditor() {
-      if (!open) {
-        if (editor.document && editor.document.length > 1) {
-          let notFound = false;
-
-          for (const block of editor.document) {
-            notFound = editor.getBlock(block.id) == null;
-
-            if (notFound) return;
-          }
-
-          editor.removeBlocks(editor.document.map(({ id }) => id));
-        }
-      }
-    },
-    [open]
-  );
-
   React.useEffect(
     function refreshAfterMutation() {
       if (state == null) return;
@@ -105,14 +74,7 @@ export function Create({ learnId }: { learnId: number }) {
               </Field>
             </DialogHeader>
             <DialogBody px="3rem">
-              <ElearnerNoteEditor key={open.toString()} editor={editor} />
-              <Input
-                id="description"
-                name="description"
-                hidden={true}
-                value={description}
-                readOnly={true}
-              />
+              <DescriptionEditor key={open.toString()} />
               <Input
                 id="learnId"
                 name="learnId"
@@ -137,6 +99,33 @@ export function Create({ learnId }: { learnId: number }) {
           </form>
         </DialogContent>
       </DialogRoot>
+    </>
+  );
+}
+
+function DescriptionEditor() {
+  const [description, setDescription] = React.useState<string>();
+
+  const editor = useElearnerCreateBlockNote({
+    initialContent: undefined,
+    style: "padding-top: 0; padding-bottom: 0; padding-inline-start: 1.5em",
+  });
+
+  useEditorChange((editor) => {
+    const html = editor.blocksToFullHTML(editor.document);
+    setDescription(html);
+  }, editor);
+
+  return (
+    <>
+      <Input
+        id="description"
+        name="description"
+        hidden={true}
+        value={description}
+        readOnly={true}
+      />
+      <ElearnerNoteEditor editor={editor} />;
     </>
   );
 }
