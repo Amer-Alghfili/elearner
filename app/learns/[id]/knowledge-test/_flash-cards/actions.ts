@@ -1,14 +1,11 @@
 "use server";
 
-import {
-  AnswerType,
-  Flashcard,
-} from "@/app/learns/[id]/knowledge-test/_flash-cards/types";
 import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/prisma";
 import { calculateDueDate } from "@/service/knowledge-test";
 import { State } from "@/types/server-state";
 import z from "zod";
+import { AnswerType, Flashcard } from "./types";
 
 export async function postFlashCard(
   flashCard: Flashcard

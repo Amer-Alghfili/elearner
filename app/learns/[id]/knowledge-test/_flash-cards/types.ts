@@ -1,4 +1,5 @@
 export type AnswerType = "multiple-choices" | "true-false" | "open-ended";
+
 export type Flashcard = {
   id: number;
   question: string;

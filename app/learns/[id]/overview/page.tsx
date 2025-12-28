@@ -2,7 +2,7 @@ import { prisma } from "@/prisma";
 import NoteEditor from ".";
 import { Stack } from "@chakra-ui/react";
 import { ReadyToReviewKnowledgeTest } from "./ready-for-review-knowledge-test";
-import { AnswerType } from "@/app/learns/[id]/knowledge-test/_flash-cards/types";
+import { AnswerType } from "../knowledge-test/_flash-cards/types";
 
 export default async function OverviewTabPage({
   params,
