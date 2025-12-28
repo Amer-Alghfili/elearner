@@ -2,10 +2,13 @@
 
 import {
   Box,
+  Button,
   Card,
   Flex,
   Heading,
+  Icon,
   IconButton,
+  Input,
   Stack,
   useBreakpointValue,
   Wrap,
@@ -19,11 +22,14 @@ import {
   CarouselPrevTrigger,
   CarouselRoot,
 } from "@/components/ui/carousel";
-import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
+import { LuChevronLeft, LuChevronRight, LuTrash } from "react-icons/lu";
 import { Update } from "./Update";
-import { Remove } from "./Remove";
 import { dateDiffInDays } from "@/util/date";
 import { PracticeTask } from "./types";
+import { toaster } from "@/components/ui/toaster";
+import { useRouter } from "next/navigation";
+import { deletePracticeTask } from "./actions";
+import RemoveButton from "@/components/button/remove";
 
 export function PracticeTasksList(props: {
   learnId: number;
@@ -111,5 +117,60 @@ export function PracticeTasksList(props: {
         })}
       </CarouselItemGroup>
     </CarouselRoot>
+  );
+}
+
+function Remove({ id }: { id: number }) {
+  const router = useRouter();
+
+  const [state, action, loading] = React.useActionState(
+    deletePracticeTask,
+    undefined
+  );
+
+  React.useEffect(
+    function reset() {
+      if (state == null) return;
+
+      if (state.error) {
+        toaster.create({
+          title: state.error,
+          type: "error",
+          closable: true,
+        });
+
+        return;
+      }
+
+      router.refresh();
+
+      toaster.create({
+        title: "Practice task has been deleted successfully",
+        type: "success",
+        closable: true,
+      });
+    },
+    [state]
+  );
+
+  return (
+    <RemoveButton
+      className="group"
+      _hover={{ bg: "stroke" }}
+      minW="2rem"
+      h="2rem"
+      icon={
+        <Icon color="accent.softCoral" w="1.2rem" h="1.2rem">
+          <LuTrash />
+        </Icon>
+      }
+    >
+      <form action={action}>
+        <Input id="id" name="id" value={id} hidden={true} readOnly={true} />
+        <Button type="submit" loading={loading} bg="feedback.error">
+          Delete
+        </Button>
+      </form>
+    </RemoveButton>
   );
 }
