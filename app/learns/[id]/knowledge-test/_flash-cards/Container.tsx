@@ -12,7 +12,6 @@ import {
 } from "@chakra-ui/react";
 import { Create } from "./Create";
 import React from "react";
-import { Flashcard } from "./actions";
 import {
   CarouselItem,
   CarouselItemGroup,
@@ -24,6 +23,7 @@ import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
 import { Update } from "./Update";
 import { Remove } from "./Remove";
 import { dateDiffInDays } from "@/util/date";
+import { Flashcard } from "./types";
 
 export function Container(props: { learnId: number; flashCards: Flashcard[] }) {
   const [flashCards, setFlashCards] = React.useState<Flashcard[]>(

@@ -1,6 +1,6 @@
 import { prisma } from "@/prisma";
 import { Container } from "./Container";
-import { AnswerType } from "./actions";
+import { AnswerType } from "@/app/learns/[id]/knowledge-test/_flash-cards/types";
 
 export async function FlashCards({ learnId }: { learnId: number }) {
   const res = await prisma.flashCard.findMany({

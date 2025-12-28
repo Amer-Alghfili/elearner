@@ -1,66 +1,18 @@
 "use server";
 
+import {
+  AnswerType,
+  Flashcard,
+} from "@/app/learns/[id]/knowledge-test/_flash-cards/types";
 import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/prisma";
 import { calculateDueDate } from "@/service/knowledge-test";
+import { State } from "@/types/server-state";
 import z from "zod";
 
-export type AnswerType = "multiple-choices" | "true-false" | "open-ended";
-export type Flashcard = {
-  id: number;
-  question: string;
-  answerType: AnswerType;
-  answer: string;
-  stage: string | null;
-  due: Date;
-  hint: string | null;
-  learn_id: number;
-  options: string[] | null;
-};
-export type State = { data?: Flashcard; error?: string | null };
-
-export async function updateDueDate(id: number, stage: number) {
-  const newDue = calculateDueDate(stage);
-
-  await prisma.flashCard.update({
-    where: {
-      id,
-    },
-    data: {
-      due: newDue,
-      stage: stage.toString(),
-    },
-  });
-}
-
-export async function deleteFlashCard(
-  _: unknown,
-  formData: FormData
-): Promise<State> {
-  const id = Number(formData.get("id"));
-
-  try {
-    const res = await prisma.flashCard.delete({
-      where: {
-        id,
-      },
-    });
-    return {
-      data: {
-        ...res,
-        options: res.options as any,
-        answerType: res.answerType as AnswerType,
-      },
-    };
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (_) {
-    return { error: "Something went wrong" };
-  }
-}
-
-export async function postFlashCard(flashCard: Flashcard): Promise<State> {
-  console.log(flashCard);
+export async function postFlashCard(
+  flashCard: Flashcard
+): Promise<State<Flashcard>> {
   const validate = z
     .object({
       id: z.number("Invalid ID").optional(),
@@ -133,5 +85,45 @@ export async function postFlashCard(flashCard: Flashcard): Promise<State> {
     }
   } else {
     return { error: validate.error.issues.map((i) => i.message).join("\n") };
+  }
+}
+
+export async function updateDueDate(id: number, stage: number) {
+  const newDue = calculateDueDate(stage);
+
+  await prisma.flashCard.update({
+    where: {
+      id,
+    },
+    data: {
+      due: newDue,
+      stage: stage.toString(),
+    },
+  });
+}
+
+export async function deleteFlashCard(
+  _: unknown,
+  formData: FormData
+): Promise<State<Flashcard>> {
+  const id = Number(formData.get("id"));
+
+  try {
+    const res = await prisma.flashCard.delete({
+      where: {
+        id,
+      },
+    });
+    return {
+      data: {
+        ...res,
+        options: res.options as any,
+        answerType: res.answerType as AnswerType,
+      },
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (_) {
+    return { error: "Something went wrong" };
   }
 }

@@ -1,10 +1,10 @@
 import RemoveButton from "@/components/button/remove";
 import { Button, Icon, Input } from "@chakra-ui/react";
 import React from "react";
-import { deleteFlashCard } from "./actions";
 import { useRouter } from "next/navigation";
 import { toaster } from "@/components/ui/toaster";
 import { LuTrash } from "react-icons/lu";
+import { deleteFlashCard } from "./actions";
 
 export function Remove({ id }: { id: number }) {
   const router = useRouter();

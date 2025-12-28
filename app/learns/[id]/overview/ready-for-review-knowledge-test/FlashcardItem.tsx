@@ -27,10 +27,6 @@ import {
 import { RadioCardItem, RadioCardRoot } from "@/components/ui/radio-card";
 import { toaster } from "@/components/ui/toaster";
 import { useRouter } from "next/navigation";
-import {
-  Flashcard,
-  updateDueDate,
-} from "../../knowledge-test/_flash-cards/actions";
 import { Field } from "@/components/ui/field";
 import {
   SelectContent,
@@ -40,6 +36,8 @@ import {
   SelectTrigger,
 } from "@/components/ui/select";
 import { Tooltip } from "@/components/ui/tooltip";
+import { Flashcard } from "@/app/learns/[id]/knowledge-test/_flash-cards/types";
+import { updateDueDate } from "@/features/flashcard/actions";
 
 export function FlashcardItem({ flashcard }: { flashcard: Flashcard }) {
   const { question, answer } = flashcard;
