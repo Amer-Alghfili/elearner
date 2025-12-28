@@ -65,7 +65,7 @@ model FlashCard {
   learn_id   Int
   question   String                       @db.VarChar(255)
   answerType String   @map("answer_type") @db.VarChar(255)
-  answer     String                       @db.VarChar(255)
+  answer     String                       @db.VarChar(500)
   hint       String?                      @db.VarChar(255)
   options    Json?
   learn      Learn    @relation(fields: [learn_id], references: [id])
