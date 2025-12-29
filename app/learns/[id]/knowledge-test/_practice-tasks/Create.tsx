@@ -125,7 +125,7 @@ function DescriptionEditor() {
         value={description}
         readOnly={true}
       />
-      <ElearnerNoteEditor editor={editor} />;
+      <ElearnerNoteEditor editor={editor} />
     </>
   );
 }
