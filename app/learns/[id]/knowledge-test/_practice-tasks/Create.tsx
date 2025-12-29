@@ -41,13 +41,15 @@ export function Create({ learnId }: { learnId: number }) {
       } else {
         router.refresh();
 
-        toaster.create({
-          title: "Practice task has been created successfully 🎉",
-          type: "success",
-          closable: true,
-        });
+        setTimeout(() => {
+          toaster.create({
+            title: "Practice task has been created successfully 🎉",
+            type: "success",
+            closable: true,
+          });
 
-        setOpen(false);
+          setOpen(false);
+        }, 0);
       }
     },
     [state]
