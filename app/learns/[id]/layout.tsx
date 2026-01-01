@@ -51,7 +51,7 @@ export default async function LearnDetailsLayout({
             <Box textStyle="h2" color="text.primary">
               {learn.title}
             </Box>
-            <Box textStyle="lg" color="text.secondary" lineHeight="0.8">
+            <Box textStyle="lg" color="text.secondary">
               {learn.description}
             </Box>
           </Stack>

@@ -158,7 +158,7 @@ export function Resource({
                   </DialogTrigger>
                   <DialogContent>
                     <DialogHeader>
-                      <Heading as="h4" lineHeight="1.6">
+                      <Heading as="h4">
                         Are you sure you want to delete {resource.title} ?
                       </Heading>
                     </DialogHeader>
@@ -201,7 +201,6 @@ export function Resource({
                 onChange={(e) => setLink(e.target.value)}
                 placeholder="Link"
                 fontWeight="medium"
-                lineHeight={1.4}
               />
             </Field>
             <Flex gap="1em" alignItems="center" justifyContent="space-between">

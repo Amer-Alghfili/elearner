@@ -52,10 +52,7 @@ export default function RemoveButton({
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <Heading as="h4" lineHeight="1.6">
-            {title}
-            {/* Are you sure you want to delete {title} ? */}
-          </Heading>
+          <Heading as="h4">{title}</Heading>
         </DialogHeader>
         <DialogBody textStyle="md">
           {withDescription ? description : null}

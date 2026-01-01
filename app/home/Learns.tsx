@@ -68,7 +68,7 @@ export function Learns({ learns }: { learns: Learn[] }) {
                     </DialogTrigger>
                     <DialogContent>
                       <DialogHeader>
-                        <Heading as="h4" lineHeight="1.6">
+                        <Heading as="h4">
                           Are you sure you want to delete {title} ?
                         </Heading>
                       </DialogHeader>
