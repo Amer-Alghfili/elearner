@@ -29,6 +29,9 @@ export function NoteEditor({
         : (blocks.map((block: any) => block.data) as any[]),
   });
 
+  const x = editor.getTextCursorPosition();
+  console.log(x);
+
   const titleRef = React.useRef<HTMLInputElement>(null);
 
   const [documentState, setDocumentState] = React.useState<Block<any>[]>();
@@ -66,12 +69,27 @@ export function NoteEditor({
   }, [documentBlocks]);
 
   React.useEffect(function registerOnEnterClick() {
-    document.addEventListener("keydown", (e) => {
+    function handleArrowNavigation(e: KeyboardEvent) {
+      // From title => editor
       const { activeElement } = document;
-      if (e.key === "Enter" && activeElement === titleRef.current) {
+      if (
+        activeElement === titleRef.current &&
+        (e.key === "ArrowDown" || e.key === "Enter")
+      ) {
+        e.preventDefault();
         editor.focus();
       }
-    });
+
+      // From editor => title
+      const isFirstBlock = editor.getTextCursorPosition().prevBlock == null;
+      if (isFirstBlock && e.key === "ArrowUp") {
+        titleRef.current?.focus();
+      }
+    }
+
+    document.addEventListener("keydown", handleArrowNavigation);
+
+    return () => document.removeEventListener("keydown", handleArrowNavigation);
   }, []);
 
   return (
