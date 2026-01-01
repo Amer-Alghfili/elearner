@@ -2,24 +2,15 @@
 
 import React from "react";
 import { Resource } from "./Resource";
-import {
-  Flex,
-  Heading,
-  Input,
-  InputGroup,
-  Stack,
-  Text,
-} from "@chakra-ui/react";
-import { DebounceInput } from "react-debounce-input";
+import { Flex, Heading, Stack, Text } from "@chakra-ui/react";
 import AddButton from "@/components/button/add";
 import { v4 } from "uuid";
 import { isZodError } from "@/types/error";
 import { toaster } from "@/components/ui/toaster";
 import { createTag, deleteResource, postResource } from "./actions";
-import { Field } from "@/components/ui/field";
-import { SearchIcon } from "@/components/Icons";
 import { NotFound } from "@/components/NotFound";
 import { useRouter } from "next/navigation";
+import SearchInput from "@/components/input/search";
 
 export type Resource = {
   id: string;
@@ -90,7 +81,8 @@ export default function ResourceList(props: ResourceListProps) {
 
         return true;
       }
-    } catch (err) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_) {
       toaster.create({
         title: "Something went wrong",
         type: "error",
@@ -106,7 +98,8 @@ export default function ResourceList(props: ResourceListProps) {
       await deleteResource(learnId, Number(id));
 
       router.refresh();
-    } catch (err) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_) {
       toaster.create({
         title: "Something went wrong",
         type: "error",
@@ -134,7 +127,8 @@ export default function ResourceList(props: ResourceListProps) {
 
         return id;
       }
-    } catch (err) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_) {
       toaster.create({
         title: "Something went wrong",
         type: "error",
@@ -205,21 +199,10 @@ export default function ResourceList(props: ResourceListProps) {
         <AddButton textStyle="h5" alignSelf="flex-start" onClick={draft}>
           New Resource
         </AddButton>
-        <Field maxW="22em">
-          <InputGroup
-            startElement={
-              <SearchIcon w="1.3em" h="1.3em" stroke="stroke.thick" />
-            }
-          >
-            <DebounceInput
-              onChange={(e) => setSearch(e.target.value)}
-              debounceTimeout={500}
-              size="sm"
-              placeholder="Search by name, tag or link"
-              element={Input}
-            />
-          </InputGroup>
-        </Field>
+        <SearchInput
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search by name, tag or link"
+        />
       </Flex>
       {content}
     </Stack>
