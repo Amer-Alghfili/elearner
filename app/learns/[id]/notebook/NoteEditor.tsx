@@ -29,9 +29,6 @@ export function NoteEditor({
         : (blocks.map((block: any) => block.data) as any[]),
   });
 
-  const x = editor.getTextCursorPosition();
-  console.log(x);
-
   const titleRef = React.useRef<HTMLInputElement>(null);
 
   const [documentState, setDocumentState] = React.useState<Block<any>[]>();
@@ -70,20 +67,23 @@ export function NoteEditor({
 
   React.useEffect(function registerOnEnterClick() {
     function handleArrowNavigation(e: KeyboardEvent) {
-      // From title => editor
       const { activeElement } = document;
-      if (
-        activeElement === titleRef.current &&
-        (e.key === "ArrowDown" || e.key === "Enter")
-      ) {
-        e.preventDefault();
-        editor.focus();
-      }
 
-      // From editor => title
-      const isFirstBlock = editor.getTextCursorPosition().prevBlock == null;
-      if (isFirstBlock && e.key === "ArrowUp") {
-        titleRef.current?.focus();
+      // From title => editor
+      if (activeElement === titleRef.current) {
+        if (e.key === "ArrowDown") e.preventDefault();
+
+        if (e.key === "ArrowDown" || e.key === "Enter") {
+          editor.focus();
+        }
+      } else {
+        // From editor => title
+        const isFirstBlock = editor.getTextCursorPosition().prevBlock == null;
+        if (isFirstBlock && e.key === "ArrowUp" && titleRef.current) {
+          e.preventDefault();
+          titleRef.current.setSelectionRange(title.length, title.length);
+          titleRef.current.focus();
+        }
       }
     }
 
