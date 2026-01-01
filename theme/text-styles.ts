@@ -1,6 +1,5 @@
 import { defineTextStyles } from "@chakra-ui/react";
 
-// TODO: line height for heading text
 export const textStyles = defineTextStyles({
   h1: {
     value: {
