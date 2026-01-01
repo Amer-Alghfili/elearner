@@ -7,16 +7,12 @@ import { NoteEditor } from "./NoteEditor";
 import { useRouter } from "next/navigation";
 import { File } from "./page";
 
-export function NoteEditorContainer({
-  files: initialFiles,
-  learnId,
-}: {
-  files: File[];
-  learnId: number;
-}) {
+export function Notebook(props: { files: File[]; learnId: number }) {
+  const { learnId } = props;
+
   const router = useRouter();
 
-  const [files, setFiles] = React.useState<File[]>(initialFiles);
+  const [files, setFiles] = React.useState<File[]>(props.files);
   const [activeFileId, setActiveFileId] = React.useState<number | null>(
     files.length > 0 ? files[files.length - 1].id : null
   );
@@ -34,9 +30,9 @@ export function NoteEditorContainer({
 
   React.useEffect(
     function syncServerState() {
-      setFiles(initialFiles);
+      setFiles(props.files);
     },
-    [initialFiles]
+    [props.files]
   );
 
   React.useEffect(
@@ -59,7 +55,6 @@ export function NoteEditorContainer({
   const activeFile =
     activeFileId == null ? null : files.find(({ id }) => id === activeFileId);
 
-  //TODO: empty state
   return (
     <Flex alignItems="flex-start">
       <Files

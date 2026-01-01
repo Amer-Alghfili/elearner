@@ -1,12 +1,12 @@
 import { prisma } from "@/prisma";
-import { NoteEditorContainer } from "./NoteEditorContainer";
+import { Notebook } from ".";
 
 export type File = {
   id: number;
   title: string;
   blocks?: any[];
 };
-export default async function NotesTabPage({
+export default async function NotebookTabPage({
   params,
 }: {
   params: Promise<{ id: string }>;
@@ -29,5 +29,5 @@ export default async function NotesTabPage({
     },
   });
 
-  return <NoteEditorContainer learnId={Number(id)} files={files} />;
+  return <Notebook learnId={Number(id)} files={files} />;
 }
