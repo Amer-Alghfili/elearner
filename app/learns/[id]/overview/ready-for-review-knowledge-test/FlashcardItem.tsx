@@ -274,6 +274,7 @@ export function FlashcardItem({ flashcard }: { flashcard: Flashcard }) {
             answerForm.reset();
             reset();
           }}
+          closeOnInteractOutside={false}
         >
           <DialogTrigger asChild>
             <Button variant="plain" color="primary" alignSelf="flex-end">

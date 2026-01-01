@@ -194,6 +194,7 @@ export function PracticeTaskItem({
             }
             setOpen(open);
           }}
+          closeOnInteractOutside={false}
         >
           <DialogTrigger asChild>
             <Button variant="plain" color="primary" alignSelf="flex-end">
