@@ -10,6 +10,7 @@ import {
   IconButton,
   Input,
   Stack,
+  Text,
   useBreakpointValue,
   Wrap,
 } from "@chakra-ui/react";
@@ -54,18 +55,26 @@ export function PracticeTasksList({
     >
       <Wrap gap="1em" alignItems="center" justifyContent="space-between">
         <Create learnId={learnId} />
-        <Flex>
-          <CarouselPrevTrigger asChild>
-            <IconButton size="xs" variant="subtle">
-              <LuChevronLeft />
-            </IconButton>
-          </CarouselPrevTrigger>
-          <CarouselNextTrigger asChild>
-            <IconButton size="xs" variant="subtle">
-              <LuChevronRight />
-            </IconButton>
-          </CarouselNextTrigger>
-        </Flex>
+        <Stack alignItems="flex-end">
+          <Flex>
+            <CarouselPrevTrigger asChild>
+              <IconButton size="xs" variant="subtle">
+                <LuChevronLeft />
+              </IconButton>
+            </CarouselPrevTrigger>
+            <CarouselNextTrigger asChild>
+              <IconButton size="xs" variant="subtle">
+                <LuChevronRight />
+              </IconButton>
+            </CarouselNextTrigger>
+          </Flex>
+          <Text textStyle="sm" color="text.caption">
+            Total:{" "}
+            <Box as="span" fontWeight="bold">
+              {practiceTasks.length}
+            </Box>
+          </Text>
+        </Stack>
       </Wrap>
 
       <CarouselItemGroup>
