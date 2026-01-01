@@ -6,6 +6,7 @@ import { AnswerType, Flashcard } from "./_flash-cards/types";
 import { FlashCard, PracticeTask } from "@/generated/prisma/client";
 import React from "react";
 import { PracticeTasksList } from "./_practice-tasks";
+import SearchInput from "@/components/input/search";
 
 function mapToFlashcard(flashcard: FlashCard) {
   return {
@@ -22,7 +23,30 @@ export function KnowledgeTestLists(props: {
 }) {
   const { learnId } = props;
 
-  const [flashCards, setFlashCards] = React.useState<Flashcard[]>(
+  const { flashcards, practiceTasks, search } = useKnowledgeTest(props);
+
+  return (
+    <Stack gap="2em">
+      <SearchInput
+        onChange={(e) => search(e.target.value)}
+        placeholder="Search by title, question or stage"
+      />
+      <FlashcardsList flashCards={flashcards} learnId={learnId} />
+      <PracticeTasksList practiceTasks={practiceTasks} learnId={learnId} />
+    </Stack>
+  );
+}
+
+type UseKnowledgeTestReturn = {
+  flashcards: Flashcard[];
+  practiceTasks: PracticeTask[];
+  search: (query: string) => void;
+};
+function useKnowledgeTest(props: {
+  flashcards: FlashCard[];
+  practiceTasks: PracticeTask[];
+}): UseKnowledgeTestReturn {
+  const [flashcards, setFlashcards] = React.useState<Flashcard[]>(
     props.flashcards.map(mapToFlashcard) || []
   );
 
@@ -30,9 +54,11 @@ export function KnowledgeTestLists(props: {
     props.practiceTasks || []
   );
 
+  const [search, setSearch] = React.useState<string>("");
+
   React.useEffect(
     function reset() {
-      setFlashCards(props.flashcards.map(mapToFlashcard));
+      setFlashcards(props.flashcards.map(mapToFlashcard));
     },
     [props.flashcards]
   );
@@ -44,10 +70,21 @@ export function KnowledgeTestLists(props: {
     [props.practiceTasks]
   );
 
-  return (
-    <Stack gap="2em">
-      <FlashcardsList flashCards={flashCards} learnId={learnId} />
-      <PracticeTasksList practiceTasks={practiceTasks} learnId={learnId} />
-    </Stack>
+  const query = search.toLowerCase();
+  const flashcardSearchResult = flashcards.filter(
+    ({ question, stage }) =>
+      question.toLocaleLowerCase().includes(query) ||
+      stage?.toLocaleLowerCase().includes(query)
   );
+  const practiceTaskSearchResult = practiceTasks.filter(
+    ({ title, stage }) =>
+      title.toLocaleLowerCase().includes(query) ||
+      stage?.toLocaleLowerCase().includes(query)
+  );
+
+  return {
+    flashcards: flashcardSearchResult,
+    practiceTasks: practiceTaskSearchResult,
+    search: (query: string) => setSearch(query),
+  };
 }
