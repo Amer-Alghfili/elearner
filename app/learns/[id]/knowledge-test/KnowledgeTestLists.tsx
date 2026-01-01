@@ -1,10 +1,11 @@
 "use client";
 
 import { Stack } from "@chakra-ui/react";
-import { FlashcardsList } from "./_flash-cards/List";
+import { FlashcardsList } from "./_flash-cards";
 import { AnswerType, Flashcard } from "./_flash-cards/types";
 import { FlashCard, PracticeTask } from "@/generated/prisma/client";
 import React from "react";
+import { PracticeTasksList } from "./_practice-tasks";
 
 function mapToFlashcard(flashcard: FlashCard) {
   return {
@@ -25,6 +26,10 @@ export function KnowledgeTestLists(props: {
     props.flashcards.map(mapToFlashcard) || []
   );
 
+  const [practiceTasks, setPracticeTasks] = React.useState<PracticeTask[]>(
+    props.practiceTasks || []
+  );
+
   React.useEffect(
     function reset() {
       setFlashCards(props.flashcards.map(mapToFlashcard));
@@ -32,10 +37,17 @@ export function KnowledgeTestLists(props: {
     [props.flashcards]
   );
 
+  React.useEffect(
+    function reset() {
+      setPracticeTasks(props.practiceTasks);
+    },
+    [props.practiceTasks]
+  );
+
   return (
     <Stack gap="2em">
       <FlashcardsList flashCards={flashCards} learnId={learnId} />
-      {/* <PracticeTasksList practiceTasks={practiceTasks} learnId={learnId} /> */}
+      <PracticeTasksList practiceTasks={practiceTasks} learnId={learnId} />
     </Stack>
   );
 }
