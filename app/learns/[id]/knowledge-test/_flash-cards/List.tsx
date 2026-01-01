@@ -32,21 +32,13 @@ import { deleteFlashCard } from "./actions";
 import { toaster } from "@/components/ui/toaster";
 import RemoveButton from "@/components/button/remove";
 
-export function FlashcardsList(props: {
+export function FlashcardsList({
+  flashCards,
+  learnId,
+}: {
   learnId: number;
   flashCards: Flashcard[];
 }) {
-  const [flashCards, setFlashCards] = React.useState<Flashcard[]>(
-    props.flashCards || []
-  );
-
-  React.useEffect(
-    function reset() {
-      setFlashCards(props.flashCards);
-    },
-    [props.flashCards]
-  );
-
   const currentBreakpoint = useBreakpointValue({
     base: "base",
     sm: "sm",
@@ -62,7 +54,7 @@ export function FlashcardsList(props: {
       gap="3"
     >
       <Wrap gap="1em" alignItems="center" justifyContent="space-between">
-        <Create learnId={props.learnId} />
+        <Create learnId={learnId} />
         <Flex>
           <CarouselPrevTrigger asChild>
             <IconButton size="xs" variant="subtle">
