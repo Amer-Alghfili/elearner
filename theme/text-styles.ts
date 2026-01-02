@@ -5,35 +5,35 @@ export const textStyles = defineTextStyles({
     value: {
       fontSize: "clamp(2rem, 4.7852vw, 3.0625rem)",
       fontWeight: "bold",
-      lineHeight: 1.2,
+      lineHeight: 1.3,
     },
   },
   h2: {
     value: {
       fontSize: "clamp(1.75rem, 3.8086vw, 2.4375rem)",
       fontWeight: "bold",
-      lineHeight: 1.2,
+      lineHeight: 1.3,
     },
   },
   h3: {
     value: {
       fontSize: "clamp(1.5rem, 3.0273vw, 1.9375rem)",
       fontWeight: "bold",
-      lineHeight: 1.2,
+      lineHeight: 1.3,
     },
   },
   h4: {
     value: {
       fontSize: "clamp(1.25rem, 2.4414vw, 1.5625rem)",
       fontWeight: "bold",
-      lineHeight: 1.2,
+      lineHeight: 1.3,
     },
   },
   h5: {
     value: {
       fontSize: "clamp(1rem, 1.9531vw, 1.25rem)",
       fontWeight: "bold",
-      lineHeight: 1.2,
+      lineHeight: 1.3,
     },
   },
   lg: {
