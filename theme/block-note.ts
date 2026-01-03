@@ -21,15 +21,19 @@ export const blockNoteStyle = defineGlobalStyles({
   // heading block
   '[data-content-type="heading"]': {
     textStyle: "h2 !important",
+    marginY: "0.5em",
   },
   '[data-content-type="heading"][data-level="2"]': {
     textStyle: "h3 !important",
+    marginY: "0.5em",
   },
   '[data-content-type="heading"][data-level="3"]': {
     textStyle: "h4 !important",
+    marginY: "0.5em",
   },
   '[data-content-type="heading"][data-level="4"]': {
     textStyle: "h5 !important",
+    marginY: "0.5em",
   },
   // checklist item block
   '[data-content-type="checkListItem"]': {
