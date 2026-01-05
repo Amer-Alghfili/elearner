@@ -99,7 +99,7 @@ export default function Upsert({
                 w="100%"
                 maxW="12.5rem"
               >
-                Add
+                {defaultValues?.id == null ? "Add" : "Update"}
               </Button>
             </DialogFooter>
           </form>
