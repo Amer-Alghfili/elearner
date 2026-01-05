@@ -39,7 +39,7 @@ export function Learns({ learns }: { learns: Learn[] }) {
 
     return (
       <LinkBox key={id} w="full">
-        <Card.Root>
+        <Card.Root _hover={{ bg: "neutral.surface" }}>
           <Card.Body>
             <Stack gap={0}>
               <Flex
