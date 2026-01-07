@@ -1,14 +1,21 @@
 "use client";
 
 import React from "react";
-import { Flex } from "@chakra-ui/react";
+import { Flex, FlexProps } from "@chakra-ui/react";
 import { Files } from "./Files";
 import { NoteEditor } from "./NoteEditor";
 import { useRouter } from "next/navigation";
-import { File } from "./page";
 
-export function Notebook(props: { files: File[]; learnId: number }) {
-  const { learnId } = props;
+export type File = {
+  id: number;
+  title: string;
+  blocks?: any[];
+};
+export function Notebook(
+  props: { files: File[]; learnId: number } & FlexProps
+) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { learnId, files: _, ...rest } = props;
 
   const router = useRouter();
 
@@ -56,8 +63,8 @@ export function Notebook(props: { files: File[]; learnId: number }) {
     activeFileId == null ? null : files.find(({ id }) => id === activeFileId);
 
   return (
-    <Flex alignItems="flex-start">
-      <Files
+    <Flex alignItems="flex-start" {...rest}>
+      {/* <Files
         flex="40%"
         minH="55vh"
         maxW="20em"
@@ -66,7 +73,7 @@ export function Notebook(props: { files: File[]; learnId: number }) {
         files={files}
         activeFile={activeFile?.id as number}
         viewContent={({ id }) => setActiveFileId(id)}
-      />
+      /> */}
       {activeFile && (
         <NoteEditor
           key={activeFile.id}

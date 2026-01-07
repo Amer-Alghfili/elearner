@@ -1,9 +1,8 @@
 import { auth } from "@/auth";
 import { prisma } from "@/prisma";
-import { LayoutTabs } from "./LayoutTabs";
 import { Scaffold } from "@/components/Scaffold";
 import Header from "@/components/Header";
-import { Box, Button, Heading, Link, Stack, Text } from "@chakra-ui/react";
+import { Button, Heading, Link, Stack, Text } from "@chakra-ui/react";
 
 export default async function LearnDetailsLayout({
   children,
@@ -25,39 +24,31 @@ export default async function LearnDetailsLayout({
     },
   });
 
+  if (learn == null) {
+    return (
+      <Stack w="full" gap={0} alignItems="center">
+        <NotFound />
+        <Stack gap="0.5em" alignItems="center">
+          <Heading as="h3" color="text.primary">
+            Learn is not Found!
+          </Heading>
+          <Text color="text.secondary">
+            The learn you are looking for is not found
+          </Text>
+          <Button asChild mt="1.2em">
+            <Link href="/home" textDecoration="none">
+              Go to home page
+            </Link>
+          </Button>
+        </Stack>
+      </Stack>
+    );
+  }
+
   return (
     <Scaffold>
-      <Header />
-      {learn == null ? (
-        <Stack w="full" gap={0} alignItems="center">
-          <NotFound />
-          <Stack gap="0.5em" alignItems="center">
-            <Heading as="h3" color="text.primary">
-              Learn is not Found!
-            </Heading>
-            <Text color="text.secondary">
-              The learn you are looking for is not found
-            </Text>
-            <Button asChild mt="1.2em">
-              <Link href="/home" textDecoration="none">
-                Go to home page
-              </Link>
-            </Button>
-          </Stack>
-        </Stack>
-      ) : (
-        <Stack mt="3rem" gap="2em">
-          <Stack gap="1em">
-            <Box textStyle="h2" color="text.primary">
-              {learn.title}
-            </Box>
-            <Box textStyle="lg" color="text.secondary">
-              {learn.description}
-            </Box>
-          </Stack>
-          <LayoutTabs>{children}</LayoutTabs>
-        </Stack>
-      )}
+      <Header withLogo={false} />
+      {children}
     </Scaffold>
   );
 }

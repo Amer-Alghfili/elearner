@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/prisma";
-import { File } from "./page";
+import { File } from ".";
 
 export async function updateFileTitle(id: number, title: string) {
   await prisma.noteFile.update({

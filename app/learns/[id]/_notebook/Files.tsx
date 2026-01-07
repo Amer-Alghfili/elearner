@@ -13,7 +13,7 @@ import { deleteFile, createFile } from "./actions";
 import { useRouter } from "next/navigation";
 import { LuTrash } from "react-icons/lu";
 import RemoveButton from "../../../../components/button/remove";
-import { File } from "./page";
+import { File } from ".";
 
 export function Files({
   learnId,
