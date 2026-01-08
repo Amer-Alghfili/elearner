@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ["@chakra-ui/react"],
   },
+  typedRoutes: true,
 };
 
 export default nextConfig;

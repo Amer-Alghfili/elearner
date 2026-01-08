@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/prisma";
-import { File } from ".";
+import { NotebookType } from ".";
 
 export async function updateFileTitle(id: number, title: string) {
   await prisma.noteFile.update({
@@ -37,7 +37,7 @@ export async function updateFileBlocks(
   });
 }
 
-export type State = { data?: File; error?: string | null };
+export type State = { data?: NotebookType; error?: string | null };
 export async function createFile(_: State, formData: FormData): Promise<State> {
   const learnId = Number(formData.get("learnId"));
 

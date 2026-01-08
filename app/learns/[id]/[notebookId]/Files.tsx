@@ -13,7 +13,7 @@ import { deleteFile, createFile } from "./actions";
 import { useRouter } from "next/navigation";
 import { LuTrash } from "react-icons/lu";
 import RemoveButton from "../../../../components/button/remove";
-import { File } from ".";
+import { NotebookType } from ".";
 
 export function Files({
   learnId,
@@ -23,9 +23,9 @@ export function Files({
   ...rest
 }: {
   learnId: number;
-  files: File[];
-  activeFile: File["id"] | null;
-  viewContent: (file: File) => void;
+  files: NotebookType[];
+  activeFile: NotebookType["id"] | null;
+  viewContent: (file: NotebookType) => void;
 } & StackProps) {
   return (
     <Stack

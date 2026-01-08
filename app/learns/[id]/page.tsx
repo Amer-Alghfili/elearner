@@ -1,6 +1,5 @@
-import React from "react";
-import { Notebook } from "./_notebook";
 import { prisma } from "@/prisma";
+import { redirect } from "next/navigation";
 
 export default async function LearnPage({
   params,
@@ -8,6 +7,7 @@ export default async function LearnPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+
   const learnId = Number(id);
 
   const files = await prisma.noteFile.findMany({
@@ -17,14 +17,12 @@ export default async function LearnPage({
     orderBy: {
       createdAt: "asc",
     },
-    include: {
-      blocks: {
-        orderBy: {
-          order: "asc",
-        },
-      },
-    },
   });
 
-  return <Notebook files={files} learnId={learnId} mt="5em" />;
+  if (files.length) {
+    redirect(`/learns/${learnId}/${files[files.length - 1].id.toString()}`);
+  } else {
+    //TODO: notebook empty state
+    return <h1>Not fount</h1>;
+  }
 }
