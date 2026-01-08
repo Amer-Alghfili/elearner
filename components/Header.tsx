@@ -1,23 +1,12 @@
-import { domine } from "@/fonts";
-import { Box, Button, Flex, Link } from "@chakra-ui/react";
+import { Box, Button, Flex } from "@chakra-ui/react";
 import { ExitIcon } from "./Icons";
 import { signOut } from "@/auth";
+import { Logo } from "./Logo";
 
 export default function Header({ withLogo = true }: { withLogo?: boolean }) {
   return (
     <Flex alignItems="center" gap="2em" justifyContent="space-between">
-      {withLogo && (
-        <Link
-          href="/home"
-          {...domine}
-          fontSize="clamp(2rem, 3vw, 3.625rem)"
-          fontWeight="bold"
-          color="primary"
-          textDecoration="none"
-        >
-          Elearner
-        </Link>
-      )}
+      {withLogo && <Logo />}
       <Box ms="auto">
         <form
           action={async () => {

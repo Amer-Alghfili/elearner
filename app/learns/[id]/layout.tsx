@@ -2,7 +2,8 @@ import { auth } from "@/auth";
 import { prisma } from "@/prisma";
 import { Scaffold } from "@/components/Scaffold";
 import Header from "@/components/Header";
-import { Button, Heading, Link, Stack, Text } from "@chakra-ui/react";
+import { Box, Button, Heading, Link, Stack, Text } from "@chakra-ui/react";
+import { Sidebar } from "./Sidebar";
 
 export default async function LearnDetailsLayout({
   children,
@@ -17,9 +18,11 @@ export default async function LearnDetailsLayout({
 
   const email = session?.user?.email;
 
+  const learnId = Number(id);
+
   const learn = await prisma.learn.findFirst({
     where: {
-      id: Number(id),
+      id: learnId,
       user_id: email as string,
     },
   });
@@ -45,10 +48,22 @@ export default async function LearnDetailsLayout({
     );
   }
 
+  const notebooks = await prisma.noteFile.findMany({
+    where: {
+      learn_id: Number(learnId),
+    },
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
+
   return (
-    <Scaffold>
-      <Header withLogo={false} />
-      {children}
+    <Scaffold display="flex">
+      <Sidebar notebooks={notebooks} />
+      <Box>
+        <Header withLogo={false} />
+        {children}
+      </Box>
     </Scaffold>
   );
 }
