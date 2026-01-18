@@ -22,15 +22,18 @@ export default async function LearnPage({
     },
   });
 
-  return (
-    <Notebook
-      notebook={{
-        ...notebook,
-        id: notebook?.id as number,
-        title: notebook?.title as string,
-      }}
-      learnId={learnId}
-      mt="5em"
-    />
-  );
+  return <h1>notebook</h1>;
+
+  // This component keeps rerendering!
+  // return (
+  //   <Notebook
+  //     notebook={{
+  //       ...notebook,
+  //       id: notebook?.id as number,
+  //       title: notebook?.title as string,
+  //     }}
+  //     learnId={learnId}
+  //     mt="5em"
+  //   />
+  // );
 }

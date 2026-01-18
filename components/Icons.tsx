@@ -264,3 +264,24 @@ export function PaperWriteIcon(props: IconProps) {
     </Icon>
   );
 }
+
+export function BurgerIcon(props: IconProps) {
+  return (
+    <Icon
+      width="8"
+      height="8"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#986D00"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      {...props}
+    >
+      <svg>
+        <path d="M20 7H4" />
+        <path opacity="0.5" d="M20 12H4" />
+        <path d="M20 17H4" />
+      </svg>
+    </Icon>
+  );
+}

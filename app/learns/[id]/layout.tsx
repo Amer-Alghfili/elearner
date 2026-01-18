@@ -3,7 +3,7 @@ import { prisma } from "@/prisma";
 import { Scaffold } from "@/components/Scaffold";
 import Header from "@/components/Header";
 import { Box, Button, Heading, Link, Stack, Text } from "@chakra-ui/react";
-import { Sidebar } from "./Sidebar";
+import { Sidebar, SIDEBAR_WIDTH } from "./Sidebar";
 
 export default async function LearnDetailsLayout({
   children,
@@ -58,9 +58,9 @@ export default async function LearnDetailsLayout({
   });
 
   return (
-    <Scaffold display="flex">
+    <Scaffold display="flex" ps={{ base: 0, sm: 0, md: 0 }}>
       <Sidebar notebooks={notebooks} />
-      <Box>
+      <Box ps="27rem" w="full">
         <Header withLogo={false} />
         {children}
       </Box>
