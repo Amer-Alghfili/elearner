@@ -9,6 +9,7 @@ import {
   Link,
   IconProps,
   LinkProps,
+  Box,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import {
@@ -28,73 +29,88 @@ import {
   MenuTrigger,
 } from "@/components/ui/menu";
 import { usePathname } from "next/navigation";
+import Header from "@/components/Header";
 
 const SidebarContext = React.createContext<{ open: boolean }>({ open: true });
 function useSidebar() {
   return React.useContext(SidebarContext);
 }
 
-export function SidebarContent({ notebooks }: { notebooks: NotebookType[] }) {
+export function SidebarContent({
+  notebooks,
+  children,
+}: {
+  notebooks: NotebookType[];
+  children: React.ReactElement;
+}) {
   const [open, setOpen] = React.useState(true);
 
-  const width = open ? "20rem" : "4rem";
-
   return (
-    <Stack
-      position="fixed"
-      top={0}
-      bottom={0}
-      left={0}
-      overflow="auto"
-      w={width}
-      px={open ? "1.5em" : 0}
-      pt="2em"
-      gap="2em"
-      borderWidth="1px"
-      borderColor="stroke"
-      bg="neutral.surface"
-      transition="width 0.3s ease-in-out"
-    >
-      <Flex
-        gap="1em"
-        justifyContent="space-between"
-        alignItems="center"
-        flexDirection={open ? "row" : "column"}
+    <Flex display="flex" alignItems="flex-start" ps={{ base: 0, sm: 0, md: 0 }}>
+      <Box
+        ps={open ? "17rem" : "4rem"}
+        w="full"
+        transition="padding 0.3s ease-in-out"
       >
-        <Logo short={!open} />
-        <IconButton
-          h="auto"
-          border="none"
-          variant="plain"
-          onClick={() => setOpen((prev) => !prev)}
+        <Header withLogo={false} />
+        {children}
+      </Box>
+      <Stack
+        position="fixed"
+        top={0}
+        bottom={0}
+        left={0}
+        overflow="auto"
+        w={open ? "20rem" : "4rem"}
+        px={open ? "1.5em" : 0}
+        pt="2em"
+        gap="2em"
+        borderWidth="1px"
+        borderColor="stroke"
+        bg="neutral.surface"
+        transition="width 0.3s ease-in-out"
+      >
+        <Flex
+          gap="1em"
+          justifyContent="space-between"
+          alignItems="center"
+          flexDirection={open ? "row" : "column"}
         >
-          <BurgerIcon />
-        </IconButton>
-      </Flex>
-      <SidebarContext.Provider value={{ open }}>
-        <Stack alignItems={open ? "flex-start" : "center"} gap="1.5em">
-          <SidebarLinksGroup
-            icon={<NotebookIcon />}
-            subLinks={notebooks.map((notebook) => (
-              <SidebarSubLink key={notebook.id} href={notebook.id.toString()}>
-                {notebook.title}
-              </SidebarSubLink>
-            ))}
+          <Logo short={!open} />
+          <IconButton
+            h="auto"
+            border="none"
+            variant="plain"
+            onClick={() => setOpen((prev) => !prev)}
           >
-            Notebooks
-          </SidebarLinksGroup>
-          <SidebarLinksGroup icon={<BulbWithFolderIcon />} subLinks={[]}>
-            Flashcards
-          </SidebarLinksGroup>
-          <SidebarLinksGroup icon={<KeyboardIcon />} subLinks={[]}>
-            Practice Tasks
-          </SidebarLinksGroup>
-          <SidebarLinksGroup icon={<LinkWithFolderIcon />} subLinks={[]}>
-            Resources
-          </SidebarLinksGroup>
-        </Stack>
-      </SidebarContext.Provider>
-    </Stack>
+            <BurgerIcon />
+          </IconButton>
+        </Flex>
+        <SidebarContext.Provider value={{ open }}>
+          <Stack alignItems={open ? "flex-start" : "center"} gap="1.5em">
+            <SidebarLinksGroup
+              icon={<NotebookIcon />}
+              subLinks={notebooks.map((notebook) => (
+                <SidebarSubLink key={notebook.id} href={notebook.id.toString()}>
+                  {notebook.title}
+                </SidebarSubLink>
+              ))}
+            >
+              Notebooks
+            </SidebarLinksGroup>
+            <SidebarLinksGroup icon={<BulbWithFolderIcon />} subLinks={[]}>
+              Flashcards
+            </SidebarLinksGroup>
+            <SidebarLinksGroup icon={<KeyboardIcon />} subLinks={[]}>
+              Practice Tasks
+            </SidebarLinksGroup>
+            <SidebarLinksGroup icon={<LinkWithFolderIcon />} subLinks={[]}>
+              Resources
+            </SidebarLinksGroup>
+          </Stack>
+        </SidebarContext.Provider>
+      </Stack>
+    </Flex>
   );
 }
 

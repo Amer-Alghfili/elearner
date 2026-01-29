@@ -1,7 +1,14 @@
 import { prisma } from "@/prisma";
 import { SidebarContent } from "./SidebarContent";
+import React from "react";
 
-export async function Sidebar({ learnId }: { learnId: number }) {
+export async function Sidebar({
+  learnId,
+  children,
+}: {
+  learnId: number;
+  children: React.ReactElement;
+}) {
   const notebooks = await prisma.noteFile.findMany({
     select: {
       id: true,
@@ -15,5 +22,5 @@ export async function Sidebar({ learnId }: { learnId: number }) {
     },
   });
 
-  return <SidebarContent notebooks={notebooks} />;
+  return <SidebarContent notebooks={notebooks}>{children}</SidebarContent>;
 }

@@ -78,3 +78,7 @@ export const { auth, signIn, signOut } = NextAuth({
     }),
   ],
 });
+
+export async function logout() {
+  await signOut({ redirectTo: "/login" });
+}

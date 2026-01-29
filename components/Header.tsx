@@ -1,6 +1,6 @@
 import { Box, Button, Flex } from "@chakra-ui/react";
 import { ExitIcon } from "./Icons";
-import { signOut } from "@/auth";
+import { logout } from "@/auth";
 import { Logo } from "./Logo";
 
 export default function Header({ withLogo = true }: { withLogo?: boolean }) {
@@ -8,12 +8,7 @@ export default function Header({ withLogo = true }: { withLogo?: boolean }) {
     <Flex alignItems="center" gap="2em" justifyContent="space-between">
       {withLogo && <Logo />}
       <Box ms="auto">
-        <form
-          action={async () => {
-            "use server";
-            await signOut({ redirectTo: "/login" });
-          }}
-        >
+        <form action={logout}>
           <Button
             type="submit"
             variant="plain"

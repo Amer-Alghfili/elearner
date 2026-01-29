@@ -1,15 +1,14 @@
 import { auth } from "@/auth";
 import { prisma } from "@/prisma";
 import { Scaffold } from "@/components/Scaffold";
-import Header from "@/components/Header";
-import { Box, Button, Heading, Link, Stack, Text } from "@chakra-ui/react";
+import { Button, Heading, Link, Stack, Text } from "@chakra-ui/react";
 import { Sidebar } from "./_sidebar";
 
 export default async function LearnDetailsLayout({
   children,
   params,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactElement;
   params: Promise<{ id: string }>;
 }>) {
   const { id } = await params;
@@ -49,16 +48,8 @@ export default async function LearnDetailsLayout({
   }
 
   return (
-    <Scaffold
-      display="flex"
-      alignItems="flex-start"
-      ps={{ base: 0, sm: 0, md: 0 }}
-    >
-      <Sidebar learnId={learnId} />
-      <Box ps="27rem" w="full">
-        <Header withLogo={false} />
-        {children}
-      </Box>
+    <Scaffold>
+      <Sidebar learnId={learnId}>{children}</Sidebar>
     </Scaffold>
   );
 }
