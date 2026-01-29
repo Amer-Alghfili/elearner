@@ -9,8 +9,9 @@ import {
 import React from "react";
 import { Block } from "@blocknote/core";
 import { useDebounce } from "use-debounce";
-import { Input, Stack } from "@chakra-ui/react";
+import { Button, Flex, Input, Stack } from "@chakra-ui/react";
 import { Field } from "@/components/ui/field";
+import { PlusIcon } from "@/components/Icons";
 
 export type NotebookType = {
   id: number;
@@ -100,17 +101,52 @@ export function Notebook({ notebook }: { notebook: NotebookType }) {
 
   return (
     <Stack>
-      <Field ps="3.375rem">
-        <Input
-          ref={titleRef}
-          variant="plain"
-          textStyle="h2"
-          placeholder="Title"
-          fontWeight="bold"
-          value={title}
-          onChange={({ target }) => changeTitle(target.value)}
-        />
-      </Field>
+      <Stack ps="3.375rem" gap="1em">
+        <Field>
+          <Input
+            ref={titleRef}
+            variant="plain"
+            textStyle="h2"
+            placeholder="Title"
+            fontWeight="bold"
+            value={title}
+            onChange={({ target }) => changeTitle(target.value)}
+          />
+        </Field>
+        <Flex
+          gap="0.3em"
+          borderWidth="1px"
+          borderColor="stroke"
+          borderRadius="4px"
+          px="0.3em"
+          py="0.3em"
+        >
+          <Button
+            bg="#dededb"
+            borderColor="stroke.thick"
+            color="text.secondary"
+            borderRadius="3px"
+            size="xs"
+            fontWeight="bold"
+            _hover={{ bg: "neutral.surface" }}
+          >
+            <PlusIcon fill="text.secondary" strokeWidth="0.3" />
+            Flashcard
+          </Button>
+          <Button
+            bg="#dededb"
+            borderColor="stroke.thick"
+            color="text.secondary"
+            borderRadius="3px"
+            size="xs"
+            fontWeight="bold"
+            _hover={{ bg: "neutral.surface" }}
+          >
+            <PlusIcon fill="text.secondary" strokeWidth="0.3" />
+            Practice Task
+          </Button>
+        </Flex>
+      </Stack>
       <ElearnerNoteEditor editor={editor} />
     </Stack>
   );
