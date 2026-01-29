@@ -8,6 +8,7 @@ import {
   Stack,
   Link,
   IconProps,
+  LinkProps,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import {
@@ -20,6 +21,13 @@ import {
 import { LuChevronRight } from "react-icons/lu";
 import { NotebookType } from "../[notebookId]";
 import React from "react";
+import {
+  MenuContent,
+  MenuItem,
+  MenuRoot,
+  MenuTrigger,
+} from "@/components/ui/menu";
+import { usePathname } from "next/navigation";
 
 const SidebarContext = React.createContext<{ open: boolean }>({ open: true });
 function useSidebar() {
@@ -68,11 +76,9 @@ export function SidebarContent({ notebooks }: { notebooks: NotebookType[] }) {
           <SidebarLinksGroup
             icon={<NotebookIcon />}
             subLinks={notebooks.map((notebook) => (
-              <Link asChild key={notebook.id} textStyle="sm-semibold">
-                <NextLink href={notebook.id.toString() as any}>
-                  {notebook.title}
-                </NextLink>
-              </Link>
+              <SidebarSubLink key={notebook.id} href={notebook.id.toString()}>
+                {notebook.title}
+              </SidebarSubLink>
             ))}
           >
             Notebooks
@@ -107,31 +113,54 @@ function SidebarLinksGroup({
     return <SidebarLink icon={icon}>{children}</SidebarLink>;
   }
 
+  if (open) {
+    return (
+      <Collapsible.Root w={open ? "full" : "auto"} textStyle="md-semibold">
+        <Collapsible.Trigger
+          w="full"
+          justifyContent="space-between"
+          cursor="pointer"
+          display="flex"
+          alignItems="center"
+          gap="0.5rem"
+        >
+          <SidebarLink icon={icon}>{children}</SidebarLink>
+          {open && (
+            <Collapsible.Indicator
+              transition="transform 0.2s"
+              color="text.secondary"
+              _open={{ transform: "rotate(90deg)" }}
+            >
+              <LuChevronRight />
+            </Collapsible.Indicator>
+          )}
+        </Collapsible.Trigger>
+        <Collapsible.Content mt="0.7em" ms="1rem">
+          <Stack>{subLinks}</Stack>
+        </Collapsible.Content>
+      </Collapsible.Root>
+    );
+  }
+
   return (
-    <Collapsible.Root w={open ? "full" : "auto"} textStyle="md-semibold">
-      <Collapsible.Trigger
-        w="full"
-        justifyContent="space-between"
-        cursor="pointer"
-        display="flex"
-        alignItems="center"
-        gap="0.5rem"
-      >
+    <MenuRoot>
+      <MenuTrigger>
         <SidebarLink icon={icon}>{children}</SidebarLink>
-        {open && (
-          <Collapsible.Indicator
-            transition="transform 0.2s"
-            color="text.secondary"
-            _open={{ transform: "rotate(90deg)" }}
+      </MenuTrigger>
+      <MenuContent>
+        {subLinks.map((subLink, index) => (
+          <MenuItem
+            key={index}
+            value={index.toString()}
+            p={0}
+            borderRadius="8px"
+            _hover={{ bg: "transparent" }}
           >
-            <LuChevronRight />
-          </Collapsible.Indicator>
-        )}
-      </Collapsible.Trigger>
-      <Collapsible.Content mt="0.7em" ms="1rem">
-        <Stack>{subLinks}</Stack>
-      </Collapsible.Content>
-    </Collapsible.Root>
+            {subLink}
+          </MenuItem>
+        ))}
+      </MenuContent>
+    </MenuRoot>
   );
 }
 
@@ -161,5 +190,31 @@ function SidebarLink({
       {mappedIcon}
       {children}
     </Flex>
+  );
+}
+
+function SidebarSubLink(props: LinkProps) {
+  const pathname = usePathname();
+
+  const isActive = pathname.endsWith(props.href as string);
+
+  return (
+    <Link
+      asChild
+      w="full"
+      textStyle="sm-semibold"
+      textDecoration="none"
+      outline="none"
+      py="0.3em"
+      px="1em"
+      borderRadius="8px"
+      bg={isActive ? "stroke.transparent" : "transparent"}
+      _hover={{
+        bg: "stroke.transparent",
+      }}
+      {...props}
+    >
+      <NextLink href={props.href as any}>{props.children}</NextLink>
+    </Link>
   );
 }
