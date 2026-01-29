@@ -49,7 +49,11 @@ export default async function LearnDetailsLayout({
   }
 
   return (
-    <Scaffold display="flex" ps={{ base: 0, sm: 0, md: 0 }}>
+    <Scaffold
+      display="flex"
+      alignItems="flex-start"
+      ps={{ base: 0, sm: 0, md: 0 }}
+    >
       <Sidebar learnId={learnId} />
       <Box ps="27rem" w="full">
         <Header withLogo={false} />
