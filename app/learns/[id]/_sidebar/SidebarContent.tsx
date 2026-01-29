@@ -21,6 +21,11 @@ import { LuChevronRight } from "react-icons/lu";
 import { NotebookType } from "../[notebookId]";
 import React from "react";
 
+const SidebarContext = React.createContext<{ open: boolean }>({ open: true });
+function useSidebar() {
+  return React.useContext(SidebarContext);
+}
+
 export function SidebarContent({ notebooks }: { notebooks: NotebookType[] }) {
   const [open, setOpen] = React.useState(true);
 
@@ -40,6 +45,7 @@ export function SidebarContent({ notebooks }: { notebooks: NotebookType[] }) {
       borderWidth="1px"
       borderColor="stroke"
       bg="neutral.surface"
+      transition="width 0.3s ease-in-out"
     >
       <Flex
         gap="1em"
@@ -57,29 +63,31 @@ export function SidebarContent({ notebooks }: { notebooks: NotebookType[] }) {
           <BurgerIcon />
         </IconButton>
       </Flex>
-      <Stack gap="1.5em">
-        <SidebarLinksGroup
-          icon={<NotebookIcon />}
-          subLinks={notebooks.map((notebook) => (
-            <Link asChild key={notebook.id} textStyle="sm-semibold">
-              <NextLink href={notebook.id.toString() as any}>
-                {notebook.title}
-              </NextLink>
-            </Link>
-          ))}
-        >
-          Notebooks
-        </SidebarLinksGroup>
-        <SidebarLinksGroup icon={<BulbWithFolderIcon />} subLinks={[]}>
-          Flashcards
-        </SidebarLinksGroup>
-        <SidebarLinksGroup icon={<KeyboardIcon />} subLinks={[]}>
-          Practice Tasks
-        </SidebarLinksGroup>
-        <SidebarLinksGroup icon={<LinkWithFolderIcon />} subLinks={[]}>
-          Resources
-        </SidebarLinksGroup>
-      </Stack>
+      <SidebarContext.Provider value={{ open }}>
+        <Stack alignItems={open ? "flex-start" : "center"} gap="1.5em">
+          <SidebarLinksGroup
+            icon={<NotebookIcon />}
+            subLinks={notebooks.map((notebook) => (
+              <Link asChild key={notebook.id} textStyle="sm-semibold">
+                <NextLink href={notebook.id.toString() as any}>
+                  {notebook.title}
+                </NextLink>
+              </Link>
+            ))}
+          >
+            Notebooks
+          </SidebarLinksGroup>
+          <SidebarLinksGroup icon={<BulbWithFolderIcon />} subLinks={[]}>
+            Flashcards
+          </SidebarLinksGroup>
+          <SidebarLinksGroup icon={<KeyboardIcon />} subLinks={[]}>
+            Practice Tasks
+          </SidebarLinksGroup>
+          <SidebarLinksGroup icon={<LinkWithFolderIcon />} subLinks={[]}>
+            Resources
+          </SidebarLinksGroup>
+        </Stack>
+      </SidebarContext.Provider>
     </Stack>
   );
 }
@@ -93,12 +101,14 @@ function SidebarLinksGroup({
   icon: React.ReactElement<IconProps>;
   children: React.ReactNode;
 }) {
+  const { open } = useSidebar();
+
   if (!subLinks.length) {
     return <SidebarLink icon={icon}>{children}</SidebarLink>;
   }
 
   return (
-    <Collapsible.Root w="full" textStyle="md-semibold">
+    <Collapsible.Root w={open ? "full" : "auto"} textStyle="md-semibold">
       <Collapsible.Trigger
         w="full"
         justifyContent="space-between"
@@ -108,13 +118,15 @@ function SidebarLinksGroup({
         gap="0.5rem"
       >
         <SidebarLink icon={icon}>{children}</SidebarLink>
-        <Collapsible.Indicator
-          transition="transform 0.2s"
-          color="text.secondary"
-          _open={{ transform: "rotate(90deg)" }}
-        >
-          <LuChevronRight />
-        </Collapsible.Indicator>
+        {open && (
+          <Collapsible.Indicator
+            transition="transform 0.2s"
+            color="text.secondary"
+            _open={{ transform: "rotate(90deg)" }}
+          >
+            <LuChevronRight />
+          </Collapsible.Indicator>
+        )}
       </Collapsible.Trigger>
       <Collapsible.Content mt="0.7em" ms="1rem">
         <Stack>{subLinks}</Stack>
@@ -130,6 +142,14 @@ function SidebarLink({
   icon: React.ReactElement<IconProps>;
   children: React.ReactNode;
 }) {
+  const { open } = useSidebar();
+
+  const mappedIcon = React.cloneElement(icon, {
+    stroke: "text.secondary",
+  });
+
+  if (!open) return mappedIcon;
+
   return (
     <Flex
       cursor="pointer"
@@ -138,9 +158,7 @@ function SidebarLink({
       gap="0.5em"
       alignItems="center"
     >
-      {React.cloneElement(icon, {
-        stroke: "text.secondary",
-      })}
+      {mappedIcon}
       {children}
     </Flex>
   );
