@@ -7,7 +7,12 @@ import { ZodError } from "@/types/error";
 import z from "zod";
 import { da } from "zod/v4/locales";
 
-export type Learn = { id: number; title: string; description: string | null };
+export type Learn = {
+  id: number;
+  title: string;
+  description: string | null;
+  firstNoteFileId: number | null;
+};
 
 export async function deleteLearn(id: number) {
   try {
@@ -64,25 +69,39 @@ export async function postLearn(
           },
         });
       } else {
-        await prisma.user.update({
-          where: {
-            email,
-          },
+        await prisma.learn.create({
           data: {
-            learns: {
+            title,
+            description,
+            user_id: email,
+            noteFiles: {
               create: {
-                title,
-                description,
+                title: "untitled",
               },
             },
           },
         });
       }
 
-      return await prisma.learn.findMany({
+      const result = await prisma.learn.findMany({
         where: {
           user_id: email,
         },
+        include: {
+          noteFiles: {
+            select: {
+              id: true,
+            },
+            take: 1,
+          },
+        },
+      });
+
+      return result.map((learn) => {
+        return {
+          ...learn,
+          firstNoteFileId: learn.noteFiles[0]?.id || null,
+        };
       });
     } catch (err) {
       if (err instanceof Prisma.PrismaClientKnownRequestError) {

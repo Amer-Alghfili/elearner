@@ -9,12 +9,13 @@ import {
   Stack,
   Link,
 } from "@chakra-ui/react";
-import { NotebookType } from "./[notebookId]";
 import NextLink from "next/link";
 import { BurgerIcon } from "@/components/Icons";
 import { LuChevronRight } from "react-icons/lu";
+import { NotebookType } from "../[notebookId]";
+import React from "react";
 
-export function Sidebar({ notebooks }: { notebooks: NotebookType[] }) {
+export function SidebarContent({ notebooks }: { notebooks: NotebookType[] }) {
   return (
     <Stack
       position="fixed"
@@ -37,12 +38,10 @@ export function Sidebar({ notebooks }: { notebooks: NotebookType[] }) {
       <Stack gap="1.5em">
         <LinksGroup
           content={notebooks.map((notebook) => (
-            <Link
-              key={notebook.id}
-              href={notebook.id.toString() as any}
-              textStyle="sm-semibold"
-            >
-              {notebook.title}
+            <Link asChild key={notebook.id} textStyle="sm-semibold">
+              <NextLink href={notebook.id.toString() as any}>
+                {notebook.title}
+              </NextLink>
             </Link>
           ))}
         >

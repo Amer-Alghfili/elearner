@@ -6,8 +6,7 @@ export default async function LearnPage({
 }: {
   params: Promise<{ id: string; notebookId: string }>;
 }) {
-  const { id, notebookId } = await params;
-  const learnId = Number(id);
+  const { notebookId } = await params;
 
   const notebook = await prisma.noteFile.findFirst({
     where: {
@@ -22,18 +21,13 @@ export default async function LearnPage({
     },
   });
 
-  return <h1>notebook</h1>;
-
-  // This component keeps rerendering!
-  // return (
-  //   <Notebook
-  //     notebook={{
-  //       ...notebook,
-  //       id: notebook?.id as number,
-  //       title: notebook?.title as string,
-  //     }}
-  //     learnId={learnId}
-  //     mt="5em"
-  //   />
-  // );
+  return (
+    <Notebook
+      notebook={{
+        ...notebook,
+        id: notebook?.id as number,
+        title: notebook?.title as string,
+      }}
+    />
+  );
 }

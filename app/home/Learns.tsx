@@ -35,7 +35,7 @@ export function Learns({ learns }: { learns: Learn[] }) {
   const router = useRouter();
 
   return learns.map((learn) => {
-    const { id, title } = learn;
+    const { id, title, firstNoteFileId } = learn;
 
     return (
       <LinkBox key={id} w="full">
@@ -48,7 +48,7 @@ export function Learns({ learns }: { learns: Learn[] }) {
                 justifyContent="space-between"
               >
                 <Heading as="h5">
-                  <LinkOverlay href={`/learns/${id}/overview`}>
+                  <LinkOverlay href={`/learns/${id}/${firstNoteFileId}`}>
                     {title}
                   </LinkOverlay>
                 </Heading>

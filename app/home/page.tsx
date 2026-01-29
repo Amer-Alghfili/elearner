@@ -15,13 +15,29 @@ export default async function HomePage() {
     orderBy: {
       createdAt: "desc",
     },
+    include: {
+      noteFiles: {
+        select: {
+          id: true,
+        },
+        take: 1,
+        orderBy: {
+          createdAt: "asc",
+        },
+      },
+    },
   });
 
   return (
     <Scaffold>
       <Header />
       <Stack mt="6.4375em" alignItems="flex-start" gap="2em">
-        <LearnsContainer learns={learns} />
+        <LearnsContainer
+          learns={learns.map((learn) => ({
+            ...learn,
+            firstNoteFileId: learn.noteFiles[0].id,
+          }))}
+        />
       </Stack>
     </Scaffold>
   );

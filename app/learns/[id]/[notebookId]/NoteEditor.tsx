@@ -8,7 +8,7 @@ import { Block } from "@blocknote/core";
 import React from "react";
 import { useDebounce } from "use-debounce";
 import { updateFileBlocks, updateFileTitle } from "./actions";
-import { Input, Stack } from "@chakra-ui/react";
+import { Input, Stack, StackProps } from "@chakra-ui/react";
 import { Field } from "@/components/ui/field";
 
 export function NoteEditor({
@@ -16,12 +16,13 @@ export function NoteEditor({
   title,
   blocks,
   changeFileTitle,
+  ...rest
 }: {
   fileId: number;
   title: string;
   blocks: any;
   changeFileTitle: (value: string) => void;
-}) {
+} & StackProps) {
   const editor = useElearnerCreateBlockNote({
     initialContent:
       blocks.length === 0
@@ -93,7 +94,7 @@ export function NoteEditor({
   }, []);
 
   return (
-    <Stack flex="60%">
+    <Stack {...rest}>
       <Field ps="3.375rem">
         <Input
           ref={titleRef}
