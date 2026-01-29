@@ -7,7 +7,7 @@ export async function Sidebar({
   children,
 }: {
   learnId: number;
-  children: React.ReactElement;
+  children: React.ReactNode;
 }) {
   const notebooks = await prisma.noteFile.findMany({
     select: {

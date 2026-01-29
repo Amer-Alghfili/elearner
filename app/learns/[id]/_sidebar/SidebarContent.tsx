@@ -41,7 +41,7 @@ export function SidebarContent({
   children,
 }: {
   notebooks: NotebookType[];
-  children: React.ReactElement;
+  children: React.ReactNode;
 }) {
   const [open, setOpen] = React.useState(true);
 

@@ -8,7 +8,7 @@ export default async function LearnDetailsLayout({
   children,
   params,
 }: Readonly<{
-  children: React.ReactElement;
+  children: React.ReactNode;
   params: Promise<{ id: string }>;
 }>) {
   const { id } = await params;
