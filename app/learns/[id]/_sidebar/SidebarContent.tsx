@@ -46,14 +46,14 @@ export function SidebarContent({
   const [open, setOpen] = React.useState(true);
 
   return (
-    <Flex display="flex" alignItems="flex-start" ps={{ base: 0, sm: 0, md: 0 }}>
+    <Flex alignItems="flex-start" ps={{ base: 0, sm: 0, md: 0 }}>
       <Box
         ps={open ? "17rem" : "4rem"}
         w="full"
         transition="padding 0.3s ease-in-out"
       >
         <Header withLogo={false} />
-        {children}
+        <Box pt="3em">{children}</Box>
       </Box>
       <Stack
         position="fixed"
