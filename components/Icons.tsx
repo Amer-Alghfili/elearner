@@ -268,8 +268,8 @@ export function PaperWriteIcon(props: IconProps) {
 export function BurgerIcon(props: IconProps) {
   return (
     <Icon
-      width="8"
-      height="8"
+      width="2rem"
+      height="2rem"
       viewBox="0 0 24 24"
       fill="none"
       stroke="#986D00"

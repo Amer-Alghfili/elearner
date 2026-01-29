@@ -23,15 +23,17 @@ export function SidebarContent({ notebooks }: { notebooks: NotebookType[] }) {
       bottom={0}
       left={0}
       overflow="auto"
-      w="25rem"
-      ps="2em"
+      w="20rem"
+      px="1.5em"
       pt="2em"
       gap="2em"
-      border="1px solid black"
+      borderWidth="1px"
+      borderColor="stroke"
+      bg="neutral.surface"
     >
-      <Flex gap="1em" alignItems="center">
+      <Flex gap="1em" justifyContent="space-between" alignItems="center">
         <Logo />
-        <IconButton variant="plain">
+        <IconButton h="auto" border="none" variant="plain">
           <BurgerIcon />
         </IconButton>
       </Flex>
