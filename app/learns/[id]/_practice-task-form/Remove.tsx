@@ -4,7 +4,7 @@ import { LuTrash } from "react-icons/lu";
 import { useRouter } from "next/navigation";
 import { toaster } from "@/components/ui/toaster";
 import RemoveButton from "@/components/button/remove";
-import { deletePracticeTask } from "../knowledge-test/_practice-tasks/actions";
+import { deletePracticeTask } from "./actions";
 
 export function RemovePracticeTask({ id }: { id: number }) {
   const router = useRouter();

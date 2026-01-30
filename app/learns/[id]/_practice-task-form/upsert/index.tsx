@@ -10,13 +10,13 @@ import { toaster } from "@/components/ui/toaster";
 import { useRouter } from "next/navigation";
 import { useLearnControlManagement } from "../../LearnPageContainer";
 import React from "react";
-import { PracticeTask } from "../../knowledge-test/_practice-tasks/types";
-import { postPracticeTask } from "../../knowledge-test/_practice-tasks/actions";
+import { PracticeTask } from "../types";
 import {
   ElearnerNoteEditor,
   useElearnerCreateBlockNote,
 } from "@/components/ElearnerNoteEditor";
 import { useEditorChange } from "@blocknote/react";
+import { postPracticeTask } from "../actions";
 
 export default function Upsert({ learnId }: { learnId: number }) {
   const { practiceTaskForm, togglePracticeTaskForm } =

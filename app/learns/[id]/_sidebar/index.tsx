@@ -1,4 +1,4 @@
-import { AnswerType } from "../knowledge-test/_flash-cards/types";
+import { AnswerType } from "../_flashcard-form/types";
 import { Sidebar as ClientSidebar } from "./client";
 import { prisma } from "@/prisma";
 

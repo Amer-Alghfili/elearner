@@ -31,10 +31,10 @@ import {
 import { usePathname } from "next/navigation";
 import { NotebookType } from "../[notebookId]";
 import { useLearnControlManagement } from "../LearnPageContainer";
-import { Flashcard } from "../knowledge-test/_flash-cards/types";
+import { Flashcard } from "../_flashcard-form/types";
 import { Remove as RemoveFlashcard } from "../_flashcard-form/Remove";
 import TruncateText from "@/components/TruncateText";
-import { PracticeTask } from "../knowledge-test/_practice-tasks/types";
+import { PracticeTask } from "../_practice-task-form/types";
 import { RemovePracticeTask } from "../_practice-task-form/Remove";
 
 export function Sidebar({

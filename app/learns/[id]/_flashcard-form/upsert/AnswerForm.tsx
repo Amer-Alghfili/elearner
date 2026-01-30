@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/select";
 import { LuTrash } from "react-icons/lu";
 import { useController, useFormContext } from "react-hook-form";
-import { Flashcard } from "../../knowledge-test/_flash-cards/types";
+import { Flashcard } from "../types";
 
 export function AnswerForm() {
   const { formState, register, control, setValue } =

@@ -4,8 +4,8 @@ import { Flex, Box } from "@chakra-ui/react";
 import React from "react";
 import Header from "@/components/Header";
 import { FlashcardForm } from "./_flashcard-form";
-import { Flashcard } from "./knowledge-test/_flash-cards/types";
-import { PracticeTask } from "./knowledge-test/_practice-tasks/types";
+import { Flashcard } from "./_flashcard-form/types";
+import { PracticeTask } from "./_practice-task-form/types";
 import { PracticeTaskForm } from "./_practice-task-form";
 
 type FlashcardFormType = { flashcard?: Flashcard; open: boolean };

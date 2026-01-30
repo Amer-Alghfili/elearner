@@ -4,8 +4,8 @@ import { FormProvider, useForm } from "react-hook-form";
 import { toaster } from "@/components/ui/toaster";
 import { useRouter } from "next/navigation";
 import { AnswerForm } from "./AnswerForm";
-import { Flashcard } from "../../knowledge-test/_flash-cards/types";
-import { postFlashCard } from "../../knowledge-test/_flash-cards/actions";
+import { Flashcard } from "../types";
+import { postFlashCard } from "../actions";
 import { useLearnControlManagement } from "../../LearnPageContainer";
 import React from "react";
 

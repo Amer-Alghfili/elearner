@@ -4,13 +4,13 @@ import { LuTrash } from "react-icons/lu";
 import { useRouter } from "next/navigation";
 import { toaster } from "@/components/ui/toaster";
 import RemoveButton from "@/components/button/remove";
-import { deleteFlashCard } from "../knowledge-test/_flash-cards/actions";
+import { deleteFlashcard } from "./actions";
 
 export function Remove({ id }: { id: number }) {
   const router = useRouter();
 
   const [state, action, loading] = React.useActionState(
-    deleteFlashCard,
+    deleteFlashcard,
     undefined
   );
 
