@@ -69,8 +69,11 @@ export default function Upsert({ learnId }: { learnId: number }) {
         py="7em"
         gap="3em"
       >
-        {/* TODO: Change heading based on edit or create */}
-        <Heading as="h2">New Practice Task</Heading>
+        <Heading as="h2">
+          {practiceTaskForm.practiceTask == null
+            ? "New Practice Task"
+            : `Update '${practiceTaskForm.practiceTask.title}'`}
+        </Heading>
         <Stack gap="1em">
           <Field
             required={true}

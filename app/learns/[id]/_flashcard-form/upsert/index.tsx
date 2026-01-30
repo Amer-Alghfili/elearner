@@ -59,8 +59,11 @@ export default function Upsert({ learnId }: { learnId: number }) {
         py="7em"
         gap="3em"
       >
-        {/* TODO: Change heading based on edit or create */}
-        <Heading as="h2">New Flashcard</Heading>
+        <Heading as="h2">
+          {flashcardForm.flashcard == null
+            ? "New Flashcard"
+            : `Update '${flashcardForm.flashcard.question}'`}
+        </Heading>
         <Stack gap="1em">
           <Field
             required={true}
