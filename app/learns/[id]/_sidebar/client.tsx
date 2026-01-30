@@ -9,6 +9,9 @@ import {
   Link,
   IconProps,
   LinkProps,
+  LinkBox,
+  LinkOverlay,
+  Button,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import {
@@ -18,7 +21,7 @@ import {
   LinkWithFolderIcon,
   NotebookIcon,
 } from "@/components/Icons";
-import { LuChevronRight } from "react-icons/lu";
+import { LuChevronRight, LuTrash } from "react-icons/lu";
 import React from "react";
 import {
   MenuContent,
@@ -30,6 +33,9 @@ import { usePathname } from "next/navigation";
 import { NotebookType } from "../[notebookId]";
 import { useLearnControlManagement } from "../LearnPageContainer";
 import { Flashcard } from "../knowledge-test/_flash-cards/types";
+import RemoveButton from "@/components/button/remove";
+import { deleteFlashCard } from "../knowledge-test/_flash-cards/actions";
+import { Remove } from "../_flashcard-form/Remove";
 
 export function Sidebar({
   notebooks,
@@ -88,13 +94,18 @@ export function Sidebar({
         <SidebarLinksGroup
           icon={<BulbWithFolderIcon />}
           subLinks={flashcards.map((flashcard) => (
-            <SidebarSubLink
-              key={flashcard.id}
-              href=""
-              onClick={() => toggleFlashcardForm({ flashcard })}
-            >
-              {flashcard.question}
-            </SidebarSubLink>
+            <LinkBox key={flashcard.id}>
+              <SidebarSubLink
+                href=""
+                display="flex"
+                justifyContent="space-between"
+              >
+                <LinkOverlay onClick={() => toggleFlashcardForm({ flashcard })}>
+                  {flashcard.question}
+                </LinkOverlay>
+                <Remove id={flashcard.id} />
+              </SidebarSubLink>
+            </LinkBox>
           ))}
         >
           Flashcards
@@ -211,7 +222,7 @@ function SidebarLink({
 function SidebarSubLink(props: LinkProps) {
   const pathname = usePathname();
 
-  const isActive = pathname.endsWith(props.href as string);
+  const isActive = props.href !== "" && pathname.endsWith(props.href as string);
 
   return (
     <Link
