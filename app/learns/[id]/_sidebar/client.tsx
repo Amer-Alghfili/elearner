@@ -9,7 +9,6 @@ import {
   Link,
   IconProps,
   LinkProps,
-  Box,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import {
@@ -20,7 +19,6 @@ import {
   NotebookIcon,
 } from "@/components/Icons";
 import { LuChevronRight } from "react-icons/lu";
-import { NotebookType } from "../[notebookId]";
 import React from "react";
 import {
   MenuContent,
@@ -29,88 +27,67 @@ import {
   MenuTrigger,
 } from "@/components/ui/menu";
 import { usePathname } from "next/navigation";
-import Header from "@/components/Header";
+import { NotebookType } from "../[notebookId]";
+import { useLearnControlManagement } from "../LearnPageContainer";
 
-const SidebarContext = React.createContext<{ open: boolean }>({ open: true });
-function useSidebar() {
-  return React.useContext(SidebarContext);
-}
-
-export function SidebarContent({
-  notebooks,
-  children,
-}: {
-  notebooks: NotebookType[];
-  children: React.ReactNode;
-}) {
-  const [open, setOpen] = React.useState(true);
+export function Sidebar({ notebooks }: { notebooks: NotebookType[] }) {
+  const { sidebarExpanded, toggleSidebar } = useLearnControlManagement();
 
   return (
-    <Flex alignItems="flex-start" ps={{ base: 0, sm: 0, md: 0 }}>
-      <Box
-        ps={open ? "17rem" : "4rem"}
-        w="full"
-        transition="padding 0.3s ease-in-out"
+    <Stack
+      position="fixed"
+      top={0}
+      bottom={0}
+      left={0}
+      overflow="auto"
+      w={sidebarExpanded ? "20rem" : "4rem"}
+      px={sidebarExpanded ? "1.5em" : 0}
+      pt="2em"
+      gap="2em"
+      borderWidth="1px"
+      borderColor="stroke"
+      bg="neutral.surface"
+      transition="width 0.3s ease-in-out"
+    >
+      <Flex
+        gap="1em"
+        justifyContent="space-between"
+        alignItems="center"
+        flexDirection={sidebarExpanded ? "row" : "column"}
       >
-        <Header withLogo={false} />
-        <Box pt="3em">{children}</Box>
-      </Box>
-      <Stack
-        position="fixed"
-        top={0}
-        bottom={0}
-        left={0}
-        overflow="auto"
-        w={open ? "20rem" : "4rem"}
-        px={open ? "1.5em" : 0}
-        pt="2em"
-        gap="2em"
-        borderWidth="1px"
-        borderColor="stroke"
-        bg="neutral.surface"
-        transition="width 0.3s ease-in-out"
-      >
-        <Flex
-          gap="1em"
-          justifyContent="space-between"
-          alignItems="center"
-          flexDirection={open ? "row" : "column"}
+        <Logo short={!sidebarExpanded} />
+        <IconButton
+          h="auto"
+          border="none"
+          variant="plain"
+          onClick={toggleSidebar}
         >
-          <Logo short={!open} />
-          <IconButton
-            h="auto"
-            border="none"
-            variant="plain"
-            onClick={() => setOpen((prev) => !prev)}
-          >
-            <BurgerIcon />
-          </IconButton>
-        </Flex>
-        <SidebarContext.Provider value={{ open }}>
-          <Stack alignItems={open ? "flex-start" : "center"} gap="1.5em">
-            <SidebarLinksGroup
-              icon={<NotebookIcon />}
-              subLinks={notebooks.map((notebook) => (
-                <SidebarSubLink key={notebook.id} href={notebook.id.toString()}>
-                  {notebook.title}
-                </SidebarSubLink>
-              ))}
-            >
-              Notebooks
-            </SidebarLinksGroup>
-            <SidebarLinksGroup icon={<BulbWithFolderIcon />} subLinks={[]}>
-              Flashcards
-            </SidebarLinksGroup>
-            <SidebarLinksGroup icon={<KeyboardIcon />} subLinks={[]}>
-              Practice Tasks
-            </SidebarLinksGroup>
-            <SidebarLinksGroup icon={<LinkWithFolderIcon />} subLinks={[]}>
-              Resources
-            </SidebarLinksGroup>
-          </Stack>
-        </SidebarContext.Provider>
+          <BurgerIcon />
+        </IconButton>
+      </Flex>
+
+      <Stack alignItems={sidebarExpanded ? "flex-start" : "center"} gap="1.5em">
+        <SidebarLinksGroup
+          icon={<NotebookIcon />}
+          subLinks={notebooks.map((notebook) => (
+            <SidebarSubLink key={notebook.id} href={notebook.id.toString()}>
+              {notebook.title}
+            </SidebarSubLink>
+          ))}
+        >
+          Notebooks
+        </SidebarLinksGroup>
+        <SidebarLinksGroup icon={<BulbWithFolderIcon />} subLinks={[]}>
+          Flashcards
+        </SidebarLinksGroup>
+        <SidebarLinksGroup icon={<KeyboardIcon />} subLinks={[]}>
+          Practice Tasks
+        </SidebarLinksGroup>
+        <SidebarLinksGroup icon={<LinkWithFolderIcon />} subLinks={[]}>
+          Resources
+        </SidebarLinksGroup>
       </Stack>
-    </Flex>
+    </Stack>
   );
 }
 
@@ -123,15 +100,18 @@ function SidebarLinksGroup({
   icon: React.ReactElement<IconProps>;
   children: React.ReactNode;
 }) {
-  const { open } = useSidebar();
+  const { sidebarExpanded } = useLearnControlManagement();
 
   if (!subLinks.length) {
     return <SidebarLink icon={icon}>{children}</SidebarLink>;
   }
 
-  if (open) {
+  if (sidebarExpanded) {
     return (
-      <Collapsible.Root w={open ? "full" : "auto"} textStyle="md-semibold">
+      <Collapsible.Root
+        w={sidebarExpanded ? "full" : "auto"}
+        textStyle="md-semibold"
+      >
         <Collapsible.Trigger
           w="full"
           justifyContent="space-between"
@@ -141,7 +121,7 @@ function SidebarLinksGroup({
           gap="0.5rem"
         >
           <SidebarLink icon={icon}>{children}</SidebarLink>
-          {open && (
+          {sidebarExpanded && (
             <Collapsible.Indicator
               transition="transform 0.2s"
               color="text.secondary"
@@ -187,13 +167,13 @@ function SidebarLink({
   icon: React.ReactElement<IconProps>;
   children: React.ReactNode;
 }) {
-  const { open } = useSidebar();
+  const { sidebarExpanded } = useLearnControlManagement();
 
   const mappedIcon = React.cloneElement(icon, {
     stroke: "text.secondary",
   });
 
-  if (!open) return mappedIcon;
+  if (!sidebarExpanded) return mappedIcon;
 
   return (
     <Flex

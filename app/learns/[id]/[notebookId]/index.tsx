@@ -12,6 +12,7 @@ import { useDebounce } from "use-debounce";
 import { Button, Flex, Input, Stack } from "@chakra-ui/react";
 import { Field } from "@/components/ui/field";
 import { PlusIcon } from "@/components/Icons";
+import { useLearnControlManagement } from "../LearnPageContainer";
 
 export type NotebookType = {
   id: number;
@@ -22,6 +23,8 @@ export function Notebook({ notebook }: { notebook: NotebookType }) {
   const { id, title, blocks = [] } = notebook;
 
   const router = useRouter();
+
+  const { toggleForm } = useLearnControlManagement();
 
   function changeTitle(value: string) {
     updateFileTitle(id, value);
@@ -122,6 +125,7 @@ export function Notebook({ notebook }: { notebook: NotebookType }) {
           py="0.3em"
         >
           <Button
+            onClick={toggleForm}
             bg="#dededb"
             borderColor="stroke.thick"
             color="text.secondary"
