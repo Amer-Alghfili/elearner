@@ -1,4 +1,4 @@
-import { Button, Flex, Heading, Input, Stack } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, Input, Stack } from "@chakra-ui/react";
 import { Field } from "@/components/ui/field";
 import {
   FormProvider,
@@ -17,6 +17,8 @@ import {
 } from "@/components/ElearnerNoteEditor";
 import { useEditorChange } from "@blocknote/react";
 import { postPracticeTask } from "../actions";
+import { ClockIcon } from "@/components/Icons";
+import { dateDiffInDays } from "@/util/date";
 
 export default function Upsert({ learnId }: { learnId: number }) {
   const { practiceTaskForm, togglePracticeTaskForm } =
@@ -74,6 +76,16 @@ export default function Upsert({ learnId }: { learnId: number }) {
             ? "New Practice Task"
             : `Update '${practiceTaskForm.practiceTask.title}'`}
         </Heading>
+        {practiceTaskForm.practiceTask != null && (
+          <Flex alignItems="center" gap="0.25em">
+            <ClockIcon w="1.1rem" h="1.1rem" />
+            <Box textStyle="md-medium" color="primary">
+              Due in{" "}
+              {dateDiffInDays(practiceTaskForm.practiceTask.due, new Date())}{" "}
+              days
+            </Box>
+          </Flex>
+        )}
         <Stack gap="1em">
           <Field
             required={true}

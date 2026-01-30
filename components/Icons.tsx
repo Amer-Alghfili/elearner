@@ -370,3 +370,30 @@ export function KeyboardIcon(props: IconProps) {
     </Icon>
   );
 }
+
+export function ClockIcon(props: IconProps) {
+  return (
+    <Icon
+      width="1.5rem"
+      height="1.5rem"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#986D00"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fillOpacity="0.16"
+      strokeWidth="1.5"
+      strokeMiterlimit="10"
+      {...props}
+    >
+      <svg>
+        <path
+          d="M12 22C17.523 22 22 17.523 22 12C22 6.477 17.523 2 12 2C6.477 2 2 6.477 2 12C2 17.523 6.477 22 12 22Z"
+          fill="#986D00"
+          fillOpacity="0.16"
+        />
+        <path d="M12 6V11.8C12 11.853 11.9789 11.9039 11.9414 11.9414C11.9039 11.9789 11.853 12 11.8 12H8M22 12C22 17.523 17.523 22 12 22C6.477 22 2 17.523 2 12C2 6.477 6.477 2 12 2C17.523 2 22 6.477 22 12Z" />
+      </svg>
+    </Icon>
+  );
+}

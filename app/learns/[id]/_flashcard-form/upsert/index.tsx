@@ -8,6 +8,8 @@ import { Flashcard } from "../types";
 import { postFlashCard } from "../actions";
 import { useLearnControlManagement } from "../../LearnPageContainer";
 import React from "react";
+import { dateDiffInDays } from "@/util/date";
+import { ClockIcon } from "@/components/Icons";
 
 export default function Upsert({ learnId }: { learnId: number }) {
   const { flashcardForm, toggleFlashcardForm } = useLearnControlManagement();
@@ -64,6 +66,15 @@ export default function Upsert({ learnId }: { learnId: number }) {
             ? "New Flashcard"
             : `Update '${flashcardForm.flashcard.question}'`}
         </Heading>
+        {flashcardForm.flashcard != null && (
+          <Flex alignItems="center" gap="0.25em">
+            <ClockIcon w="1.1rem" h="1.1rem" />
+            <Box textStyle="md-medium" color="primary">
+              Due in {dateDiffInDays(flashcardForm.flashcard.due, new Date())}
+              days
+            </Box>
+          </Flex>
+        )}
         <Stack gap="1em">
           <Field
             required={true}
