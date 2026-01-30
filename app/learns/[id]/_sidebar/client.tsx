@@ -11,7 +11,6 @@ import {
   LinkProps,
   LinkBox,
   LinkOverlay,
-  Button,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import {
@@ -21,7 +20,7 @@ import {
   LinkWithFolderIcon,
   NotebookIcon,
 } from "@/components/Icons";
-import { LuChevronRight, LuTrash } from "react-icons/lu";
+import { LuChevronRight } from "react-icons/lu";
 import React from "react";
 import {
   MenuContent,
@@ -33,9 +32,8 @@ import { usePathname } from "next/navigation";
 import { NotebookType } from "../[notebookId]";
 import { useLearnControlManagement } from "../LearnPageContainer";
 import { Flashcard } from "../knowledge-test/_flash-cards/types";
-import RemoveButton from "@/components/button/remove";
-import { deleteFlashCard } from "../knowledge-test/_flash-cards/actions";
 import { Remove } from "../_flashcard-form/Remove";
+import TruncateText from "@/components/TruncateText";
 
 export function Sidebar({
   notebooks,
@@ -100,9 +98,13 @@ export function Sidebar({
                 display="flex"
                 justifyContent="space-between"
               >
-                <LinkOverlay onClick={() => toggleFlashcardForm({ flashcard })}>
-                  {flashcard.question}
-                </LinkOverlay>
+                <TruncateText>
+                  <LinkOverlay
+                    onClick={() => toggleFlashcardForm({ flashcard })}
+                  >
+                    {flashcard.question}
+                  </LinkOverlay>
+                </TruncateText>
                 <Remove id={flashcard.id} />
               </SidebarSubLink>
             </LinkBox>
