@@ -32,18 +32,25 @@ import { usePathname } from "next/navigation";
 import { NotebookType } from "../[notebookId]";
 import { useLearnControlManagement } from "../LearnPageContainer";
 import { Flashcard } from "../knowledge-test/_flash-cards/types";
-import { Remove } from "../_flashcard-form/Remove";
+import { Remove as RemoveFlashcard } from "../_flashcard-form/Remove";
 import TruncateText from "@/components/TruncateText";
+import { PracticeTask } from "../knowledge-test/_practice-tasks/types";
 
 export function Sidebar({
   notebooks,
   flashcards,
+  practiceTasks,
 }: {
   notebooks: NotebookType[];
   flashcards: Flashcard[];
+  practiceTasks: PracticeTask[];
 }) {
-  const { sidebarExpanded, toggleSidebar, toggleFlashcardForm } =
-    useLearnControlManagement();
+  const {
+    sidebarExpanded,
+    toggleSidebar,
+    toggleFlashcardForm,
+    togglePracticeTaskForm,
+  } = useLearnControlManagement();
 
   return (
     <Stack
@@ -105,14 +112,34 @@ export function Sidebar({
                     {flashcard.question}
                   </LinkOverlay>
                 </TruncateText>
-                <Remove id={flashcard.id} />
+                <RemoveFlashcard id={flashcard.id} />
               </SidebarSubLink>
             </LinkBox>
           ))}
         >
           Flashcards
         </SidebarLinksGroup>
-        <SidebarLinksGroup icon={<KeyboardIcon />} subLinks={[]}>
+        <SidebarLinksGroup
+          icon={<KeyboardIcon />}
+          subLinks={practiceTasks.map((practiceTask) => (
+            <LinkBox key={practiceTask.id}>
+              <SidebarSubLink
+                href=""
+                display="flex"
+                justifyContent="space-between"
+              >
+                <TruncateText>
+                  <LinkOverlay
+                    onClick={() => togglePracticeTaskForm({ practiceTask })}
+                  >
+                    {practiceTask.title}
+                  </LinkOverlay>
+                </TruncateText>
+                {/* <Remove id={practiceTask.id} /> */}
+              </SidebarSubLink>
+            </LinkBox>
+          ))}
+        >
           Practice Tasks
         </SidebarLinksGroup>
         <SidebarLinksGroup icon={<LinkWithFolderIcon />} subLinks={[]}>

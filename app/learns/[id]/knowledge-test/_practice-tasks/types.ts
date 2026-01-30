@@ -4,4 +4,5 @@ export type PracticeTask = {
   description: string;
   stage: string | null;
   due: Date;
+  learn_id: number;
 };

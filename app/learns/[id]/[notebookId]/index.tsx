@@ -24,7 +24,8 @@ export function Notebook({ notebook }: { notebook: NotebookType }) {
 
   const router = useRouter();
 
-  const { toggleFlashcardForm } = useLearnControlManagement();
+  const { toggleFlashcardForm, togglePracticeTaskForm } =
+    useLearnControlManagement();
 
   function changeTitle(value: string) {
     updateFileTitle(id, value);
@@ -138,6 +139,7 @@ export function Notebook({ notebook }: { notebook: NotebookType }) {
             Flashcard
           </Button>
           <Button
+            onClick={() => togglePracticeTaskForm({})}
             bg="#dededb"
             borderColor="stroke.thick"
             color="text.secondary"

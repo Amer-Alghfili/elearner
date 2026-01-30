@@ -25,6 +25,15 @@ export async function Sidebar({ learnId }: { learnId: number }) {
     },
   });
 
+  const practiceTasks = await prisma.practiceTask.findMany({
+    where: {
+      learn_id: learnId,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
   return (
     <ClientSidebar
       notebooks={notebooks}
@@ -33,6 +42,7 @@ export async function Sidebar({ learnId }: { learnId: number }) {
         answerType: flashcard.answerType as AnswerType,
         options: flashcard.options as string[] | null,
       }))}
+      practiceTasks={practiceTasks}
     />
   );
 }

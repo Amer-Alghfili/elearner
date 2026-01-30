@@ -5,17 +5,28 @@ import React from "react";
 import Header from "@/components/Header";
 import { FlashcardForm } from "./_flashcard-form";
 import { Flashcard } from "./knowledge-test/_flash-cards/types";
+import { PracticeTask } from "./knowledge-test/_practice-tasks/types";
+import { PracticeTaskForm } from "./_practice-task-form";
 
 type FlashcardFormType = { flashcard?: Flashcard; open: boolean };
+type PracticeTaskFormType = { practiceTask?: PracticeTask; open: boolean };
 const LearnControlManagementContext = React.createContext<{
   sidebarExpanded: boolean;
   flashcardForm: FlashcardFormType;
   toggleFlashcardForm: ({ flashcard }: { flashcard?: Flashcard }) => void;
+  practiceTaskForm: PracticeTaskFormType;
+  togglePracticeTaskForm: ({
+    practiceTask,
+  }: {
+    practiceTask?: PracticeTask;
+  }) => void;
   toggleSidebar: VoidFunction;
 }>({
   sidebarExpanded: true,
   flashcardForm: { open: false },
   toggleFlashcardForm: () => {},
+  practiceTaskForm: { open: false },
+  togglePracticeTaskForm: () => {},
   toggleSidebar: () => {},
 });
 
@@ -36,12 +47,17 @@ export function LearnPageContainer({
   const [flashcardForm, setFlashcardForm] = React.useState<FlashcardFormType>({
     open: false,
   });
+  const [practiceTaskForm, setPracticeTaskForm] =
+    React.useState<PracticeTaskFormType>({
+      open: false,
+    });
 
   const sidebarAlreadyCollapsed = React.useRef<boolean>(false);
 
   function expandSidebar() {
     setSidebarExpanded(true);
     setFlashcardForm({ open: false });
+    setPracticeTaskForm({ open: false });
     sidebarAlreadyCollapsed.current = false;
   }
 
@@ -52,6 +68,7 @@ export function LearnPageContainer({
 
   function openFlashcardForm({ flashcard }: { flashcard?: Flashcard } = {}) {
     setSidebarExpanded(false);
+    setPracticeTaskForm({ open: false });
 
     const obj: FlashcardFormType = { open: true };
     if (flashcard) {
@@ -59,6 +76,20 @@ export function LearnPageContainer({
     }
 
     setFlashcardForm(obj);
+  }
+
+  function openPracticeTaskForm({
+    practiceTask,
+  }: { practiceTask?: PracticeTask } = {}) {
+    setSidebarExpanded(false);
+    setFlashcardForm({ open: false });
+
+    const obj: PracticeTaskFormType = { open: true };
+    if (practiceTask) {
+      obj.practiceTask = { ...practiceTask };
+    }
+
+    setPracticeTaskForm(obj);
   }
 
   function closeFlashcardForm() {
@@ -69,9 +100,24 @@ export function LearnPageContainer({
     }
   }
 
+  function closePracticeTaskForm() {
+    setPracticeTaskForm({ open: false });
+    // expand sidebar if it was not already collapsed by the user
+    if (!sidebarAlreadyCollapsed.current) {
+      setSidebarExpanded(true);
+    }
+  }
+
   function toggleFlashcardForm({ flashcard }: { flashcard?: Flashcard } = {}) {
     if (flashcardForm.open) closeFlashcardForm();
     else openFlashcardForm({ flashcard });
+  }
+
+  function togglePracticeTaskForm({
+    practiceTask,
+  }: { practiceTask?: PracticeTask } = {}) {
+    if (practiceTaskForm.open) closePracticeTaskForm();
+    else openPracticeTaskForm({ practiceTask });
   }
 
   function toggleSidebar() {
@@ -84,7 +130,9 @@ export function LearnPageContainer({
       value={{
         sidebarExpanded,
         flashcardForm,
+        practiceTaskForm,
         toggleFlashcardForm,
+        togglePracticeTaskForm,
         toggleSidebar,
       }}
     >
@@ -93,7 +141,7 @@ export function LearnPageContainer({
         <Box
           ps={sidebarExpanded ? "17rem" : "4rem"}
           // TODO: Add practice task check
-          pe={flashcardForm.open ? "40vw" : 0}
+          pe={flashcardForm.open || practiceTaskForm.open ? "40vw" : 0}
           w="full"
           transition="padding 0.3s ease-in-out"
         >
@@ -102,6 +150,7 @@ export function LearnPageContainer({
         </Box>
       </Flex>
       {flashcardForm.open && <FlashcardForm learnId={learnId} />}
+      {practiceTaskForm.open && <PracticeTaskForm learnId={learnId} />}
     </LearnControlManagementContext.Provider>
   );
 }

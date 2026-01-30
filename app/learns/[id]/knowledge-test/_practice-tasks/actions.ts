@@ -40,21 +40,20 @@ export async function deletePracticeTask(
 }
 
 export async function postPracticeTask(
-  _: unknown,
-  formData: FormData
+  practiceTask: PracticeTask
 ): Promise<State<PracticeTask>> {
   const validate = z
     .object({
+      id: z.number("Invalid ID").optional(),
+      learn_id: z.number("Invalid LID"),
       title: z.string("Invalid title"),
       description: z.string("Invalid description"),
     })
-    .safeParse(Object.fromEntries(formData.entries()));
+    .safeParse(practiceTask);
 
   if (validate.success) {
     const { data } = validate;
-
-    const learnId = Number(formData.get("learnId"));
-    const id = formData.get("id");
+    const { id } = data;
 
     if (id == null) {
       const due = calculateDueDate(0);
@@ -64,11 +63,12 @@ export async function postPracticeTask(
           ...data,
           due,
           stage: "0",
-          learn_id: learnId,
         },
       });
 
-      return { data: created };
+      return {
+        data: created,
+      };
     } else {
       const updated = await prisma.practiceTask.update({
         where: {
@@ -77,7 +77,9 @@ export async function postPracticeTask(
         data,
       });
 
-      return { data: updated };
+      return {
+        data: updated,
+      };
     }
   } else {
     return { error: validate.error.issues.map((i) => i.message).join("\n") };
