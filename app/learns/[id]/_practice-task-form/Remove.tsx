@@ -4,13 +4,13 @@ import { LuTrash } from "react-icons/lu";
 import { useRouter } from "next/navigation";
 import { toaster } from "@/components/ui/toaster";
 import RemoveButton from "@/components/button/remove";
-import { deleteFlashCard } from "../knowledge-test/_flash-cards/actions";
+import { deletePracticeTask } from "../knowledge-test/_practice-tasks/actions";
 
-export function Remove({ id }: { id: number }) {
+export function RemovePracticeTask({ id }: { id: number }) {
   const router = useRouter();
 
   const [state, action, loading] = React.useActionState(
-    deleteFlashCard,
+    deletePracticeTask,
     undefined
   );
 
@@ -31,7 +31,7 @@ export function Remove({ id }: { id: number }) {
       router.refresh();
 
       toaster.create({
-        title: "Flash card has been deleted successfully",
+        title: "Practice task has been deleted successfully",
         type: "success",
         closable: true,
       });

@@ -35,6 +35,7 @@ import { Flashcard } from "../knowledge-test/_flash-cards/types";
 import { Remove as RemoveFlashcard } from "../_flashcard-form/Remove";
 import TruncateText from "@/components/TruncateText";
 import { PracticeTask } from "../knowledge-test/_practice-tasks/types";
+import { RemovePracticeTask } from "../_practice-task-form/Remove";
 
 export function Sidebar({
   notebooks,
@@ -99,8 +100,9 @@ export function Sidebar({
         <SidebarLinksGroup
           icon={<BulbWithFolderIcon />}
           subLinks={flashcards.map((flashcard) => (
-            <LinkBox key={flashcard.id}>
+            <LinkBox key={flashcard.id} w="full">
               <SidebarSubLink
+                w="full"
                 href=""
                 display="flex"
                 justifyContent="space-between"
@@ -122,8 +124,9 @@ export function Sidebar({
         <SidebarLinksGroup
           icon={<KeyboardIcon />}
           subLinks={practiceTasks.map((practiceTask) => (
-            <LinkBox key={practiceTask.id}>
+            <LinkBox key={practiceTask.id} w="full">
               <SidebarSubLink
+                w="full"
                 href=""
                 display="flex"
                 justifyContent="space-between"
@@ -135,7 +138,7 @@ export function Sidebar({
                     {practiceTask.title}
                   </LinkOverlay>
                 </TruncateText>
-                {/* <Remove id={practiceTask.id} /> */}
+                <RemovePracticeTask id={practiceTask.id} />
               </SidebarSubLink>
             </LinkBox>
           ))}
@@ -202,7 +205,7 @@ function SidebarLinksGroup({
       <MenuTrigger>
         <SidebarLink icon={icon}>{children}</SidebarLink>
       </MenuTrigger>
-      <MenuContent>
+      <MenuContent maxW="25em">
         {subLinks.map((subLink, index) => (
           <MenuItem
             key={index}
