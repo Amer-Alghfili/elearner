@@ -140,7 +140,6 @@ export function LearnPageContainer({
       <Flex alignItems="flex-start" ps={{ base: 0, sm: 0, md: 0 }}>
         <Box
           ps={sidebarExpanded ? "17rem" : "4rem"}
-          // TODO: Add practice task check
           pe={flashcardForm.open || practiceTaskForm.open ? "40vw" : 0}
           w="full"
           transition="padding 0.3s ease-in-out"

@@ -21,6 +21,9 @@ export default async function LearnPage({
     },
   });
 
+  //TODO: Not found
+  if (notebook == null) return <h1>Not found!</h1>;
+
   return (
     <Notebook
       notebook={{

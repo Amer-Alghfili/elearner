@@ -18,10 +18,42 @@ export async function deleteLearn(id: number) {
   try {
     const data = await auth();
 
-    await prisma.learn.delete({
+    const learn = await prisma.learn.findFirst({
       where: {
         id,
       },
+    });
+
+    if (!learn) {
+      throw new Error("Learn not found");
+    }
+
+    const notebooks = await prisma.noteFile.findMany({
+      where: {
+        learn_id: id,
+      },
+    });
+
+    await prisma.$transaction(async (prisma) => {
+      await prisma.noteFileBlock.deleteMany({
+        where: {
+          file_id: {
+            in: notebooks.map((notebook) => notebook.id),
+          },
+        },
+      });
+
+      await prisma.noteFile.deleteMany({
+        where: {
+          learn_id: id,
+        },
+      });
+
+      await prisma.learn.deleteMany({
+        where: {
+          id,
+        },
+      });
     });
 
     return await prisma.learn.findMany({
