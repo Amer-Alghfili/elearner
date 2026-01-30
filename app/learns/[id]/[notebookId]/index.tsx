@@ -24,7 +24,7 @@ export function Notebook({ notebook }: { notebook: NotebookType }) {
 
   const router = useRouter();
 
-  const { toggleForm } = useLearnControlManagement();
+  const { toggleFlashcardForm } = useLearnControlManagement();
 
   function changeTitle(value: string) {
     updateFileTitle(id, value);
@@ -125,7 +125,7 @@ export function Notebook({ notebook }: { notebook: NotebookType }) {
           py="0.3em"
         >
           <Button
-            onClick={toggleForm}
+            onClick={() => toggleFlashcardForm({})}
             bg="#dededb"
             borderColor="stroke.thick"
             color="text.secondary"

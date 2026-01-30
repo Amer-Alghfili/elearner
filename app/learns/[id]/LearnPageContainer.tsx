@@ -3,16 +3,19 @@
 import { Flex, Box } from "@chakra-ui/react";
 import React from "react";
 import Header from "@/components/Header";
+import { FlashcardForm } from "./_flashcard-form";
+import { Flashcard } from "./knowledge-test/_flash-cards/types";
 
+type FlashcardFormType = { flashcard?: Flashcard; open: boolean };
 const LearnControlManagementContext = React.createContext<{
   sidebarExpanded: boolean;
-  formOpen: boolean;
-  toggleForm: VoidFunction;
+  flashcardForm: FlashcardFormType;
+  toggleFlashcardForm: ({ flashcard }: { flashcard?: Flashcard }) => void;
   toggleSidebar: VoidFunction;
 }>({
   sidebarExpanded: true,
-  formOpen: false,
-  toggleForm: () => {},
+  flashcardForm: { open: false },
+  toggleFlashcardForm: () => {},
   toggleSidebar: () => {},
 });
 
@@ -21,22 +24,25 @@ export function useLearnControlManagement() {
 }
 
 export function LearnPageContainer({
+  learnId,
   Sidebar,
   children,
 }: {
+  learnId: number;
   Sidebar: React.ReactNode;
   children: React.ReactNode;
 }) {
   const [sidebarExpanded, setSidebarExpanded] = React.useState(true);
-  const [formOpen, setFormOpen] = React.useState(false);
+  const [flashcardForm, setFlashcardForm] = React.useState<FlashcardFormType>({
+    open: false,
+  });
 
   const sidebarAlreadyCollapsed = React.useRef<boolean>(false);
 
   function expandSidebar() {
     setSidebarExpanded(true);
-    setFormOpen(false);
+    setFlashcardForm({ open: false });
     sidebarAlreadyCollapsed.current = false;
-    //TODO: reset form state if any
   }
 
   function collapseSidebar() {
@@ -44,23 +50,28 @@ export function LearnPageContainer({
     sidebarAlreadyCollapsed.current = true;
   }
 
-  function openForm() {
-    setFormOpen(true);
+  function openFlashcardForm({ flashcard }: { flashcard?: Flashcard } = {}) {
     setSidebarExpanded(false);
+
+    const obj: FlashcardFormType = { open: true };
+    if (flashcard) {
+      obj.flashcard = { ...flashcard };
+    }
+
+    setFlashcardForm(obj);
   }
 
-  function closeForm() {
-    setFormOpen(false);
+  function closeFlashcardForm() {
+    setFlashcardForm({ open: false });
     // expand sidebar if it was not already collapsed by the user
     if (!sidebarAlreadyCollapsed.current) {
       setSidebarExpanded(true);
     }
-    //TODO: reset form state if any
   }
 
-  function toggleForm() {
-    if (formOpen) closeForm();
-    else openForm();
+  function toggleFlashcardForm({ flashcard }: { flashcard?: Flashcard } = {}) {
+    if (flashcardForm.open) closeFlashcardForm();
+    else openFlashcardForm({ flashcard });
   }
 
   function toggleSidebar() {
@@ -72,8 +83,8 @@ export function LearnPageContainer({
     <LearnControlManagementContext.Provider
       value={{
         sidebarExpanded,
-        formOpen,
-        toggleForm,
+        flashcardForm,
+        toggleFlashcardForm,
         toggleSidebar,
       }}
     >
@@ -81,6 +92,8 @@ export function LearnPageContainer({
       <Flex alignItems="flex-start" ps={{ base: 0, sm: 0, md: 0 }}>
         <Box
           ps={sidebarExpanded ? "17rem" : "4rem"}
+          // TODO: Add practice task check
+          pe={flashcardForm.open ? "40vw" : 0}
           w="full"
           transition="padding 0.3s ease-in-out"
         >
@@ -88,7 +101,7 @@ export function LearnPageContainer({
           <Box pt="3em">{children}</Box>
         </Box>
       </Flex>
-      {/* TODO: practice task and flashcard forms */}
+      <FlashcardForm learnId={learnId} />
     </LearnControlManagementContext.Provider>
   );
 }

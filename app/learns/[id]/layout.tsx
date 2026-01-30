@@ -31,7 +31,10 @@ export default async function LearnPageLayout({
 
   return (
     <Scaffold>
-      <LearnPageContainer Sidebar={<Sidebar learnId={learnId} />}>
+      <LearnPageContainer
+        learnId={learnId}
+        Sidebar={<Sidebar learnId={learnId} />}
+      >
         {children}
       </LearnPageContainer>
     </Scaffold>
