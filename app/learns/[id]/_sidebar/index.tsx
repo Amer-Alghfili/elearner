@@ -1,3 +1,4 @@
+import { AnswerType } from "../knowledge-test/_flash-cards/types";
 import { Sidebar as ClientSidebar } from "./client";
 import { prisma } from "@/prisma";
 
@@ -15,5 +16,23 @@ export async function Sidebar({ learnId }: { learnId: number }) {
     },
   });
 
-  return <ClientSidebar notebooks={notebooks} />;
+  const flashcards = await prisma.flashCard.findMany({
+    where: {
+      learn_id: learnId,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  return (
+    <ClientSidebar
+      notebooks={notebooks}
+      flashcards={flashcards.map((flashcard) => ({
+        ...flashcard,
+        answerType: flashcard.answerType as AnswerType,
+        options: flashcard.options as string[] | null,
+      }))}
+    />
+  );
 }

@@ -101,7 +101,7 @@ export function LearnPageContainer({
           <Box pt="3em">{children}</Box>
         </Box>
       </Flex>
-      <FlashcardForm learnId={learnId} />
+      {flashcardForm.open && <FlashcardForm learnId={learnId} />}
     </LearnControlManagementContext.Provider>
   );
 }

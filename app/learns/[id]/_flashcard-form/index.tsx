@@ -1,9 +1,19 @@
 import { useLearnControlManagement } from "../LearnPageContainer";
 import { Stack } from "@chakra-ui/react";
 import Upsert from "./upsert";
+import React from "react";
 
 export function FlashcardForm({ learnId }: { learnId: number }) {
   const { flashcardForm } = useLearnControlManagement();
+
+  const [width, setWidth] = React.useState("0");
+
+  React.useEffect(() => {
+    if (flashcardForm.open) {
+      const timer = setTimeout(() => setWidth("40vw"), 0);
+      return () => clearTimeout(timer);
+    }
+  }, [flashcardForm.open]);
 
   return (
     <Stack
@@ -13,7 +23,7 @@ export function FlashcardForm({ learnId }: { learnId: number }) {
       top={0}
       bottom={0}
       overflow="auto"
-      w={flashcardForm.open ? "40vw" : 0}
+      w={width}
       borderInlineStartWidth="1px"
       borderInlineStartColor="stroke"
       transition="width 0.3s ease-in-out"

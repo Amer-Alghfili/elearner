@@ -29,9 +29,17 @@ import {
 import { usePathname } from "next/navigation";
 import { NotebookType } from "../[notebookId]";
 import { useLearnControlManagement } from "../LearnPageContainer";
+import { Flashcard } from "../knowledge-test/_flash-cards/types";
 
-export function Sidebar({ notebooks }: { notebooks: NotebookType[] }) {
-  const { sidebarExpanded, toggleSidebar } = useLearnControlManagement();
+export function Sidebar({
+  notebooks,
+  flashcards,
+}: {
+  notebooks: NotebookType[];
+  flashcards: Flashcard[];
+}) {
+  const { sidebarExpanded, toggleSidebar, toggleFlashcardForm } =
+    useLearnControlManagement();
 
   return (
     <Stack
@@ -77,7 +85,18 @@ export function Sidebar({ notebooks }: { notebooks: NotebookType[] }) {
         >
           Notebooks
         </SidebarLinksGroup>
-        <SidebarLinksGroup icon={<BulbWithFolderIcon />} subLinks={[]}>
+        <SidebarLinksGroup
+          icon={<BulbWithFolderIcon />}
+          subLinks={flashcards.map((flashcard) => (
+            <SidebarSubLink
+              key={flashcard.id}
+              href=""
+              onClick={() => toggleFlashcardForm({ flashcard })}
+            >
+              {flashcard.question}
+            </SidebarSubLink>
+          ))}
+        >
           Flashcards
         </SidebarLinksGroup>
         <SidebarLinksGroup icon={<KeyboardIcon />} subLinks={[]}>
