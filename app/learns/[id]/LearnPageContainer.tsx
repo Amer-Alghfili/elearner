@@ -109,15 +109,27 @@ export function LearnPageContainer({
   }
 
   function toggleFlashcardForm({ flashcard }: { flashcard?: Flashcard } = {}) {
-    if (flashcardForm.open) closeFlashcardForm();
-    else openFlashcardForm({ flashcard });
+    if (flashcardForm.open) {
+      if (flashcard == null) {
+        closeFlashcardForm();
+        return;
+      }
+    }
+
+    openFlashcardForm({ flashcard });
   }
 
   function togglePracticeTaskForm({
     practiceTask,
   }: { practiceTask?: PracticeTask } = {}) {
-    if (practiceTaskForm.open) closePracticeTaskForm();
-    else openPracticeTaskForm({ practiceTask });
+    if (practiceTaskForm.open) {
+      if (practiceTask == null) {
+        closePracticeTaskForm();
+        return;
+      }
+    }
+
+    openPracticeTaskForm({ practiceTask });
   }
 
   function toggleSidebar() {

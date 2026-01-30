@@ -28,7 +28,7 @@ export function FlashcardForm({ learnId }: { learnId: number }) {
       borderInlineStartColor="stroke"
       transition="width 0.3s ease-in-out"
     >
-      <Upsert learnId={learnId} />
+      <Upsert key={flashcardForm.flashcard?.id.toString()} learnId={learnId} />
     </Stack>
   );
 }

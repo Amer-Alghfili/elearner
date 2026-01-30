@@ -28,7 +28,10 @@ export function PracticeTaskForm({ learnId }: { learnId: number }) {
       borderInlineStartColor="stroke"
       transition="width 0.3s ease-in-out"
     >
-      <Upsert learnId={learnId} />
+      <Upsert
+        key={practiceTaskForm.practiceTask?.id.toString()}
+        learnId={learnId}
+      />
     </Stack>
   );
 }
