@@ -28,7 +28,7 @@ import {
   MenuRoot,
   MenuTrigger,
 } from "@/components/ui/menu";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { NotebookType } from "../[notebookId]";
 import { useLearnControlManagement } from "../LearnPageContainer";
 import { Flashcard } from "../_flashcard-form/types";
@@ -50,20 +50,12 @@ export function Sidebar({
   flashcards: Flashcard[];
   practiceTasks: PracticeTask[];
 }) {
-  const router = useRouter();
-
   const {
     sidebarExpanded,
     toggleSidebar,
     toggleFlashcardForm,
     togglePracticeTaskForm,
   } = useLearnControlManagement();
-
-  React.useEffect(() => {
-    if (!notebooks.length) return;
-
-    router.push(notebooks[notebooks.length - 1]?.id.toString() as any);
-  }, [notebooks.length]);
 
   return (
     <Stack
@@ -101,29 +93,21 @@ export function Sidebar({
       <Stack alignItems={sidebarExpanded ? "flex-start" : "center"} gap="1.5em">
         <SidebarLinksGroup
           icon={<NotebookIcon />}
-          subLinks={[
-            <LinkBox key={0} w="full">
-              <SidebarSubLink href="" w="full">
-                <LinkOverlay>
-                  <CreateNotebook learnId={learnId} />
-                </LinkOverlay>
-              </SidebarSubLink>
-            </LinkBox>,
-            ...notebooks.map((notebook) => (
-              <LinkBox key={notebook.id} w="full">
-                <LinkOverlay>
-                  <SidebarSubLink
-                    href={notebook.id.toString()}
-                    display="flex"
-                    justifyContent="space-between"
-                  >
-                    {notebook.title}
-                    <RemoveNotebook id={notebook.id} />
-                  </SidebarSubLink>
-                </LinkOverlay>
-              </LinkBox>
-            )),
-          ]}
+          action={<CreateNotebook learnId={learnId} />}
+          subLinks={notebooks.map((notebook) => (
+            <LinkBox key={notebook.id} w="full">
+              <LinkOverlay>
+                <SidebarSubLink
+                  href={notebook.id.toString()}
+                  display="flex"
+                  justifyContent="space-between"
+                >
+                  {notebook.title}
+                  <RemoveNotebook id={notebook.id} />
+                </SidebarSubLink>
+              </LinkOverlay>
+            </LinkBox>
+          ))}
         >
           Notebooks
         </SidebarLinksGroup>
@@ -186,10 +170,12 @@ export function Sidebar({
 function SidebarLinksGroup({
   subLinks,
   icon,
+  action,
   children,
 }: {
   subLinks: React.ReactNode[];
   icon: React.ReactElement<IconProps>;
+  action?: React.ReactNode;
   children: React.ReactNode;
 }) {
   const { sidebarExpanded } = useLearnControlManagement();
@@ -214,13 +200,16 @@ function SidebarLinksGroup({
         >
           <SidebarLink icon={icon}>{children}</SidebarLink>
           {sidebarExpanded && (
-            <Collapsible.Indicator
-              transition="transform 0.2s"
-              color="text.secondary"
-              _open={{ transform: "rotate(90deg)" }}
-            >
-              <LuChevronRight />
-            </Collapsible.Indicator>
+            <Flex alignItems="center">
+              {action != null && action}
+              <Collapsible.Indicator
+                transition="transform 0.2s"
+                color="text.secondary"
+                _open={{ transform: "rotate(90deg)" }}
+              >
+                <LuChevronRight />
+              </Collapsible.Indicator>
+            </Flex>
           )}
         </Collapsible.Trigger>
         <Collapsible.Content mt="0.7em" ms="1rem">

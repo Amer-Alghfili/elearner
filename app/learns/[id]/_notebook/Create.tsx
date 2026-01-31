@@ -3,18 +3,19 @@ import { useForm } from "react-hook-form";
 import { NotebookType } from "../[notebookId]";
 import { createNotebook } from "./action";
 import { toaster } from "@/components/ui/toaster";
-import { useRouter } from "next/navigation";
-import { Button } from "@chakra-ui/react";
+import { usePathname, useRouter } from "next/navigation";
+import { IconButton } from "@chakra-ui/react";
 
 export function CreateNotebook({ learnId }: { learnId: number }) {
   const router = useRouter();
+  const pathname = usePathname();
 
   const methods = useForm<NotebookType>({
     defaultValues: { learnId, title: "untitled" },
   });
 
   async function submit(notebook: NotebookType) {
-    const { error } = await createNotebook(notebook);
+    const { error, data } = await createNotebook(notebook);
 
     if (error) {
       toaster.create({
@@ -24,6 +25,12 @@ export function CreateNotebook({ learnId }: { learnId: number }) {
       });
     } else {
       router.refresh();
+
+      //TODO:
+      // const split = pathname.split("/");
+      // split.pop();
+
+      // router.push(`${split.join("/")}/${data?.id}` as any);
     }
   }
 
@@ -32,12 +39,12 @@ export function CreateNotebook({ learnId }: { learnId: number }) {
       onSubmit={methods.handleSubmit(submit)}
       onClick={(e) => e.stopPropagation()}
     >
-      <Button
+      <IconButton
         type="submit"
         variant="plain"
         size="sm"
+        _hover={{ bg: "stroke" }}
         p={0}
-        h="auto"
         textStyle="sm-semibold"
       >
         <PlusIcon
@@ -45,8 +52,7 @@ export function CreateNotebook({ learnId }: { learnId: number }) {
           stroke="text.secondary"
           strokeWidth="0.5"
         />
-        New
-      </Button>
+      </IconButton>
     </form>
   );
 }
