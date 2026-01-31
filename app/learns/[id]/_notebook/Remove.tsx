@@ -21,8 +21,9 @@ export function RemoveNotebook({ id }: { id: number }) {
     <RemoveButton
       className="group"
       _hover={{ bg: "stroke" }}
+      h="auto"
       icon={
-        <Icon color="accent.softCoral" w="1.2rem" h="1.2rem">
+        <Icon color="accent.softCoral" w="1rem" h="1rem">
           <LuTrash />
         </Icon>
       }
