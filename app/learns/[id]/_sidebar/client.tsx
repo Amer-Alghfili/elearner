@@ -37,7 +37,6 @@ import TruncateText from "@/components/TruncateText";
 import { PracticeTask } from "../_practice-task-form/types";
 import { RemovePracticeTask } from "../_practice-task-form/Remove";
 import { CreateNotebook } from "../_notebook/Create";
-import { no } from "@blocknote/core/locales";
 import { RemoveNotebook } from "../_notebook/Remove";
 
 export function Sidebar({

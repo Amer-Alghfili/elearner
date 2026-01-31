@@ -21,18 +21,14 @@ export type NotebookType = {
   learnId: number;
 };
 export function Notebook({ notebook }: { notebook: NotebookType }) {
-  const { id, title, blocks = [] } = notebook;
+  const { id, blocks = [] } = notebook;
+
+  const [title, setTitle] = React.useState<string>(notebook.title);
 
   const router = useRouter();
 
   const { toggleFlashcardForm, togglePracticeTaskForm } =
     useLearnControlManagement();
-
-  function changeTitle(value: string) {
-    updateFileTitle(id, value);
-
-    router.refresh();
-  }
 
   const editor = useElearnerCreateBlockNote({
     initialContent:
@@ -55,6 +51,8 @@ export function Notebook({ notebook }: { notebook: NotebookType }) {
   React.useEffect(() => {
     async function syncTitleWithBackend() {
       await updateFileTitle(id, titleValue as string);
+
+      router.refresh();
     }
 
     syncTitleWithBackend();
@@ -115,7 +113,7 @@ export function Notebook({ notebook }: { notebook: NotebookType }) {
             placeholder="Title"
             fontWeight="bold"
             value={title}
-            onChange={({ target }) => changeTitle(target.value)}
+            onChange={({ target }) => setTitle(target.value)}
           />
         </Field>
         <Flex
