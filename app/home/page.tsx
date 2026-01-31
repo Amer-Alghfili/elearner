@@ -22,7 +22,7 @@ export default async function HomePage() {
         },
         take: 1,
         orderBy: {
-          createdAt: "asc",
+          createdAt: "desc",
         },
       },
     },
@@ -35,7 +35,7 @@ export default async function HomePage() {
         <LearnsContainer
           learns={learns.map((learn) => ({
             ...learn,
-            firstNoteFileId: learn.noteFiles[0].id,
+            lastNoteFileId: learn.noteFiles[learn.noteFiles.length - 1].id,
           }))}
         />
       </Stack>

@@ -28,7 +28,7 @@ import {
   MenuRoot,
   MenuTrigger,
 } from "@/components/ui/menu";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { NotebookType } from "../[notebookId]";
 import { useLearnControlManagement } from "../LearnPageContainer";
 import { Flashcard } from "../_flashcard-form/types";
@@ -36,22 +36,34 @@ import { Remove as RemoveFlashcard } from "../_flashcard-form/Remove";
 import TruncateText from "@/components/TruncateText";
 import { PracticeTask } from "../_practice-task-form/types";
 import { RemovePracticeTask } from "../_practice-task-form/Remove";
+import { CreateNotebook } from "../_notebook/CreateNotebook";
+import { no } from "@blocknote/core/locales";
 
 export function Sidebar({
+  learnId,
   notebooks,
   flashcards,
   practiceTasks,
 }: {
-  notebooks: NotebookType[];
+  learnId: number;
+  notebooks: Omit<NotebookType, "learnId">[];
   flashcards: Flashcard[];
   practiceTasks: PracticeTask[];
 }) {
+  const router = useRouter();
+
   const {
     sidebarExpanded,
     toggleSidebar,
     toggleFlashcardForm,
     togglePracticeTaskForm,
   } = useLearnControlManagement();
+
+  React.useEffect(() => {
+    if (!notebooks.length) return;
+
+    router.push(notebooks[notebooks.length - 1]?.id.toString() as any);
+  }, [notebooks.length]);
 
   return (
     <Stack
@@ -89,11 +101,20 @@ export function Sidebar({
       <Stack alignItems={sidebarExpanded ? "flex-start" : "center"} gap="1.5em">
         <SidebarLinksGroup
           icon={<NotebookIcon />}
-          subLinks={notebooks.map((notebook) => (
-            <SidebarSubLink key={notebook.id} href={notebook.id.toString()}>
-              {notebook.title}
-            </SidebarSubLink>
-          ))}
+          subLinks={[
+            <LinkBox key={0} w="full">
+              <SidebarSubLink href="" w="full">
+                <LinkOverlay>
+                  <CreateNotebook learnId={learnId} />
+                </LinkOverlay>
+              </SidebarSubLink>
+            </LinkBox>,
+            ...notebooks.map((notebook) => (
+              <SidebarSubLink key={notebook.id} href={notebook.id.toString()}>
+                {notebook.title}
+              </SidebarSubLink>
+            )),
+          ]}
         >
           Notebooks
         </SidebarLinksGroup>

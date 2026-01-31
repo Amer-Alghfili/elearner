@@ -36,6 +36,7 @@ export async function Sidebar({ learnId }: { learnId: number }) {
 
   return (
     <ClientSidebar
+      learnId={learnId}
       notebooks={notebooks}
       flashcards={flashcards.map((flashcard) => ({
         ...flashcard,

@@ -5,13 +5,12 @@ import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/prisma";
 import { ZodError } from "@/types/error";
 import z from "zod";
-import { da } from "zod/v4/locales";
 
 export type Learn = {
   id: number;
   title: string;
   description: string | null;
-  firstNoteFileId: number | null;
+  lastNoteFileId: number | null;
 };
 
 export async function deleteLearn(id: number) {
@@ -132,7 +131,8 @@ export async function postLearn(
       return result.map((learn) => {
         return {
           ...learn,
-          firstNoteFileId: learn.noteFiles[0]?.id || null,
+          lastNoteFileId:
+            learn.noteFiles[learn.noteFiles.length - 1]?.id ?? null,
         };
       });
     } catch (err) {

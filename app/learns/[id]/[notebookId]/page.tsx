@@ -30,6 +30,7 @@ export default async function LearnPage({
         ...notebook,
         id: notebook?.id as number,
         title: notebook?.title as string,
+        learnId: notebook.learn_id,
       }}
     />
   );

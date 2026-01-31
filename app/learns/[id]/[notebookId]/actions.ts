@@ -1,7 +1,6 @@
 "use server";
 
 import { prisma } from "@/prisma";
-import { NotebookType } from ".";
 
 export async function updateFileTitle(id: number, title: string) {
   await prisma.noteFile.update({
@@ -35,40 +34,4 @@ export async function updateFileBlocks(
   await prisma.noteFileBlock.createMany({
     data: blocks,
   });
-}
-
-export type State = { data?: NotebookType; error?: string | null };
-export async function createFile(_: State, formData: FormData): Promise<State> {
-  const learnId = Number(formData.get("learnId"));
-
-  const file = await prisma.noteFile.create({
-    data: {
-      title: "untitled",
-      emoji: "",
-      learn_id: learnId,
-    },
-  });
-
-  return { data: file, error: null };
-}
-
-export async function deleteFile(
-  prev: State,
-  formData: FormData
-): Promise<State> {
-  const id = Number(formData.get("id"));
-
-  await prisma.noteFileBlock.deleteMany({
-    where: {
-      file_id: id,
-    },
-  });
-
-  const file = await prisma.noteFile.delete({
-    where: {
-      id,
-    },
-  });
-
-  return { data: file, error: null };
 }

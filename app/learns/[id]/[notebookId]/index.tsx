@@ -18,6 +18,7 @@ export type NotebookType = {
   id: number;
   title: string;
   blocks?: any[];
+  learnId: number;
 };
 export function Notebook({ notebook }: { notebook: NotebookType }) {
   const { id, title, blocks = [] } = notebook;
