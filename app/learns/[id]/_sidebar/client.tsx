@@ -36,8 +36,9 @@ import { Remove as RemoveFlashcard } from "../_flashcard-form/Remove";
 import TruncateText from "@/components/TruncateText";
 import { PracticeTask } from "../_practice-task-form/types";
 import { RemovePracticeTask } from "../_practice-task-form/Remove";
-import { CreateNotebook } from "../_notebook/CreateNotebook";
+import { CreateNotebook } from "../_notebook/Create";
 import { no } from "@blocknote/core/locales";
+import { RemoveNotebook } from "../_notebook/Remove";
 
 export function Sidebar({
   learnId,
@@ -110,9 +111,18 @@ export function Sidebar({
               </SidebarSubLink>
             </LinkBox>,
             ...notebooks.map((notebook) => (
-              <SidebarSubLink key={notebook.id} href={notebook.id.toString()}>
-                {notebook.title}
-              </SidebarSubLink>
+              <LinkBox key={notebook.id} w="full">
+                <LinkOverlay>
+                  <SidebarSubLink
+                    href={notebook.id.toString()}
+                    display="flex"
+                    justifyContent="space-between"
+                  >
+                    {notebook.title}
+                    <RemoveNotebook id={notebook.id} />
+                  </SidebarSubLink>
+                </LinkOverlay>
+              </LinkBox>
             )),
           ]}
         >

@@ -1,7 +1,7 @@
 import { PlusIcon } from "@/components/Icons";
 import { useForm } from "react-hook-form";
 import { NotebookType } from "../[notebookId]";
-import { createFile } from "./action";
+import { createNotebook } from "./action";
 import { toaster } from "@/components/ui/toaster";
 import { useRouter } from "next/navigation";
 import { Button } from "@chakra-ui/react";
@@ -14,7 +14,7 @@ export function CreateNotebook({ learnId }: { learnId: number }) {
   });
 
   async function submit(notebook: NotebookType) {
-    const { error } = await createFile(notebook);
+    const { error } = await createNotebook(notebook);
 
     if (error) {
       toaster.create({

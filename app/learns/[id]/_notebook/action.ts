@@ -4,7 +4,7 @@ import { prisma } from "@/prisma";
 import { NotebookType } from "../[notebookId]";
 import { State } from "@/types/server-state";
 
-export async function createFile(
+export async function createNotebook(
   notebook: NotebookType
 ): Promise<State<NotebookType>> {
   const file = await prisma.noteFile.create({
@@ -17,7 +17,7 @@ export async function createFile(
   return { data: { ...file, blocks: [], learnId: file.learn_id }, error: null };
 }
 
-export async function deleteFile(
+export async function deleteNotebook(
   prev: State<NotebookType>,
   formData: FormData
 ): Promise<State<NotebookType>> {
