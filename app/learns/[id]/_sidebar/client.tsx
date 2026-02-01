@@ -8,7 +8,6 @@ import {
   Stack,
   Link,
   IconProps,
-  LinkProps,
   LinkBox,
   LinkOverlay,
 } from "@chakra-ui/react";
@@ -95,18 +94,13 @@ export function Sidebar({
           icon={<NotebookIcon />}
           action={<CreateNotebook learnId={learnId} />}
           subLinks={notebooks.map((notebook) => (
-            <LinkBox key={notebook.id} w="full">
-              <LinkOverlay>
-                <SidebarSubLink
-                  href={notebook.id.toString()}
-                  display="flex"
-                  justifyContent="space-between"
-                >
-                  {notebook.title}
-                  <RemoveNotebook id={notebook.id} />
-                </SidebarSubLink>
-              </LinkOverlay>
-            </LinkBox>
+            <SidebarSubLink
+              key={notebook.id}
+              href={notebook.id.toString()}
+              action={<RemoveNotebook id={notebook.id} />}
+            >
+              {notebook.title}
+            </SidebarSubLink>
           ))}
         >
           Notebooks
@@ -114,23 +108,15 @@ export function Sidebar({
         <SidebarLinksGroup
           icon={<BulbWithFolderIcon />}
           subLinks={flashcards.map((flashcard) => (
-            <LinkBox key={flashcard.id} w="full">
-              <SidebarSubLink
-                w="full"
-                href=""
-                display="flex"
-                justifyContent="space-between"
-              >
-                <TruncateText>
-                  <LinkOverlay
-                    onClick={() => toggleFlashcardForm({ flashcard })}
-                  >
-                    {flashcard.question}
-                  </LinkOverlay>
-                </TruncateText>
-                <RemoveFlashcard id={flashcard.id} />
-              </SidebarSubLink>
-            </LinkBox>
+            <SidebarSubLink
+              key={flashcard.id}
+              href=""
+              action={<RemoveFlashcard id={flashcard.id} />}
+            >
+              <LinkOverlay onClick={() => toggleFlashcardForm({ flashcard })}>
+                {flashcard.question}
+              </LinkOverlay>
+            </SidebarSubLink>
           ))}
         >
           Flashcards
@@ -138,23 +124,17 @@ export function Sidebar({
         <SidebarLinksGroup
           icon={<KeyboardIcon />}
           subLinks={practiceTasks.map((practiceTask) => (
-            <LinkBox key={practiceTask.id} w="full">
-              <SidebarSubLink
-                w="full"
-                href=""
-                display="flex"
-                justifyContent="space-between"
+            <SidebarSubLink
+              key={practiceTask.id}
+              href=""
+              action={<RemovePracticeTask id={practiceTask.id} />}
+            >
+              <LinkOverlay
+                onClick={() => togglePracticeTaskForm({ practiceTask })}
               >
-                <TruncateText>
-                  <LinkOverlay
-                    onClick={() => togglePracticeTaskForm({ practiceTask })}
-                  >
-                    {practiceTask.title}
-                  </LinkOverlay>
-                </TruncateText>
-                <RemovePracticeTask id={practiceTask.id} />
-              </SidebarSubLink>
-            </LinkBox>
+                {practiceTask.title}
+              </LinkOverlay>
+            </SidebarSubLink>
           ))}
         >
           Practice Tasks
@@ -270,10 +250,45 @@ function SidebarLink({
   );
 }
 
-function SidebarSubLink(props: LinkProps) {
+function SidebarSubLink({
+  action,
+  href,
+  children,
+}: {
+  action?: React.ReactNode;
+  href: string;
+  children: React.ReactNode;
+}) {
   const pathname = usePathname();
 
-  const isActive = props.href !== "" && pathname.endsWith(props.href as string);
+  const isActive = href !== "" && pathname.endsWith(href as string);
+
+  if (action != null) {
+    return (
+      <LinkBox w="full">
+        <Flex
+          justifyContent="space-between"
+          textStyle="sm-semibold"
+          textDecoration="none"
+          outline="none"
+          py="0.3em"
+          px="1em"
+          borderRadius="8px"
+          bg={isActive ? "stroke.transparent" : "transparent"}
+          _hover={{
+            bg: "stroke.transparent",
+          }}
+        >
+          <TruncateText>
+            <LinkOverlay asChild>
+              <NextLink href={href as any}>{children}</NextLink>
+            </LinkOverlay>
+          </TruncateText>
+          {action}
+        </Flex>
+      </LinkBox>
+    );
+  }
 
   return (
     <Link
@@ -289,9 +304,10 @@ function SidebarSubLink(props: LinkProps) {
       _hover={{
         bg: "stroke.transparent",
       }}
-      {...props}
     >
-      <NextLink href={props.href as any}>{props.children}</NextLink>
+      <TruncateText>
+        <NextLink href={href as any}>{children}</NextLink>
+      </TruncateText>
     </Link>
   );
 }

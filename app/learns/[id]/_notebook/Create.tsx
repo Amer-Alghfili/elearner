@@ -3,12 +3,15 @@ import { useForm } from "react-hook-form";
 import { NotebookType } from "../[notebookId]";
 import { createNotebook } from "./action";
 import { toaster } from "@/components/ui/toaster";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { IconButton } from "@chakra-ui/react";
+import React from "react";
 
 export function CreateNotebook({ learnId }: { learnId: number }) {
+  const [recentlyCreatedNotebookId, setRecentlyCreatedNotebookId] =
+    React.useState<number | null>(null);
+
   const router = useRouter();
-  const pathname = usePathname();
 
   const methods = useForm<NotebookType>({
     defaultValues: { learnId, title: "untitled" },
@@ -26,13 +29,18 @@ export function CreateNotebook({ learnId }: { learnId: number }) {
     } else {
       router.refresh();
 
-      //TODO:
-      // const split = pathname.split("/");
-      // split.pop();
-
-      // router.push(`${split.join("/")}/${data?.id}` as any);
+      setRecentlyCreatedNotebookId(data!.id);
     }
   }
+
+  React.useEffect(
+    function redirectToCreatedNotebook() {
+      if (recentlyCreatedNotebookId == null) return;
+
+      router.push(recentlyCreatedNotebookId.toString() as any);
+    },
+    [recentlyCreatedNotebookId]
+  );
 
   return (
     <form
