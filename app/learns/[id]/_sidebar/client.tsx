@@ -27,7 +27,7 @@ import {
   MenuRoot,
   MenuTrigger,
 } from "@/components/ui/menu";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { NotebookType } from "../[notebookId]";
 import { useLearnControlManagement } from "../LearnPageContainer";
 import { Flashcard } from "../_flashcard-form/types";
@@ -49,12 +49,39 @@ export function Sidebar({
   flashcards: Flashcard[];
   practiceTasks: PracticeTask[];
 }) {
+  const router = useRouter();
+  const pathname = usePathname();
+
   const {
     sidebarExpanded,
     toggleSidebar,
     toggleFlashcardForm,
     togglePracticeTaskForm,
   } = useLearnControlManagement();
+
+  const [recentlyRemovedNotebookId, setRecentlyRemovedNotebookId] =
+    React.useState<number | null>(null);
+
+  React.useEffect(
+    function redirectToCreatedNotebook() {
+      if (recentlyRemovedNotebookId == null) return;
+      if (notebooks.length === 1) return;
+
+      const split = pathname.split("/");
+
+      const activeNotebookId = split[split.length - 1];
+
+      if (activeNotebookId !== recentlyRemovedNotebookId.toString()) return;
+
+      split.pop();
+
+      router.push(
+        `${split.join("/")}/${notebooks[notebooks.length - 2].id}` as any
+      );
+      setRecentlyRemovedNotebookId(null);
+    },
+    [notebooks, pathname, recentlyRemovedNotebookId, router]
+  );
 
   return (
     <Stack
@@ -97,7 +124,12 @@ export function Sidebar({
             <SidebarSubLink
               key={notebook.id}
               href={notebook.id.toString()}
-              action={<RemoveNotebook id={notebook.id} />}
+              action={
+                <RemoveNotebook
+                  id={notebook.id}
+                  setRecentlyRemovedNotebookId={setRecentlyRemovedNotebookId}
+                />
+              }
             >
               {notebook.title}
             </SidebarSubLink>

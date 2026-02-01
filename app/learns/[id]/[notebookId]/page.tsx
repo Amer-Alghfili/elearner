@@ -28,8 +28,8 @@ export default async function LearnPage({
     <Notebook
       notebook={{
         ...notebook,
-        id: notebook?.id as number,
-        title: notebook?.title as string,
+        id: notebook.id as number,
+        title: notebook.title as string,
         learnId: notebook.learn_id,
       }}
     />

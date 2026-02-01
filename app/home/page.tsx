@@ -35,7 +35,7 @@ export default async function HomePage() {
         <LearnsContainer
           learns={learns.map((learn) => ({
             ...learn,
-            lastNoteFileId: learn.noteFiles[learn.noteFiles.length - 1].id,
+            lastNoteFileId: learn.noteFiles[learn.noteFiles.length - 1]?.id,
           }))}
         />
       </Stack>
