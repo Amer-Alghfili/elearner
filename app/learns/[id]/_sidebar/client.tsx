@@ -63,8 +63,14 @@ export function Sidebar({
     React.useState<number | null>(null);
 
   React.useEffect(
-    function redirectToCreatedNotebook() {
+    function syncActiveNotebookOnDelete() {
       if (recentlyRemovedNotebookId == null) return;
+
+      if (!notebooks.length) {
+        setRecentlyRemovedNotebookId(null);
+        return router.replace(`/learns/${learnId}` as any);
+      }
+
       if (notebooks.length === 1) return;
 
       const split = pathname.split("/");
@@ -193,7 +199,12 @@ function SidebarLinksGroup({
   const { sidebarExpanded } = useLearnControlManagement();
 
   if (!subLinks.length) {
-    return <SidebarLink icon={icon}>{children}</SidebarLink>;
+    return (
+      <Flex w="full" justifyContent="space-between">
+        <SidebarLink icon={icon}>{children}</SidebarLink>
+        {action != null && action}
+      </Flex>
+    );
   }
 
   if (sidebarExpanded) {

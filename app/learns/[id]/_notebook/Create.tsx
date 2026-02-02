@@ -37,7 +37,7 @@ export function CreateNotebook({ learnId }: { learnId: number }) {
     function redirectToCreatedNotebook() {
       if (recentlyCreatedNotebookId == null) return;
 
-      router.push(recentlyCreatedNotebookId.toString() as any);
+      router.push(`/learns/${learnId}/${recentlyCreatedNotebookId}` as any);
     },
     [recentlyCreatedNotebookId]
   );

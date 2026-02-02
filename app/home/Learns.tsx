@@ -37,6 +37,11 @@ export function Learns({ learns }: { learns: Learn[] }) {
   return learns.map((learn) => {
     const { id, title, lastNoteFileId: LastNoteFileId } = learn;
 
+    const learnLink =
+      LastNoteFileId == null
+        ? `/learns/${id}`
+        : `/learns/${id}/${LastNoteFileId}`;
+
     return (
       <LinkBox key={id} w="full">
         <Card.Root _hover={{ bg: "neutral.surface" }}>
@@ -48,9 +53,7 @@ export function Learns({ learns }: { learns: Learn[] }) {
                 justifyContent="space-between"
               >
                 <Heading as="h5">
-                  <LinkOverlay href={`/learns/${id}/${LastNoteFileId}`}>
-                    {title}
-                  </LinkOverlay>
+                  <LinkOverlay href={learnLink}>{title}</LinkOverlay>
                 </Heading>
                 <Flex>
                   <Update learn={learn} />

@@ -1,5 +1,3 @@
-import React from "react";
-
-export default function EmptyNotebookPage() {
+export default async function EmptyNotebookPage() {
   return <div>page</div>;
 }
