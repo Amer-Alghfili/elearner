@@ -6,6 +6,7 @@ import {
   MenuContextTrigger,
   MenuItem,
   MenuRoot,
+  MenuTrigger,
 } from "@/components/ui/menu";
 import { v4 } from "uuid";
 import {
@@ -17,8 +18,15 @@ import {
 } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
 import { Button, Input } from "@chakra-ui/react";
-import { useForm, useWatch } from "react-hook-form";
+import {
+  FormProvider,
+  useController,
+  useForm,
+  useFormContext,
+  useWatch,
+} from "react-hook-form";
 import { getWebsiteMetadata } from "./actions";
+import EmojiPicker from "emoji-picker-react";
 
 export type Resource = {
   id: string;
@@ -116,9 +124,10 @@ function AddWebsiteDialog({
 }) {
   const [loadingMetadata, setLoadingMetadata] = React.useState<boolean>(false);
 
-  const { register, handleSubmit, control, setValue } = useForm<WebsiteForm>();
+  const methods = useForm<WebsiteForm>();
+  const { register, handleSubmit, control, setValue } = methods;
+
   const url = useWatch({ name: "link", control });
-  const favicon = useWatch({ name: "favicon", control });
 
   async function fetchWebsiteMetadata() {
     if (!url) return;
@@ -135,37 +144,72 @@ function AddWebsiteDialog({
   return (
     <DialogRoot open={open} onOpenChange={({ open }) => setOpen(open)}>
       <DialogContent>
-        <form onSubmit={handleSubmit(onAdd)}>
-          <DialogHeader>
-            <Field label="URL">
-              <Input
-                {...register("link")}
-                onBlur={fetchWebsiteMetadata}
-                placeholder="e.g https://www.example.com"
-              />
-            </Field>
-          </DialogHeader>
-          <DialogBody>
-            {loadingMetadata && <p>Loading metadata...</p>}
-            {!loadingMetadata && (
-              <>
-                <Field label="Title">
-                  <Input {...register("title")} placeholder="Website Title" />
-                </Field>
-                {favicon != null && <img src={favicon} alt="link faveicon" />}
-                {/* <Input
-                {...register("favicon")}
-                placeholder="e.g https://www.example.com/favicon.ico"
-              /> */}
-              </>
-            )}
-          </DialogBody>
-          <DialogFooter>
-            <Button type="submit">Add</Button>
-            <Button onClick={() => setOpen(false)}>Cancel</Button>
-          </DialogFooter>
-        </form>
+        <FormProvider {...methods}>
+          <form onSubmit={handleSubmit(onAdd)}>
+            <DialogHeader>
+              <Field label="URL">
+                <Input
+                  {...register("link")}
+                  onBlur={fetchWebsiteMetadata}
+                  placeholder="e.g https://www.example.com"
+                />
+              </Field>
+            </DialogHeader>
+            <DialogBody>
+              {loadingMetadata && <p>Loading metadata...</p>}
+              {!loadingMetadata && (
+                <>
+                  <Field label="Title">
+                    <Input {...register("title")} placeholder="Website Title" />
+                  </Field>
+                  <IconField />
+                </>
+              )}
+            </DialogBody>
+            <DialogFooter>
+              <Button variant="secondary" onClick={() => setOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit">Add</Button>
+            </DialogFooter>
+          </form>
+        </FormProvider>
       </DialogContent>
     </DialogRoot>
+  );
+}
+
+function IconField() {
+  const { control } = useFormContext<WebsiteForm>();
+
+  const favicon = useWatch({ name: "favicon", control });
+  const icon = useWatch({ name: "icon", control });
+
+  const { field } = useController({
+    name: "icon",
+    control,
+  });
+
+  let content;
+  if (icon) {
+    content = <h1>{icon}</h1>;
+  } else {
+    content = favicon != null && <img src={favicon} alt="link faveicon" />;
+  }
+
+  return (
+    <MenuRoot>
+      <MenuTrigger>{content}</MenuTrigger>
+      <MenuContent portalled={false}>
+        <EmojiPicker
+          skinTonesDisabled={true}
+          previewConfig={{
+            defaultEmoji: field.value || "",
+            showPreview: false,
+          }}
+          onEmojiClick={(emoji) => field.onChange(emoji.emoji)}
+        />
+      </MenuContent>
+    </MenuRoot>
   );
 }
