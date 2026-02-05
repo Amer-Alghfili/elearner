@@ -34,16 +34,33 @@ export async function Sidebar({ learnId }: { learnId: number }) {
     },
   });
 
+  const resources = await prisma.resource.findMany({
+    where: {
+      learn_id: learnId,
+    },
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
+
+  // TODO: group resource by folder and fetch metadata
+  const groupResourceByFolder = resources.map((resource) => ({
+    ...resource,
+    favicon: null,
+    content: [],
+  }));
+
   return (
     <ClientSidebar
       learnId={learnId}
       notebooks={notebooks}
+      practiceTasks={practiceTasks}
       flashcards={flashcards.map((flashcard) => ({
         ...flashcard,
         answerType: flashcard.answerType as AnswerType,
         options: flashcard.options as string[] | null,
       }))}
-      practiceTasks={practiceTasks}
+      resources={groupResourceByFolder}
     />
   );
 }

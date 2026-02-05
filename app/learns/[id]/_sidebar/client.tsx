@@ -37,17 +37,20 @@ import { PracticeTask } from "../_practice-task-form/types";
 import { RemovePracticeTask } from "../_practice-task-form/Remove";
 import { CreateNotebook } from "../_notebook/Create";
 import { RemoveNotebook } from "../_notebook/Remove";
+import { Resource, Resources } from "./resources";
 
 export function Sidebar({
   learnId,
   notebooks,
   flashcards,
   practiceTasks,
+  resources,
 }: {
   learnId: number;
   notebooks: Omit<NotebookType, "learnId">[];
   flashcards: Flashcard[];
   practiceTasks: PracticeTask[];
+  resources: Resource[];
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -177,9 +180,7 @@ export function Sidebar({
         >
           Practice Tasks
         </SidebarLinksGroup>
-        <SidebarLinksGroup icon={<LinkWithFolderIcon />} subLinks={[]}>
-          Resources
-        </SidebarLinksGroup>
+        <Resources resources={resources} />
       </Stack>
     </Stack>
   );
