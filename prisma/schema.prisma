@@ -34,14 +34,16 @@ model Learn {
 }
 
 model Resource {
-  id        Int       @id @default(autoincrement())
-  title     String    @db.VarChar(255)
-  link      String    @db.VarChar(255)
-  tags      Json?     @db.Json()
-  learn_id  Int
-  learn     Learn    @relation(fields: [learn_id], references: [id])
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id             Int                              @id @default(autoincrement())
+  title          String                           @db.VarChar(255)
+  link           String?                          @db.VarChar(255)
+  icon           String?                          @db.VarChar(255)
+  parentResource Int?     @map("parent_resource") @db.Integer()
+  tags           Json?                            @db.Json()
+  learn_id       Int
+  learn          Learn    @relation(fields: [learn_id], references: [id])
+  createdAt      DateTime                         @default(now())
+  updatedAt      DateTime                         @updatedAt
 
   @@map("learns_resources")
 }
