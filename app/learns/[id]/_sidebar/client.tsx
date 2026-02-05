@@ -16,7 +16,6 @@ import {
   BulbWithFolderIcon,
   BurgerIcon,
   KeyboardIcon,
-  LinkWithFolderIcon,
   NotebookIcon,
 } from "@/components/Icons";
 import { LuChevronRight } from "react-icons/lu";
@@ -151,7 +150,6 @@ export function Sidebar({
           subLinks={flashcards.map((flashcard) => (
             <SidebarLink
               key={flashcard.id}
-              href=""
               action={<RemoveFlashcard id={flashcard.id} />}
             >
               <LinkOverlay onClick={() => toggleFlashcardForm({ flashcard })}>
@@ -167,7 +165,6 @@ export function Sidebar({
           subLinks={practiceTasks.map((practiceTask) => (
             <SidebarLink
               key={practiceTask.id}
-              href=""
               action={<RemovePracticeTask id={practiceTask.id} />}
             >
               <LinkOverlay
@@ -198,15 +195,6 @@ export function SidebarLinksGroup({
   children: React.ReactNode;
 }) {
   const { sidebarExpanded } = useLearnControlManagement();
-
-  if (!subLinks.length) {
-    return (
-      <Flex w="full" justifyContent="space-between">
-        <SidebarItem icon={icon}>{children}</SidebarItem>
-        {action != null && action}
-      </Flex>
-    );
-  }
 
   if (sidebarExpanded) {
     return (
@@ -287,6 +275,7 @@ function SidebarItem({
       textStyle="md-semibold"
       gap="0.5em"
       alignItems="center"
+      w="full"
     >
       {mappedIcon}
       {children}
@@ -300,18 +289,20 @@ export function SidebarLink({
   children,
 }: {
   action?: React.ReactNode;
-  href: string;
+  href?: string;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
 
-  const isActive = href !== "" && pathname.endsWith(href as string);
+  const isActive =
+    href != null && href !== "" && pathname.endsWith(href as string);
 
   if (action != null) {
     return (
       <LinkBox w="full">
         <Flex
           justifyContent="space-between"
+          alignItems="center"
           textStyle="sm-semibold"
           textDecoration="none"
           outline="none"
@@ -325,7 +316,10 @@ export function SidebarLink({
         >
           <TruncateText>
             <LinkOverlay asChild>
-              <NextLink href={href as any}>{children}</NextLink>
+              {href != null && (
+                <NextLink href={href as any}>{children}</NextLink>
+              )}
+              {href == null && children}
             </LinkOverlay>
           </TruncateText>
           {action}
@@ -350,7 +344,12 @@ export function SidebarLink({
       }}
     >
       <TruncateText>
-        <NextLink href={href as any}>{children}</NextLink>
+        {href != null && (
+          <Link asChild w="full" textDecoration="none">
+            <NextLink href={href as any}>{children}</NextLink>
+          </Link>
+        )}
+        {href == null && children}
       </TruncateText>
     </Link>
   );

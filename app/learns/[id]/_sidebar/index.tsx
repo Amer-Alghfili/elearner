@@ -1,6 +1,7 @@
 import { AnswerType } from "../_flashcard-form/types";
 import { Sidebar as ClientSidebar } from "./client";
 import { prisma } from "@/prisma";
+import { Resource } from "./resources";
 
 export async function Sidebar({ learnId }: { learnId: number }) {
   const notebooks = await prisma.noteFile.findMany({
@@ -44,11 +45,42 @@ export async function Sidebar({ learnId }: { learnId: number }) {
   });
 
   // TODO: group resource by folder and fetch metadata
-  const groupResourceByFolder = resources.map((resource) => ({
+  const groupResourceByFolder: Resource[] = resources.map((resource) => ({
     ...resource,
     favicon: null,
-    content: [],
+    content: resource.link as string,
   }));
+
+  groupResourceByFolder.push({
+    id: 100,
+    title: "nested",
+    favicon: null,
+    icon: null,
+    content: [
+      {
+        id: 123,
+        title: "link",
+        favicon: null,
+        icon: null,
+        content: "http://example.com",
+      },
+      {
+        id: 1234,
+        title: "link2",
+        favicon: null,
+        icon: null,
+        content: [
+          {
+            id: 123111,
+            title: "link",
+            favicon: null,
+            icon: null,
+            content: "http://example.com",
+          },
+        ],
+      },
+    ],
+  });
 
   return (
     <ClientSidebar
