@@ -18,6 +18,7 @@ import {
 import { Field } from "@/components/ui/field";
 import { Button, Input } from "@chakra-ui/react";
 import { useForm, useWatch } from "react-hook-form";
+import { getWebsiteMetadata } from "./actions";
 
 export type Resource = {
   id: string;
@@ -100,8 +101,8 @@ export function Resources(props: { resources: Resource[] }) {
 
 type WebsiteForm = {
   title: string;
-  favicon?: string;
-  icon?: string;
+  favicon: string | null;
+  icon: string | null;
   link: string;
 };
 function AddWebsiteDialog({
@@ -113,17 +114,23 @@ function AddWebsiteDialog({
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   onAdd: (resource: WebsiteForm) => void;
 }) {
-  const [blurred, setBlurred] = React.useState<boolean>(false);
+  const [loadingMetadata, setLoadingMetadata] = React.useState<boolean>(false);
 
-  const { register, handleSubmit, control } = useForm<WebsiteForm>();
+  const { register, handleSubmit, control, setValue } = useForm<WebsiteForm>();
   const url = useWatch({ name: "link", control });
+  const favicon = useWatch({ name: "favicon", control });
 
-  const fetchWebsiteMetadata = React.useEffectEvent(() => {
-    console.log(url);
-  });
-  React.useEffect(() => {
-    fetchWebsiteMetadata();
-  }, [blurred]);
+  async function fetchWebsiteMetadata() {
+    if (!url) return;
+
+    setLoadingMetadata(true);
+
+    const { title, iconLink } = await getWebsiteMetadata(url);
+    setValue("title", title);
+    setValue("favicon", iconLink);
+
+    setLoadingMetadata(false);
+  }
 
   return (
     <DialogRoot open={open} onOpenChange={({ open }) => setOpen(open)}>
@@ -133,12 +140,26 @@ function AddWebsiteDialog({
             <Field label="URL">
               <Input
                 {...register("link")}
-                onBlur={() => setBlurred(true)}
+                onBlur={fetchWebsiteMetadata}
                 placeholder="e.g https://www.example.com"
               />
             </Field>
           </DialogHeader>
-          <DialogBody>hello</DialogBody>
+          <DialogBody>
+            {loadingMetadata && <p>Loading metadata...</p>}
+            {!loadingMetadata && (
+              <>
+                <Field label="Title">
+                  <Input {...register("title")} placeholder="Website Title" />
+                </Field>
+                {favicon != null && <img src={favicon} alt="link faveicon" />}
+                {/* <Input
+                {...register("favicon")}
+                placeholder="e.g https://www.example.com/favicon.ico"
+              /> */}
+              </>
+            )}
+          </DialogBody>
           <DialogFooter>
             <Button type="submit">Add</Button>
             <Button onClick={() => setOpen(false)}>Cancel</Button>
