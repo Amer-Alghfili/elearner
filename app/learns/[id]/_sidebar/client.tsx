@@ -130,7 +130,7 @@ export function Sidebar({
           icon={<NotebookIcon />}
           action={<CreateNotebook learnId={learnId} />}
           subLinks={notebooks.map((notebook) => (
-            <SidebarSubLink
+            <SidebarLink
               key={notebook.id}
               href={notebook.id.toString()}
               action={
@@ -141,7 +141,7 @@ export function Sidebar({
               }
             >
               {notebook.title}
-            </SidebarSubLink>
+            </SidebarLink>
           ))}
         >
           Notebooks
@@ -149,7 +149,7 @@ export function Sidebar({
         <SidebarLinksGroup
           icon={<BulbWithFolderIcon />}
           subLinks={flashcards.map((flashcard) => (
-            <SidebarSubLink
+            <SidebarLink
               key={flashcard.id}
               href=""
               action={<RemoveFlashcard id={flashcard.id} />}
@@ -157,7 +157,7 @@ export function Sidebar({
               <LinkOverlay onClick={() => toggleFlashcardForm({ flashcard })}>
                 {flashcard.question}
               </LinkOverlay>
-            </SidebarSubLink>
+            </SidebarLink>
           ))}
         >
           Flashcards
@@ -165,7 +165,7 @@ export function Sidebar({
         <SidebarLinksGroup
           icon={<KeyboardIcon />}
           subLinks={practiceTasks.map((practiceTask) => (
-            <SidebarSubLink
+            <SidebarLink
               key={practiceTask.id}
               href=""
               action={<RemovePracticeTask id={practiceTask.id} />}
@@ -175,7 +175,7 @@ export function Sidebar({
               >
                 {practiceTask.title}
               </LinkOverlay>
-            </SidebarSubLink>
+            </SidebarLink>
           ))}
         >
           Practice Tasks
@@ -186,7 +186,7 @@ export function Sidebar({
   );
 }
 
-function SidebarLinksGroup({
+export function SidebarLinksGroup({
   subLinks,
   icon,
   action,
@@ -202,7 +202,7 @@ function SidebarLinksGroup({
   if (!subLinks.length) {
     return (
       <Flex w="full" justifyContent="space-between">
-        <SidebarLink icon={icon}>{children}</SidebarLink>
+        <SidebarItem icon={icon}>{children}</SidebarItem>
         {action != null && action}
       </Flex>
     );
@@ -222,7 +222,7 @@ function SidebarLinksGroup({
           alignItems="center"
           gap="0.5rem"
         >
-          <SidebarLink icon={icon}>{children}</SidebarLink>
+          <SidebarItem icon={icon}>{children}</SidebarItem>
           {sidebarExpanded && (
             <Flex alignItems="center">
               {action != null && action}
@@ -246,7 +246,7 @@ function SidebarLinksGroup({
   return (
     <MenuRoot>
       <MenuTrigger>
-        <SidebarLink icon={icon}>{children}</SidebarLink>
+        <SidebarItem icon={icon}>{children}</SidebarItem>
       </MenuTrigger>
       <MenuContent maxW="25em">
         {subLinks.map((subLink, index) => (
@@ -265,7 +265,7 @@ function SidebarLinksGroup({
   );
 }
 
-function SidebarLink({
+function SidebarItem({
   icon,
   children,
 }: {
@@ -294,7 +294,7 @@ function SidebarLink({
   );
 }
 
-function SidebarSubLink({
+export function SidebarLink({
   action,
   href,
   children,

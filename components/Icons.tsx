@@ -397,3 +397,20 @@ export function ClockIcon(props: IconProps) {
     </Icon>
   );
 }
+
+export function FolderIcon(props: IconProps) {
+  return (
+    <Icon
+      width="1.1rem"
+      height="1.1rem"
+      viewBox="0 0 16 16"
+      fill="#986D00"
+      strokeWidth="0.2"
+      {...props}
+    >
+      <svg>
+        <path d="M6.5 13H2V3H5.6L7.3 4.7L7.6 5H14V9H15V5C15 4.45 14.55 4 14 4H8L6.3 2.3C6.1 2.1 5.85 2 5.6 2H2C1.45 2 1 2.45 1 3V13C1 13.55 1.45 14 2 14H6.5V13ZM8 10H15V11H8V10ZM8 12H15V13H8V12ZM8 14H11.5V15H8V14Z" />
+      </svg>
+    </Icon>
+  );
+}

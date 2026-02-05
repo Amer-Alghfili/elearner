@@ -1,3 +1,6 @@
+import { SidebarLink, SidebarLinksGroup } from "../client";
+import { FolderIcon } from "@/components/Icons";
+
 export type Resource = {
   id: number;
   title: string;
@@ -6,8 +9,17 @@ export type Resource = {
   content: string | Resource[];
 };
 
-import React from "react";
-
 export function Resources({ resources }: { resources: Resource[] }) {
-  return <div>index</div>;
+  return (
+    <SidebarLinksGroup
+      icon={<FolderIcon fill="text.secondary" />}
+      subLinks={resources.map((resource) => (
+        <SidebarLink key={resource.id} href={resource.id.toString()}>
+          {resource.title}
+        </SidebarLink>
+      ))}
+    >
+      Resources
+    </SidebarLinksGroup>
+  );
 }
