@@ -47,40 +47,10 @@ export async function Sidebar({ learnId }: { learnId: number }) {
   // TODO: group resource by folder and fetch metadata
   const groupResourceByFolder: Resource[] = resources.map((resource) => ({
     ...resource,
+    id: resource.id.toString(),
     favicon: null,
     content: resource.link as string,
   }));
-
-  groupResourceByFolder.push({
-    id: 100,
-    title: "nested",
-    favicon: null,
-    icon: null,
-    content: [
-      {
-        id: 123,
-        title: "link",
-        favicon: null,
-        icon: null,
-        content: "http://example.com",
-      },
-      {
-        id: 1234,
-        title: "link2",
-        favicon: null,
-        icon: null,
-        content: [
-          {
-            id: 123111,
-            title: "link",
-            favicon: null,
-            icon: null,
-            content: "http://example.com",
-          },
-        ],
-      },
-    ],
-  });
 
   return (
     <ClientSidebar
