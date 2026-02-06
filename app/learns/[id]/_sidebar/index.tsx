@@ -48,7 +48,7 @@ export async function Sidebar({ learnId }: { learnId: number }) {
   const groupResourceByFolder: Resource[] = resources.map((resource) => ({
     ...resource,
     id: resource.id.toString(),
-    favicon: null,
+    icon: resource.icon,
     content: resource.link as string,
   }));
 

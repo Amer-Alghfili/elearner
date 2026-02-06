@@ -6,46 +6,42 @@ import {
   MenuContextTrigger,
   MenuItem,
   MenuRoot,
-  MenuTrigger,
 } from "@/components/ui/menu";
 import { v4 } from "uuid";
 import {
-  DialogBody,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogRoot,
 } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
-import { Button, Input } from "@chakra-ui/react";
-import {
-  FormProvider,
-  useController,
-  useForm,
-  useFormContext,
-  useWatch,
-} from "react-hook-form";
-import { getWebsiteMetadata } from "./actions";
-import EmojiPicker from "emoji-picker-react";
+import { Button, Image, Input } from "@chakra-ui/react";
+import { createResource } from "./actions";
+import { toaster } from "@/components/ui/toaster";
 
 export type Resource = {
   id: string;
   title: string;
   icon: string | null;
-  favicon: string | null;
   content: string | Resource[];
 };
 
-export function Resources(props: { resources: Resource[] }) {
+export function Resources(props: { resources: Resource[]; learnId: number }) {
   const [resources, setResources] = React.useState<Resource[]>(props.resources);
 
   const [websiteFormOpen, setWebsiteFormOpen] = React.useState<boolean>(false);
 
-  function addWebsite(resource: Resource) {}
-
-  function remove() {}
-
-  function copy() {}
+  function addWebsite(url: string, title: string, icon: string | null) {
+    setResources((resources) => [
+      ...resources,
+      {
+        id: v4(),
+        title: title,
+        icon,
+        content: url,
+      },
+    ]);
+  }
 
   return (
     <>
@@ -55,8 +51,13 @@ export function Resources(props: { resources: Resource[] }) {
           resource
         ): React.ReactNode {
           if (typeof resource.content === "string") {
+            const icon = resource.icon && (
+              <Image w="1.2rem" h="1.2rem" src={resource.icon} alt="favicon" />
+            );
+
             return (
               <SidebarLink key={resource.id} href={resource.content}>
+                {icon}
                 {resource.title}
               </SidebarLink>
             );
@@ -88,128 +89,101 @@ export function Resources(props: { resources: Resource[] }) {
       </SidebarLinksGroup>
       <AddWebsiteDialog
         key={websiteFormOpen.toString()}
+        learnId={props.learnId}
         open={websiteFormOpen}
         setOpen={setWebsiteFormOpen}
-        onAdd={(resource: WebsiteForm) => {
-          setResources((resources) => [
-            ...resources,
-            {
-              id: v4(),
-              title: resource.title,
-              icon: resource.icon || null,
-              favicon: resource.favicon || null,
-              content: resource.link,
-            },
-          ]);
-        }}
+        onAdd={addWebsite}
       />
     </>
   );
 }
 
-type WebsiteForm = {
-  title: string;
-  favicon: string | null;
-  icon: string | null;
-  link: string;
-};
 function AddWebsiteDialog({
+  learnId,
   open,
   setOpen,
   onAdd,
 }: {
+  learnId: number;
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  onAdd: (resource: WebsiteForm) => void;
+  onAdd: (url: string, title: string, icon: string | null) => void;
 }) {
-  const [loadingMetadata, setLoadingMetadata] = React.useState<boolean>(false);
+  const [state, action, loading] = React.useActionState(
+    createResource,
+    undefined
+  );
 
-  const methods = useForm<WebsiteForm>();
-  const { register, handleSubmit, control, setValue } = methods;
+  const handleSubmission = React.useEffectEvent((s: typeof state) => {
+    if (s == null) return;
 
-  const url = useWatch({ name: "link", control });
+    if (s.error) {
+      toaster.create({
+        title: s.error,
+        type: "error",
+        closable: true,
+      });
+    } else if (s.data) {
+      onAdd(s.data.url, s.data.title, s.data.icon);
+      setOpen(false);
+    }
+  });
 
-  async function fetchWebsiteMetadata() {
-    if (!url) return;
-
-    setLoadingMetadata(true);
-
-    const { title, iconLink } = await getWebsiteMetadata(url);
-    setValue("title", title);
-    setValue("favicon", iconLink);
-
-    setLoadingMetadata(false);
-  }
+  React.useEffect(() => {
+    handleSubmission(state);
+  }, [state]);
 
   return (
     <DialogRoot open={open} onOpenChange={({ open }) => setOpen(open)}>
       <DialogContent>
-        <FormProvider {...methods}>
-          <form onSubmit={handleSubmit(onAdd)}>
-            <DialogHeader>
-              <Field label="URL">
-                <Input
-                  {...register("link")}
-                  onBlur={fetchWebsiteMetadata}
-                  placeholder="e.g https://www.example.com"
-                />
-              </Field>
-            </DialogHeader>
-            <DialogBody>
-              {loadingMetadata && <p>Loading metadata...</p>}
-              {!loadingMetadata && (
-                <>
-                  <Field label="Title">
-                    <Input {...register("title")} placeholder="Website Title" />
-                  </Field>
-                  <IconField />
-                </>
-              )}
-            </DialogBody>
-            <DialogFooter>
-              <Button variant="secondary" onClick={() => setOpen(false)}>
-                Cancel
-              </Button>
-              <Button type="submit">Add</Button>
-            </DialogFooter>
-          </form>
-        </FormProvider>
+        <form action={action}>
+          <DialogHeader>
+            <Field label="URL">
+              <Input
+                id="link"
+                name="link"
+                size="sm"
+                placeholder="e.g https://www.example.com"
+              />
+            </Field>
+            <Input id="learnId" name="learnId" hidden={true} value={learnId} />
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="secondary" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
+            <Button loading={loading} type="submit">
+              Add
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </DialogRoot>
   );
 }
 
-function IconField() {
-  const { control } = useFormContext<WebsiteForm>();
+// function IconField() {
+//   const { control } = useFormContext<WebsiteForm>();
 
-  const favicon = useWatch({ name: "favicon", control });
-  const icon = useWatch({ name: "icon", control });
+//   const { field } = useController({ name: "favicon", control });
 
-  const { field } = useController({
-    name: "icon",
-    control,
-  });
+//   const content = field.value != null && (
+//     <img src={field.value} alt="link faveicon" />
+//   );
 
-  let content;
-  if (icon) {
-    content = <h1>{icon}</h1>;
-  } else {
-    content = favicon != null && <img src={favicon} alt="link faveicon" />;
-  }
-
-  return (
-    <MenuRoot>
-      <MenuTrigger>{content}</MenuTrigger>
-      <MenuContent portalled={false}>
-        <EmojiPicker
-          skinTonesDisabled={true}
-          previewConfig={{
-            defaultEmoji: field.value || "",
-            showPreview: false,
-          }}
-          onEmojiClick={(emoji) => field.onChange(emoji.emoji)}
-        />
-      </MenuContent>
-    </MenuRoot>
-  );
-}
+//   return (
+//     <MenuRoot>
+//       <MenuTrigger>{content}</MenuTrigger>
+//       <MenuContent portalled={false}>
+//         <EmojiPicker
+//           skinTonesDisabled={true}
+//           previewConfig={{
+//             defaultEmoji: field.value || "",
+//             showPreview: false,
+//           }}
+//           onEmojiClick={(emoji) => field.onChange(emoji.emoji)}
+//         />
+//       </MenuContent>
+//     </MenuRoot>
+//   );
+// }

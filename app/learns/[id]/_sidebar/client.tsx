@@ -177,7 +177,7 @@ export function Sidebar({
         >
           Practice Tasks
         </SidebarLinksGroup>
-        <Resources resources={resources} />
+        <Resources resources={resources} learnId={learnId} />
       </Stack>
     </Stack>
   );
