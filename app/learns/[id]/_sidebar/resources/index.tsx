@@ -15,7 +15,7 @@ import {
   DialogRoot,
 } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
-import { Button, Image, Input } from "@chakra-ui/react";
+import { Box, Button, Image, Input } from "@chakra-ui/react";
 import { createTopLevelFolder, createTopLevelResource } from "./actions";
 import { toaster } from "@/components/ui/toaster";
 import { set } from "zod";
@@ -28,7 +28,9 @@ export type Resource = {
 };
 
 export function Resources(props: { resources: Resource[]; learnId: number }) {
-  const [resources, setResources] = React.useState<Resource[]>(props.resources);
+  const [resources, setResources] = React.useState<Resource[]>(
+    props.resources.slice(-3)
+  );
   const [optimistic, setOptimistic] =
     React.useOptimistic<Resource[]>(resources);
 
@@ -47,26 +49,30 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
   }
 
   async function addFolder() {
-    React.startTransition(() => {
-      setOptimistic((prev) => [
-        ...prev,
-        { id: v4(), title: "untitled", icon: null, content: [] },
-      ]);
-    });
+    React.startTransition(async () => {
+      const updated = [
+        ...resources,
+        {
+          id: v4(),
+          title: "untitled",
+          icon: null,
+          content: [],
+        },
+      ];
 
-    try {
-      await createTopLevelFolder(undefined, new FormData());
-      setResources((prev) => [
-        ...prev,
-        { id: v4(), title: "untitled", icon: null, content: [] },
-      ]);
-    } catch (err) {
-      toaster.create({
-        title: err,
-        type: "error",
-        closable: true,
-      });
-    }
+      setOptimistic(updated);
+
+      try {
+        await createTopLevelFolder(undefined, new FormData());
+        setResources(updated);
+      } catch (err) {
+        toaster.create({
+          title: err,
+          type: "error",
+          closable: true,
+        });
+      }
+    });
   }
 
   return (
@@ -92,7 +98,7 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
           return (
             <SidebarLinksGroup
               key={resource.id}
-              icon={<></>}
+              icon={<FolderIcon />}
               subLinks={resource.content.map(mapToSidebarItem)}
             >
               <SidebarLink>{resource.title}</SidebarLink>
@@ -109,7 +115,13 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
             >
               Add Website
             </MenuItem>
-            <MenuItem value="add-folder" onClick={addFolder}>
+            <MenuItem
+              value="add-folder"
+              onClick={(e) => {
+                e.preventDefault();
+                addFolder();
+              }}
+            >
               Add Folder
             </MenuItem>
           </MenuContent>

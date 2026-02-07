@@ -125,7 +125,7 @@ export function Sidebar({
       </Flex>
 
       <Stack alignItems={sidebarExpanded ? "flex-start" : "center"} gap="1.5em">
-        <SidebarLinksGroup
+        {/* <SidebarLinksGroup
           icon={<NotebookIcon />}
           action={<CreateNotebook learnId={learnId} />}
           subLinks={notebooks.map((notebook) => (
@@ -176,7 +176,7 @@ export function Sidebar({
           ))}
         >
           Practice Tasks
-        </SidebarLinksGroup>
+        </SidebarLinksGroup> */}
         <Resources resources={resources} learnId={learnId} />
       </Stack>
     </Stack>
@@ -199,30 +199,26 @@ export function SidebarLinksGroup({
   if (sidebarExpanded) {
     return (
       <Collapsible.Root
+        open={true}
         w={sidebarExpanded ? "full" : "auto"}
         textStyle="md-semibold"
       >
-        <Collapsible.Trigger
-          w="full"
-          justifyContent="space-between"
-          cursor="pointer"
-          display="flex"
-          alignItems="center"
-          gap="0.5rem"
-        >
-          <SidebarItem icon={icon}>{children}</SidebarItem>
-          {sidebarExpanded && (
-            <Flex alignItems="center">
-              {action != null && action}
-              <Collapsible.Indicator
-                transition="transform 0.2s"
-                color="text.secondary"
-                _open={{ transform: "rotate(90deg)" }}
-              >
-                <LuChevronRight />
-              </Collapsible.Indicator>
-            </Flex>
-          )}
+        <Collapsible.Trigger asChild w="full" cursor="pointer">
+          <Flex justifyContent="space-between" alignItems="center" gap="0.5rem">
+            <SidebarItem icon={icon}>{children}</SidebarItem>
+            {sidebarExpanded && (
+              <Flex alignItems="center">
+                {action != null && action}
+                <Collapsible.Indicator
+                  transition="transform 0.2s"
+                  color="text.secondary"
+                  _open={{ transform: "rotate(90deg)" }}
+                >
+                  <LuChevronRight />
+                </Collapsible.Indicator>
+              </Flex>
+            )}
+          </Flex>
         </Collapsible.Trigger>
         <Collapsible.Content mt="0.7em" ms="1rem">
           <Stack>{subLinks}</Stack>
