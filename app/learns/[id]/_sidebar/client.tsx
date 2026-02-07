@@ -187,11 +187,13 @@ export function SidebarLinksGroup({
   subLinks,
   icon,
   action,
+  showArrows = true,
   children,
 }: {
   subLinks: React.ReactNode[];
   icon: React.ReactElement<IconProps>;
   action?: React.ReactNode;
+  showArrows?: boolean;
   children: React.ReactNode;
 }) {
   const { sidebarExpanded } = useLearnControlManagement();
@@ -206,7 +208,7 @@ export function SidebarLinksGroup({
         <Collapsible.Trigger asChild w="full" cursor="pointer">
           <Flex justifyContent="space-between" alignItems="center" gap="0.5rem">
             <SidebarItem icon={icon}>{children}</SidebarItem>
-            {sidebarExpanded && (
+            {sidebarExpanded && showArrows && (
               <Flex alignItems="center">
                 {action != null && action}
                 <Collapsible.Indicator

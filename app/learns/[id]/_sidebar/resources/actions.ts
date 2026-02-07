@@ -5,6 +5,7 @@ import { State } from "@/types/server-state";
 import * as cheerio from "cheerio";
 import { url } from "inspector";
 import z from "zod";
+import { ca } from "zod/v4/locales";
 
 async function searchForIconLink(
   html: cheerio.CheerioAPI,
@@ -90,12 +91,43 @@ export async function createTopLevelResource(
 }
 
 export async function createTopLevelFolder(
-  _: unknown,
-  formData: FormData
+  learnId: number
 ): Promise<{ id: number }> {
-  // throw Error("Not implemented");
+  const res = await prisma.resource.create({
+    data: {
+      title: "untitled",
+      icon: null,
+      learn_id: learnId,
+    },
+  });
 
-  return {
-    id: 1,
-  };
+  return { id: res.id };
+}
+
+export async function renameFolder(
+  // _: unknown,
+  formData: FormData
+): Promise<void> {
+  try {
+    const id = formData.get("id") as string;
+    const title = formData.get("title") as string;
+
+    const validate = z
+      .object({
+        id: z.string("Invalid id").trim(),
+        title: z.string("Invalid title").trim(),
+      })
+      .safeParse({ id, title });
+
+    if (validate.success) {
+      await prisma.resource.update({
+        where: { id: Number(validate.data.id) },
+        data: { title: validate.data.title },
+      });
+    } else {
+      throw new Error(validate.error.issues.map((i) => i.message).join("\n"));
+    }
+  } catch {
+    throw new Error("Something went wrong");
+  }
 }

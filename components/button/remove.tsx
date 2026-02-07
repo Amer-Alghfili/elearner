@@ -67,9 +67,3 @@ export default function RemoveButton({
     </DialogRoot>
   );
 }
-
-/**
- * <DialogButton>
- *      <Button>Delete</Button>
- * </DialogButton>
- */
