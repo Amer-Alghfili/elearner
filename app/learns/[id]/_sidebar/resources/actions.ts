@@ -3,9 +3,7 @@
 import { prisma } from "@/prisma";
 import { State } from "@/types/server-state";
 import * as cheerio from "cheerio";
-import { url } from "inspector";
 import z from "zod";
-import { ca } from "zod/v4/locales";
 
 async function searchForIconLink(
   html: cheerio.CheerioAPI,
@@ -13,17 +11,17 @@ async function searchForIconLink(
 ): Promise<string | null> {
   let icon = html('link[rel="icon"]').attr("href") || null;
   if (icon) {
-    return icon;
+    return icon.startsWith("http") ? icon : `${url}/${icon}`;
   }
 
   icon = html('link[rel="shortcut icon"]').attr("href") || null;
   if (icon) {
-    return icon;
+    return icon.startsWith("http") ? icon : `${url}/${icon}`;
   }
 
   icon = html('link[rel="apple-touch-icon"]').attr("href") || null;
   if (icon) {
-    return icon;
+    return icon.startsWith("http") ? icon : `${url}/${icon}`;
   }
 
   const faviconUrl = `${url}/favicon.ico`;
