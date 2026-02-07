@@ -16,8 +16,9 @@ import {
 } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
 import { Button, Image, Input } from "@chakra-ui/react";
-import { createResource } from "./actions";
+import { createTopLevelFolder, createTopLevelResource } from "./actions";
 import { toaster } from "@/components/ui/toaster";
+import { set } from "zod";
 
 export type Resource = {
   id: string;
@@ -28,26 +29,51 @@ export type Resource = {
 
 export function Resources(props: { resources: Resource[]; learnId: number }) {
   const [resources, setResources] = React.useState<Resource[]>(props.resources);
+  const [optimistic, setOptimistic] =
+    React.useOptimistic<Resource[]>(resources);
 
   const [websiteFormOpen, setWebsiteFormOpen] = React.useState<boolean>(false);
 
   function addWebsite(url: string, title: string, icon: string | null) {
-    setResources((resources) => [
-      ...resources,
-      {
-        id: v4(),
-        title: title,
-        icon,
-        content: url,
-      },
-    ]);
+    const newResource = {
+      id: v4(),
+      title: title,
+      icon,
+      content: url,
+    };
+
+    setResources((resources) => [...resources, newResource]);
+    setOptimistic((resources) => [...resources, newResource]);
+  }
+
+  async function addFolder() {
+    React.startTransition(() => {
+      setOptimistic((prev) => [
+        ...prev,
+        { id: v4(), title: "untitled", icon: null, content: [] },
+      ]);
+    });
+
+    try {
+      await createTopLevelFolder(undefined, new FormData());
+      setResources((prev) => [
+        ...prev,
+        { id: v4(), title: "untitled", icon: null, content: [] },
+      ]);
+    } catch (err) {
+      toaster.create({
+        title: err,
+        type: "error",
+        closable: true,
+      });
+    }
   }
 
   return (
     <>
       <SidebarLinksGroup
         icon={<FolderIcon fill="text.secondary" />}
-        subLinks={resources.map(function mapToSidebarItem(
+        subLinks={optimistic.map(function mapToSidebarItem(
           resource
         ): React.ReactNode {
           if (typeof resource.content === "string") {
@@ -83,7 +109,9 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
             >
               Add Website
             </MenuItem>
-            {/* <MenuItem value="add-folder">Add Folder</MenuItem> */}
+            <MenuItem value="add-folder" onClick={addFolder}>
+              Add Folder
+            </MenuItem>
           </MenuContent>
         </MenuRoot>
       </SidebarLinksGroup>
@@ -110,7 +138,7 @@ function AddWebsiteDialog({
   onAdd: (url: string, title: string, icon: string | null) => void;
 }) {
   const [state, action, loading] = React.useActionState(
-    createResource,
+    createTopLevelResource,
     undefined
   );
 

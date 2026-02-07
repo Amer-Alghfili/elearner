@@ -49,7 +49,7 @@ export async function getWebsiteMetadata(url: string): Promise<{
   };
 }
 
-export async function createResource(
+export async function createTopLevelResource(
   _: unknown,
   formData: FormData
 ): Promise<State<{ url: string; title: string; icon: string | null }>> {
@@ -86,5 +86,16 @@ export async function createResource(
 
   return {
     error: validate.error.issues.map((i) => i.message).join("\n"),
+  };
+}
+
+export async function createTopLevelFolder(
+  _: unknown,
+  formData: FormData
+): Promise<{ id: number }> {
+  // throw Error("Not implemented");
+
+  return {
+    id: 1,
   };
 }
