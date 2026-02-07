@@ -16,11 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
 import { Box, Button, Flex, Image, Input } from "@chakra-ui/react";
-import {
-  createTopLevelFolder,
-  createTopLevelResource,
-  renameFolder,
-} from "./actions";
+import { createFolder, createTopLevelResource, renameFolder } from "./actions";
 import { toaster } from "@/components/ui/toaster";
 
 export type Resource = {
@@ -28,6 +24,7 @@ export type Resource = {
   title: string;
   icon: string | null;
   content: string | Resource[];
+  indexPath?: number[];
 };
 
 export function Resources(props: { resources: Resource[]; learnId: number }) {
@@ -47,32 +44,67 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
       title: title,
       icon,
       content: url,
+      indexPath: [resources.length],
     };
 
     setResources((resources) => [...resources, newResource]);
     setOptimistic((resources) => [...resources, newResource]);
   }
 
-  async function addFolder() {
+  function nestResource(resource: Resource, indexPath?: number[]): Resource[] {
+    const updated = [...resources];
+    const updatedResource = resource;
+
+    if (indexPath == null) {
+      updated[resources.length] = {
+        ...updatedResource,
+        indexPath: [resources.length],
+      };
+    } else {
+      let parent = updated;
+      for (const i of indexPath) {
+        if (typeof parent[i].content === "string") {
+          throw new Error("Invalid index path");
+        }
+
+        parent = parent[i].content as Resource[];
+      }
+
+      parent.push({
+        ...updatedResource,
+        indexPath: [...indexPath, parent.length],
+      });
+    }
+
+    return updated;
+  }
+
+  async function addFolder(indexPath?: number[]) {
     React.startTransition(async () => {
-      const updated = [
-        ...resources,
+      const updated = nestResource(
         {
           id: v4(),
           title: "untitled",
           icon: null,
           content: [],
         },
-      ];
-
+        indexPath
+      );
       setOptimistic(updated);
 
       try {
-        const { id } = await createTopLevelFolder(learnId);
-        setResources((resources) => [
-          ...resources,
-          { id: id.toString(), title: "untitled", icon: null, content: [] },
-        ]);
+        const { id } = await createFolder(learnId);
+
+        const updated = nestResource(
+          {
+            id: id.toString(),
+            title: "untitled",
+            icon: null,
+            content: [],
+          },
+          indexPath
+        );
+        setResources(updated);
       } catch (err) {
         toaster.create({
           title: err,
@@ -81,6 +113,35 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
         });
       }
     });
+  }
+
+  async function renameFolderAction(formData: FormData) {
+    const resourcesUpdater = (resources: Resource[]) =>
+      resources.map((resource) => {
+        if (resource.id === updatingId) {
+          return {
+            ...resource,
+            title: formData.get("title") as string,
+          };
+        }
+
+        return resource;
+      });
+
+    setOptimistic(resourcesUpdater);
+
+    try {
+      await renameFolder(formData);
+
+      setResources(resourcesUpdater);
+      setUpdatingId(null);
+    } catch (err: any) {
+      toaster.create({
+        title: err.message,
+        type: "error",
+        closable: true,
+      });
+    }
   }
 
   return (
@@ -114,36 +175,7 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
                 <Flex gap="0.5em" alignItems="center">
                   <FolderIcon stroke="text.secondary" />
                   {resource.id === updatingId ? (
-                    <form
-                      action={async (formData: FormData) => {
-                        const resourcesUpdater = (resources: Resource[]) =>
-                          resources.map((resource) => {
-                            if (resource.id === updatingId) {
-                              return {
-                                ...resource,
-                                title: formData.get("title") as string,
-                              };
-                            }
-
-                            return resource;
-                          });
-
-                        setOptimistic(resourcesUpdater);
-
-                        try {
-                          await renameFolder(formData);
-
-                          setResources(resourcesUpdater);
-                          setUpdatingId(null);
-                        } catch (err: any) {
-                          toaster.create({
-                            title: err.message,
-                            type: "error",
-                            closable: true,
-                          });
-                        }
-                      }}
-                    >
+                    <form action={renameFolderAction}>
                       <Input
                         defaultValue={resource.title}
                         id="title"
@@ -157,11 +189,6 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
                         border="none"
                         bg="transparent"
                         borderRadius="8px"
-                        // onBlur={(e) => {
-                        //   e.target.form?.requestSubmit();
-
-                        //   setUpdatingId(null);
-                        // }}
                       />
                       <Input
                         defaultValue={resource.id}
@@ -172,9 +199,28 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
                       <Button type="submit" hidden={true} />
                     </form>
                   ) : (
-                    <Box onDoubleClick={() => setUpdatingId(resource.id)}>
-                      {resource.title}
-                    </Box>
+                    <MenuRoot>
+                      <MenuContextTrigger>{resource.title}</MenuContextTrigger>
+                      <MenuContent>
+                        <MenuItem
+                          value="add-website"
+                          onClick={() => setWebsiteFormOpen(true)}
+                        >
+                          Add Website
+                        </MenuItem>
+                        <MenuItem
+                          value="add-folder"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            addFolder(resource.indexPath);
+                          }}
+                        >
+                          <Box onDoubleClick={() => setUpdatingId(resource.id)}>
+                            Add Folder
+                          </Box>
+                        </MenuItem>
+                      </MenuContent>
+                    </MenuRoot>
                   )}
                 </Flex>
               </SidebarLink>
