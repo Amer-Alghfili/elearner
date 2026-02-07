@@ -22,7 +22,6 @@ import {
   renameFolder,
 } from "./actions";
 import { toaster } from "@/components/ui/toaster";
-import { set } from "zod";
 
 export type Resource = {
   id: string;
@@ -41,11 +40,6 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
   const [updatingId, setUpdatingId] = React.useState<string | null>(null);
 
   const [websiteFormOpen, setWebsiteFormOpen] = React.useState<boolean>(false);
-
-  // const [state, renameFolderAction, loading] = React.useActionState(
-  //   renameFolder,
-  //   undefined
-  // );
 
   function addWebsite(url: string, title: string, icon: string | null) {
     const newResource = {
