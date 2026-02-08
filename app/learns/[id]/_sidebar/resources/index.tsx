@@ -92,13 +92,16 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
       });
     } else {
       let parent = updated;
+      let parentResourceId: number | null = null;
       for (const i of indexPath) {
+        parentResourceId = Number(parent[i].id);
         parent = parent[i].content as Resource[];
       }
 
       parent.push({
         ...resource,
         indexPath,
+        parentResourceId,
       });
     }
 
@@ -115,6 +118,8 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
           content: [],
           // will be override
           indexPath,
+          // will be override
+          parentResourceId: null,
         },
         indexPath
       );
@@ -148,6 +153,8 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
             content: [],
             // will be override
             indexPath,
+            // will be override
+            parentResourceId: null,
           },
           indexPath
         );
@@ -293,6 +300,14 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
                           }}
                         >
                           New Folder
+                        </MenuItem>
+                        <MenuItem
+                          value="remove-folder"
+                          onClick={(e) => {
+                            //TODO: Remove folder
+                          }}
+                        >
+                          Remove
                         </MenuItem>
                       </MenuContent>
                     </MenuRoot>
