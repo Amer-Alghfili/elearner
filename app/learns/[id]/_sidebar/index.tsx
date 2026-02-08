@@ -3,7 +3,6 @@ import { Sidebar as ClientSidebar } from "./client";
 import { prisma } from "@/prisma";
 import { Resource as ElearnerResource } from "./resources";
 import { Resource } from "@/generated/prisma/client";
-import { title } from "process";
 
 export async function Sidebar({ learnId }: { learnId: number }) {
   const notebooks = await prisma.noteFile.findMany({

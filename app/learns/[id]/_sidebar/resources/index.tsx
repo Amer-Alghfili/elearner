@@ -16,8 +16,14 @@ import {
 } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
 import { Button, Flex, Image, Input } from "@chakra-ui/react";
-import { createFolder, createResource, renameFolder } from "./actions";
+import {
+  createFolder,
+  createResource,
+  removeResource,
+  renameFolder,
+} from "./actions";
 import { toaster } from "@/components/ui/toaster";
+import RemoveButton from "@/components/button/remove";
 
 export type Resource = {
   id: string;
@@ -209,6 +215,8 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
     }
   }
 
+  function removeFolder(path: number[]) {}
+
   return (
     <>
       <SidebarLinksGroup
@@ -301,13 +309,12 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
                         >
                           New Folder
                         </MenuItem>
-                        <MenuItem
-                          value="remove-folder"
-                          onClick={(e) => {
-                            //TODO: Remove folder
-                          }}
-                        >
-                          Remove
+                        <MenuItem value="remove-folder" closeOnSelect={false}>
+                          <RemoveFolder
+                            id={Number(resource.id)}
+                            path={[...resource.indexPath, index]}
+                            onRemove={removeFolder}
+                          />
                         </MenuItem>
                       </MenuContent>
                     </MenuRoot>
@@ -434,6 +441,32 @@ function AddWebsiteDialog({
         </form>
       </DialogContent>
     </DialogRoot>
+  );
+}
+
+function RemoveFolder({
+  id,
+  path,
+  onRemove,
+}: {
+  id: number;
+  path: number[];
+  onRemove: (path: number[]) => void;
+}) {
+  const [state, action, loading] = React.useActionState(
+    removeResource,
+    undefined
+  );
+
+  return (
+    <RemoveButton showIcon={false} content="Remove Folder">
+      <form action={action} onClick={(e) => e.stopPropagation()}>
+        <Input id="id" name="id" value={id} hidden={true} readOnly={true} />
+        <Button type="submit" loading={loading} bg="feedback.error">
+          Delete
+        </Button>
+      </form>
+    </RemoveButton>
   );
 }
 

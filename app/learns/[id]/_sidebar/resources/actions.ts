@@ -4,6 +4,7 @@ import { prisma } from "@/prisma";
 import { State } from "@/types/server-state";
 import * as cheerio from "cheerio";
 import z from "zod";
+import { Resource } from "@/generated/prisma/client";
 
 async function searchForIconLink(
   html: cheerio.CheerioAPI,
@@ -113,10 +114,7 @@ export async function createFolder(
   return { id: res.id };
 }
 
-export async function renameFolder(
-  // _: unknown,
-  formData: FormData
-): Promise<void> {
+export async function renameFolder(formData: FormData): Promise<void> {
   try {
     const id = formData.get("id") as string;
     const title = formData.get("title") as string;
@@ -132,6 +130,66 @@ export async function renameFolder(
       await prisma.resource.update({
         where: { id: Number(validate.data.id) },
         data: { title: validate.data.title },
+      });
+    } else {
+      throw new Error(validate.error.issues.map((i) => i.message).join("\n"));
+    }
+  } catch {
+    throw new Error("Something went wrong");
+  }
+}
+
+export async function removeResource(
+  _: unknown,
+  formData: FormData
+): Promise<void> {
+  try {
+    const id = formData.get("id") as string;
+
+    const validate = z
+      .object({
+        id: z.string("Invalid id").trim(),
+      })
+      .safeParse({ id });
+
+    if (validate.success) {
+      const toDelete: Resource[] = [
+        (await prisma.resource.findFirst({
+          where: { id: Number(id) },
+        })) as Resource,
+      ];
+
+      const nestedResources = await prisma.resource.findMany({
+        where: {
+          parentResource: Number(id),
+        },
+      });
+
+      toDelete.push(...nestedResources);
+
+      async function findNestedResources(resources: Resource[]) {
+        for (const resource of resources) {
+          const result = await prisma.resource.findMany({
+            where: {
+              parentResource: resource.id,
+            },
+          });
+
+          if (result.length) {
+            toDelete.push(...result);
+            await findNestedResources(result);
+          }
+        }
+      }
+
+      await findNestedResources(nestedResources);
+
+      await prisma.resource.deleteMany({
+        where: {
+          id: {
+            in: toDelete.map(({ id }) => id),
+          },
+        },
       });
     } else {
       throw new Error(validate.error.issues.map((i) => i.message).join("\n"));
