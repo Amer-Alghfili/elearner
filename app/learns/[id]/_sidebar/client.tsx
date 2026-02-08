@@ -191,7 +191,7 @@ export function SidebarLinksGroup({
   children,
 }: {
   subLinks: React.ReactNode[];
-  icon: React.ReactElement<IconProps>;
+  icon?: React.ReactElement<IconProps>;
   action?: React.ReactNode;
   showArrows?: boolean;
   children: React.ReactNode;
@@ -255,16 +255,19 @@ function SidebarItem({
   icon,
   children,
 }: {
-  icon: React.ReactElement<IconProps>;
+  icon?: React.ReactElement<IconProps>;
   children: React.ReactNode;
 }) {
   const { sidebarExpanded } = useLearnControlManagement();
 
-  const mappedIcon = React.cloneElement(icon, {
-    stroke: "text.secondary",
-  });
+  let mappedIcon;
+  if (icon) {
+    mappedIcon = React.cloneElement(icon, {
+      stroke: "text.secondary",
+    });
 
-  if (!sidebarExpanded) return mappedIcon;
+    if (!sidebarExpanded) return mappedIcon;
+  }
 
   return (
     <Flex

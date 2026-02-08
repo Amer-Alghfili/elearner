@@ -51,35 +51,34 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
     setOptimistic((resources) => [...resources, newResource]);
   }
 
-  function nestResource(resource: Resource, indexPath?: number[]): Resource[] {
-    const updated = [...resources];
-    const updatedResource = resource;
+  function nestResource(
+    resource: Resource,
+    indexPath: number[] = []
+  ): Resource[] {
+    const updated = structuredClone(resources);
 
-    if (indexPath == null) {
-      updated[resources.length] = {
-        ...updatedResource,
-        indexPath: [resources.length],
-      };
+    // add folder at root-level
+    if (indexPath.length === 0) {
+      updated.push({
+        ...resource,
+        indexPath: [],
+      });
     } else {
       let parent = updated;
       for (const i of indexPath) {
-        if (typeof parent[i].content === "string") {
-          throw new Error("Invalid index path");
-        }
-
         parent = parent[i].content as Resource[];
       }
 
       parent.push({
-        ...updatedResource,
-        indexPath: [...indexPath, parent.length],
+        ...resource,
+        indexPath,
       });
     }
 
     return updated;
   }
 
-  async function addFolder(indexPath?: number[]) {
+  async function addFolder(indexPath: number[] = []) {
     React.startTransition(async () => {
       const updated = nestResource(
         {
@@ -93,7 +92,24 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
       setOptimistic(updated);
 
       try {
-        const { id } = await createFolder(learnId);
+        let parentId: number | null = null;
+        if (indexPath.length > 0) {
+          let lastParent = resources[indexPath[0]];
+
+          if (lastParent) {
+            for (let i = 1; i < indexPath.length; i++) {
+              const current = lastParent.content[indexPath[i]];
+              if (typeof current === "string")
+                throw Error("Invalid index path");
+
+              lastParent = current;
+            }
+
+            parentId = Number(lastParent.id);
+          }
+        }
+
+        const { id } = await createFolder(learnId, parentId);
 
         const updated = nestResource(
           {
@@ -105,9 +121,9 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
           indexPath
         );
         setResources(updated);
-      } catch (err) {
+      } catch (err: any) {
         toaster.create({
-          title: err,
+          title: err.message,
           type: "error",
           closable: true,
         });
@@ -149,7 +165,8 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
       <SidebarLinksGroup
         icon={<FolderIcon fill="text.secondary" />}
         subLinks={optimistic.map(function mapToSidebarItem(
-          resource
+          resource,
+          index
         ): React.ReactNode {
           if (typeof resource.content === "string") {
             const icon = resource.icon && (
@@ -167,7 +184,6 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
           return (
             <SidebarLinksGroup
               key={resource.id}
-              icon={<></>}
               showArrows={false}
               subLinks={(resource.content || []).map(mapToSidebarItem)}
             >
@@ -200,24 +216,29 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
                     </form>
                   ) : (
                     <MenuRoot>
-                      <MenuContextTrigger>{resource.title}</MenuContextTrigger>
+                      <MenuContextTrigger
+                        onDoubleClick={() => setUpdatingId(resource.id)}
+                      >
+                        {resource.title}
+                      </MenuContextTrigger>
                       <MenuContent>
                         <MenuItem
                           value="add-website"
                           onClick={() => setWebsiteFormOpen(true)}
                         >
-                          Add Website
+                          New Website
                         </MenuItem>
                         <MenuItem
                           value="add-folder"
                           onClick={(e) => {
                             e.preventDefault();
-                            addFolder(resource.indexPath);
+                            addFolder([
+                              ...(resource.indexPath as number[]),
+                              index,
+                            ]);
                           }}
                         >
-                          <Box onDoubleClick={() => setUpdatingId(resource.id)}>
-                            Add Folder
-                          </Box>
+                          New Folder
                         </MenuItem>
                       </MenuContent>
                     </MenuRoot>

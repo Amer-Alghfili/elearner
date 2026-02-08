@@ -37,36 +37,14 @@ export async function Sidebar({ learnId }: { learnId: number }) {
     },
   });
 
-  // const resources = await prisma.resource.findMany({
-  //   where: {
-  //     learn_id: learnId,
-  //   },
-  //   orderBy: {
-  //     createdAt: "asc",
-  //   },
-  // });
-  const resources: Pick<Resource, "id" | "parentResource">[] = [
-    {
-      id: 1,
-      parentResource: null,
+  const resources = await prisma.resource.findMany({
+    where: {
+      learn_id: learnId,
     },
-    {
-      id: 2,
-      parentResource: 3,
+    orderBy: {
+      createdAt: "asc",
     },
-    {
-      id: 3,
-      parentResource: 1,
-    },
-    {
-      id: 4,
-      parentResource: 1,
-    },
-    {
-      id: 5,
-      parentResource: null,
-    },
-  ];
+  });
 
   const topLevel = resources.filter(
     (resource) => resource.parentResource == null
@@ -74,30 +52,37 @@ export async function Sidebar({ learnId }: { learnId: number }) {
 
   const group: ElearnerResource[] = [];
 
-  for (const resource of topLevel) {
+  for (let i = 0; i < topLevel.length; i++) {
+    const resource = topLevel[i];
+
     group.push({
       id: resource.id.toString(),
-      title: resource.id.toString(),
-      icon: null,
-      content: nest(resource),
+      title: resource.title,
+      icon: resource.icon,
+      content: nest(resource, [i]),
+      indexPath: [],
     });
   }
 
   function nest(
-    resource: Pick<Resource, "id" | "parentResource">
+    resource: Resource,
+    indexPath: number[]
   ): ElearnerResource[] | string {
-    const filter = resources.filter(
+    const nestedResources = resources.filter(
       (res) => res.parentResource === resource.id
     );
 
-    if (filter.length === 0) return `Link of ${resource.id}`;
+    if (nestedResources.length === 0) {
+      return (resource.link as string) || [];
+    }
 
-    return filter.map((res) => {
+    return nestedResources.map((res, i) => {
       return {
         id: res.id.toString(),
-        title: res.id.toString(),
+        title: res.title,
         icon: null,
-        content: nest(res),
+        content: nest(res, [...indexPath, i]),
+        indexPath,
       };
     });
   }
@@ -112,7 +97,7 @@ export async function Sidebar({ learnId }: { learnId: number }) {
         answerType: flashcard.answerType as AnswerType,
         options: flashcard.options as string[] | null,
       }))}
-      resources={[]}
+      resources={group}
     />
   );
 }

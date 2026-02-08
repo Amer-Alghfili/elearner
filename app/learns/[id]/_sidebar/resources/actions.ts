@@ -88,12 +88,16 @@ export async function createTopLevelResource(
   };
 }
 
-export async function createFolder(learnId: number): Promise<{ id: number }> {
+export async function createFolder(
+  learnId: number,
+  parentResource: number | null
+): Promise<{ id: number }> {
   const res = await prisma.resource.create({
     data: {
       title: "untitled",
       icon: null,
       learn_id: learnId,
+      parentResource,
     },
   });
 
