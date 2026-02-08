@@ -22,6 +22,8 @@ type RemoveButtonProps = {
   description?: React.ReactNode;
   icon?: React.ReactNode;
   withDescription?: boolean;
+  content?: React.ReactNode;
+  showIcon?: boolean;
 };
 export default function RemoveButton({
   title = "Are you sure you want to delete ?",
@@ -32,6 +34,8 @@ export default function RemoveButton({
       <LuTrash />
     </Icon>
   ),
+  content,
+  showIcon = true,
   children,
   ...rest
 }: RemoveButtonProps & { children: React.ReactNode } & Omit<
@@ -40,16 +44,19 @@ export default function RemoveButton({
   >) {
   return (
     <DialogRoot>
-      <DialogTrigger asChild>
-        <IconButton
-          variant="plain"
-          p={0}
-          _hover={{ bg: "accent.softCoral.transparent" }}
-          {...rest}
-        >
-          {icon}
-        </IconButton>
-      </DialogTrigger>
+      {showIcon && (
+        <DialogTrigger asChild>
+          <IconButton
+            variant="plain"
+            p={0}
+            _hover={{ bg: "accent.softCoral.transparent" }}
+            {...rest}
+          >
+            {icon}
+          </IconButton>
+        </DialogTrigger>
+      )}
+      {content != null && <DialogTrigger>{content}</DialogTrigger>}
       <DialogContent>
         <DialogHeader>
           <Heading as="h4">{title}</Heading>
@@ -67,9 +74,3 @@ export default function RemoveButton({
     </DialogRoot>
   );
 }
-
-/**
- * <DialogButton>
- *      <Button>Delete</Button>
- * </DialogButton>
- */

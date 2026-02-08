@@ -17,8 +17,8 @@ import {
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
 import { PracticeTaskItem } from "./PracticeTaskItem";
 import { FlashcardItem } from "./FlashcardItem";
-import { Flashcard } from "../../knowledge-test/_flash-cards/types";
-import { PracticeTask } from "../../knowledge-test/_practice-tasks/types";
+import { Flashcard } from "../../_flashcard-form/types";
+import { PracticeTask } from "../../_practice-task-form/types";
 
 export function ReadyToReviewKnowledgeTest({
   practiceTasks,

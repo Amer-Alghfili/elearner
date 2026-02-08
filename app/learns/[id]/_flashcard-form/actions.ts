@@ -99,7 +99,7 @@ export async function updateDueDate(id: number, stage: number) {
   });
 }
 
-export async function deleteFlashCard(
+export async function deleteFlashcard(
   _: unknown,
   formData: FormData
 ): Promise<State<Flashcard>> {
@@ -118,7 +118,6 @@ export async function deleteFlashCard(
         answerType: res.answerType as AnswerType,
       },
     };
-
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (_) {
     return { error: "Something went wrong" };

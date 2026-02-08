@@ -36,8 +36,8 @@ import {
   SelectTrigger,
 } from "@/components/ui/select";
 import { Tooltip } from "@/components/ui/tooltip";
-import { Flashcard } from "../../knowledge-test/_flash-cards/types";
-import { updateDueDate } from "../../knowledge-test/_flash-cards/actions";
+import { Flashcard } from "../../_flashcard-form/types";
+import { updateDueDate } from "../../_flashcard-form/actions";
 
 export function FlashcardItem({ flashcard }: { flashcard: Flashcard }) {
   const { question, answer } = flashcard;

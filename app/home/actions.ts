@@ -5,18 +5,54 @@ import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/prisma";
 import { ZodError } from "@/types/error";
 import z from "zod";
-import { da } from "zod/v4/locales";
 
-export type Learn = { id: number; title: string; description: string | null };
+export type Learn = {
+  id: number;
+  title: string;
+  description: string | null;
+  lastNoteFileId: number | null;
+};
 
 export async function deleteLearn(id: number) {
   try {
     const data = await auth();
 
-    await prisma.learn.delete({
+    const learn = await prisma.learn.findFirst({
       where: {
         id,
       },
+    });
+
+    if (!learn) {
+      throw new Error("Learn not found");
+    }
+
+    const notebooks = await prisma.noteFile.findMany({
+      where: {
+        learn_id: id,
+      },
+    });
+
+    await prisma.$transaction(async (prisma) => {
+      await prisma.noteFileBlock.deleteMany({
+        where: {
+          file_id: {
+            in: notebooks.map((notebook) => notebook.id),
+          },
+        },
+      });
+
+      await prisma.noteFile.deleteMany({
+        where: {
+          learn_id: id,
+        },
+      });
+
+      await prisma.learn.deleteMany({
+        where: {
+          id,
+        },
+      });
     });
 
     return await prisma.learn.findMany({
@@ -64,25 +100,40 @@ export async function postLearn(
           },
         });
       } else {
-        await prisma.user.update({
-          where: {
-            email,
-          },
+        await prisma.learn.create({
           data: {
-            learns: {
+            title,
+            description,
+            user_id: email,
+            noteFiles: {
               create: {
-                title,
-                description,
+                title: "untitled",
               },
             },
           },
         });
       }
 
-      return await prisma.learn.findMany({
+      const result = await prisma.learn.findMany({
         where: {
           user_id: email,
         },
+        include: {
+          noteFiles: {
+            select: {
+              id: true,
+            },
+            take: 1,
+          },
+        },
+      });
+
+      return result.map((learn) => {
+        return {
+          ...learn,
+          lastNoteFileId:
+            learn.noteFiles[learn.noteFiles.length - 1]?.id ?? null,
+        };
       });
     } catch (err) {
       if (err instanceof Prisma.PrismaClientKnownRequestError) {

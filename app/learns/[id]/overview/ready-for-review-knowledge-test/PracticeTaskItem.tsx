@@ -1,5 +1,5 @@
 import { Button, Card, Flex, Heading, Stack, Text } from "@chakra-ui/react";
-import { updateDueDate } from "../../knowledge-test/_practice-tasks/actions";
+import { updateDueDate } from "../../_practice-task-form/actions";
 import {
   DialogActionTrigger,
   DialogBody,
@@ -17,7 +17,7 @@ import { useController, useForm } from "react-hook-form";
 import { RadioCardItem, RadioCardRoot } from "@/components/ui/radio-card";
 import { toaster } from "@/components/ui/toaster";
 import { useRouter } from "next/navigation";
-import { PracticeTask } from "../../knowledge-test/_practice-tasks/types";
+import { PracticeTask } from "../../_practice-task-form/types";
 
 export function PracticeTaskItem({
   practiceTask,
