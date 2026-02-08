@@ -24,7 +24,7 @@ export type Resource = {
   title: string;
   icon: string | null;
   content: string | Resource[];
-  indexPath?: number[];
+  indexPath: number[];
 };
 
 export function Resources(props: { resources: Resource[]; learnId: number }) {
@@ -34,7 +34,7 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
   const [optimistic, setOptimistic] =
     React.useOptimistic<Resource[]>(resources);
 
-  const [updatingId, setUpdatingId] = React.useState<string | null>(null);
+  const [updatingId, setUpdatingId] = React.useState<number[] | null>(null);
 
   const [websiteFormOpen, setWebsiteFormOpen] = React.useState<boolean>(false);
 
@@ -86,6 +86,8 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
           title: "untitled",
           icon: null,
           content: [],
+          // will be override
+          indexPath,
         },
         indexPath
       );
@@ -117,6 +119,8 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
             title: "untitled",
             icon: null,
             content: [],
+            // will be override
+            indexPath,
           },
           indexPath
         );
@@ -133,15 +137,26 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
 
   async function renameFolderAction(formData: FormData) {
     const resourcesUpdater = (resources: Resource[]) =>
-      resources.map((resource) => {
-        if (resource.id === updatingId) {
+      resources.map(function mapResources(resource, index): Resource {
+        const currentIndexPath = [...resource.indexPath, index];
+
+        const found = (updatingId as []).every(
+          (value, index) => Number(value) === currentIndexPath[index]
+        );
+
+        if (found) {
           return {
             ...resource,
             title: formData.get("title") as string,
           };
         }
 
-        return resource;
+        if (typeof resource.content === "string") return resource;
+
+        return {
+          ...resource,
+          content: resource.content.map(mapResources),
+        };
       });
 
     setOptimistic(resourcesUpdater);
@@ -181,6 +196,8 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
             );
           }
 
+          const currentIndexPath = [...resource.indexPath, index];
+
           return (
             <SidebarLinksGroup
               key={resource.id}
@@ -190,7 +207,9 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
               <SidebarLink>
                 <Flex gap="0.5em" alignItems="center">
                   <FolderIcon stroke="text.secondary" />
-                  {resource.id === updatingId ? (
+                  {updatingId != null &&
+                  updatingId.length === currentIndexPath.length &&
+                  updatingId.every((v, i) => v === currentIndexPath[i]) ? (
                     <form action={renameFolderAction}>
                       <Input
                         defaultValue={resource.title}
@@ -217,7 +236,9 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
                   ) : (
                     <MenuRoot>
                       <MenuContextTrigger
-                        onDoubleClick={() => setUpdatingId(resource.id)}
+                        onDoubleClick={() =>
+                          setUpdatingId([...resource.indexPath, index])
+                        }
                       >
                         {resource.title}
                       </MenuContextTrigger>
