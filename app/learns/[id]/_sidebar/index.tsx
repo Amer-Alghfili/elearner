@@ -61,6 +61,7 @@ export async function Sidebar({ learnId }: { learnId: number }) {
       icon: resource.icon,
       content: nest(resource, [i]),
       indexPath: [],
+      parentResourceId: resource.parentResource,
     });
   }
 
@@ -80,9 +81,10 @@ export async function Sidebar({ learnId }: { learnId: number }) {
       return {
         id: res.id.toString(),
         title: res.title,
-        icon: null,
+        icon: res.icon,
         content: nest(res, [...indexPath, i]),
         indexPath,
+        parentResourceId: res.parentResource,
       };
     });
   }

@@ -15,8 +15,8 @@ import {
   DialogRoot,
 } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
-import { Box, Button, Flex, Image, Input } from "@chakra-ui/react";
-import { createFolder, createTopLevelResource, renameFolder } from "./actions";
+import { Button, Flex, Image, Input } from "@chakra-ui/react";
+import { createFolder, createResource, renameFolder } from "./actions";
 import { toaster } from "@/components/ui/toaster";
 
 export type Resource = {
@@ -25,6 +25,7 @@ export type Resource = {
   icon: string | null;
   content: string | Resource[];
   indexPath: number[];
+  parentResourceId: number | null;
 };
 
 export function Resources(props: { resources: Resource[]; learnId: number }) {
@@ -36,19 +37,45 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
 
   const [updatingId, setUpdatingId] = React.useState<number[] | null>(null);
 
-  const [websiteFormOpen, setWebsiteFormOpen] = React.useState<boolean>(false);
+  const [websiteForm, setWebsiteForm] = React.useState<{
+    open: boolean;
+    indexPath?: number[];
+    parentResource: number | null;
+  }>({ open: false, parentResource: null });
 
   function addWebsite(url: string, title: string, icon: string | null) {
-    const newResource = {
+    const newResource: Resource = {
       id: v4(),
-      title: title,
+      title,
       icon,
       content: url,
-      indexPath: [resources.length],
+      indexPath: websiteForm.indexPath || [],
+      parentResourceId: websiteForm.parentResource,
     };
 
-    setResources((resources) => [...resources, newResource]);
-    setOptimistic((resources) => [...resources, newResource]);
+    function mapResources(resource: Resource): Resource {
+      if (typeof resource.content === "string") return resource;
+
+      const folderMatched =
+        websiteForm.indexPath?.length === resource.indexPath.length &&
+        websiteForm.indexPath?.every((v, i) => v === resource.indexPath[i]);
+
+      if (folderMatched && websiteForm.parentResource === Number(resource.id)) {
+        return {
+          ...resource,
+          content: [...resource.content.map(mapResources), newResource],
+        };
+      }
+
+      return {
+        ...resource,
+        content: resource.content.map(mapResources),
+      };
+    }
+    const updated = resources.map(mapResources);
+
+    setResources(updated);
+    setOptimistic(updated);
   }
 
   function nestResource(
@@ -245,7 +272,13 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
                       <MenuContent>
                         <MenuItem
                           value="add-website"
-                          onClick={() => setWebsiteFormOpen(true)}
+                          onClick={() =>
+                            setWebsiteForm({
+                              open: true,
+                              indexPath: resource.indexPath,
+                              parentResource: Number(resource.id),
+                            })
+                          }
                         >
                           New Website
                         </MenuItem>
@@ -275,9 +308,15 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
           <MenuContent>
             <MenuItem
               value="add-website"
-              onClick={() => setWebsiteFormOpen(true)}
+              onClick={() =>
+                setWebsiteForm({
+                  open: true,
+                  indexPath: [],
+                  parentResource: null,
+                })
+              }
             >
-              Add Website
+              New Website
             </MenuItem>
             <MenuItem
               value="add-folder"
@@ -286,16 +325,23 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
                 addFolder();
               }}
             >
-              Add Folder
+              New Folder
             </MenuItem>
           </MenuContent>
         </MenuRoot>
       </SidebarLinksGroup>
       <AddWebsiteDialog
-        key={websiteFormOpen.toString()}
+        key={JSON.stringify(websiteForm)}
         learnId={learnId}
-        open={websiteFormOpen}
-        setOpen={setWebsiteFormOpen}
+        parentResource={websiteForm.parentResource as number | null}
+        open={websiteForm.open}
+        onClose={() =>
+          setWebsiteForm({
+            open: false,
+            indexPath: undefined,
+            parentResource: null,
+          })
+        }
         onAdd={addWebsite}
       />
     </>
@@ -305,16 +351,18 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
 function AddWebsiteDialog({
   learnId,
   open,
-  setOpen,
+  parentResource,
+  onClose,
   onAdd,
 }: {
   learnId: number;
   open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  parentResource: number | null;
+  onClose: VoidFunction;
   onAdd: (url: string, title: string, icon: string | null) => void;
 }) {
   const [state, action, loading] = React.useActionState(
-    createTopLevelResource,
+    createResource,
     undefined
   );
 
@@ -329,7 +377,7 @@ function AddWebsiteDialog({
       });
     } else if (s.data) {
       onAdd(s.data.url, s.data.title, s.data.icon);
-      setOpen(false);
+      onClose();
     }
   });
 
@@ -338,7 +386,7 @@ function AddWebsiteDialog({
   }, [state]);
 
   return (
-    <DialogRoot open={open} onOpenChange={({ open }) => setOpen(open)}>
+    <DialogRoot open={open} onOpenChange={({ open }) => !open && onClose()}>
       <DialogContent>
         <form action={action}>
           <DialogHeader>
@@ -351,9 +399,17 @@ function AddWebsiteDialog({
               />
             </Field>
             <Input id="learnId" name="learnId" hidden={true} value={learnId} />
+            {parentResource != null && (
+              <Input
+                id="parentResource"
+                name="parentResource"
+                hidden={true}
+                value={parentResource}
+              />
+            )}
           </DialogHeader>
           <DialogFooter>
-            <Button variant="secondary" onClick={() => setOpen(false)}>
+            <Button variant="secondary" onClick={onClose}>
               Cancel
             </Button>
             <Button loading={loading} type="submit">

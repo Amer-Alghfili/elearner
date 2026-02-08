@@ -48,7 +48,7 @@ export async function getWebsiteMetadata(url: string): Promise<{
   };
 }
 
-export async function createTopLevelResource(
+export async function createResource(
   _: unknown,
   formData: FormData
 ): Promise<State<{ url: string; title: string; icon: string | null }>> {
@@ -61,16 +61,25 @@ export async function createTopLevelResource(
       url: z.url("Invalid url").trim(),
       title: z.string("Invalid title").trim(),
       icon: z.url("Invalid icon url").trim().nullable(),
+      parentResource: z.string("Invalid parent resource").trim().nullable(),
     })
-    .safeParse({ url, title, icon: iconLink });
+    .safeParse({
+      url,
+      title,
+      icon: iconLink,
+      parentResource: formData.get("parentResource"),
+    });
 
   if (validate.success) {
+    const { parentResource } = validate.data;
+
     const res = await prisma.resource.create({
       data: {
         title: validate.data.title,
         link: validate.data.url,
         icon: validate.data.icon,
         learn_id: Number(formData.get("learnId") as string),
+        parentResource: parentResource == null ? null : Number(parentResource),
       },
     });
 
