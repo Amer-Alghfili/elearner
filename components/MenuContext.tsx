@@ -1,4 +1,3 @@
-import React from "react";
 import { MenuContent, MenuContextTrigger, MenuItem, MenuRoot } from "./ui/menu";
 import {
   MenuContentProps,
