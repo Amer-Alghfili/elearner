@@ -1,12 +1,6 @@
 import React from "react";
 import { SidebarLink, SidebarLinksGroup } from "../client";
 import { FolderIcon } from "@/components/Icons";
-import {
-  MenuContent,
-  MenuContextTrigger,
-  MenuItem,
-  MenuRoot,
-} from "@/components/ui/menu";
 import { v4 } from "uuid";
 import {
   DialogContent,
@@ -24,6 +18,7 @@ import {
 } from "./actions";
 import { toaster } from "@/components/ui/toaster";
 import RemoveButton from "@/components/button/remove";
+import MenuContext from "@/components/MenuContext";
 
 export type Resource = {
   id: string;
@@ -78,7 +73,10 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
         content: resource.content.map(mapResources),
       };
     }
-    const updated = resources.map(mapResources);
+    const updated =
+      websiteForm.parentResource == null
+        ? [...resources, newResource]
+        : resources.map(mapResources);
 
     setResources(updated);
     setOptimistic(updated);
@@ -335,52 +333,52 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
                       <Button type="submit" hidden={true} />
                     </form>
                   ) : (
-                    <MenuRoot>
-                      <MenuContextTrigger
-                        onDoubleClick={() =>
-                          setUpdatingId([...resource.indexPath, index])
-                        }
-                      >
-                        {resource.title}
-                      </MenuContextTrigger>
-                      <MenuContent>
-                        <MenuItem
-                          value="add-website"
-                          onClick={() =>
+                    <MenuContext
+                      triggerProps={{
+                        onDoubleClick: () =>
+                          setUpdatingId([...resource.indexPath, index]),
+                      }}
+                      list={[
+                        {
+                          value: "add-website",
+                          onClick: () =>
                             setWebsiteForm({
                               open: true,
                               indexPath: resource.indexPath,
                               parentResource: Number(resource.id),
-                            })
-                          }
-                        >
-                          New Website
-                        </MenuItem>
-                        <MenuItem
-                          value="add-folder"
-                          onClick={(e) => {
+                            }),
+                          children: "New Website",
+                        },
+                        {
+                          value: "add-folder",
+                          onClick: (e) => {
                             e.preventDefault();
                             addFolder([
                               ...(resource.indexPath as number[]),
                               index,
                             ]);
-                          }}
-                        >
-                          New Folder
-                        </MenuItem>
-                        <MenuItem value="remove-folder" closeOnSelect={false}>
-                          <RemoveFolder
-                            id={Number(resource.id)}
-                            onRemove={(formData) =>
-                              removeFolder(
-                                [...resource.indexPath, index],
-                                formData
-                              )
-                            }
-                          />
-                        </MenuItem>
-                      </MenuContent>
-                    </MenuRoot>
+                          },
+                          children: "New Folder",
+                        },
+                        {
+                          value: "remove-folder",
+                          closeOnSelect: false,
+                          children: (
+                            <RemoveFolder
+                              id={Number(resource.id)}
+                              onRemove={(formData) =>
+                                removeFolder(
+                                  [...resource.indexPath, index],
+                                  formData
+                                )
+                              }
+                            />
+                          ),
+                        },
+                      ]}
+                    >
+                      {resource.title}
+                    </MenuContext>
                   )}
                 </Flex>
               </SidebarLink>
@@ -388,32 +386,30 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
           );
         })}
       >
-        <MenuRoot>
-          <MenuContextTrigger>Resources</MenuContextTrigger>
-          <MenuContent>
-            <MenuItem
-              value="add-website"
-              onClick={() =>
+        <MenuContext
+          list={[
+            {
+              value: "add-website",
+              onClick: () =>
                 setWebsiteForm({
                   open: true,
                   indexPath: [],
                   parentResource: null,
-                })
-              }
-            >
-              New Website
-            </MenuItem>
-            <MenuItem
-              value="add-folder"
-              onClick={(e) => {
+                }),
+              children: "New Website",
+            },
+            {
+              value: "add-folder",
+              onClick: (e) => {
                 e.preventDefault();
                 addFolder();
-              }}
-            >
-              New Folder
-            </MenuItem>
-          </MenuContent>
-        </MenuRoot>
+              },
+              children: "New Folder",
+            },
+          ]}
+        >
+          Resources
+        </MenuContext>
       </SidebarLinksGroup>
       <AddWebsiteDialog
         key={JSON.stringify(websiteForm)}
