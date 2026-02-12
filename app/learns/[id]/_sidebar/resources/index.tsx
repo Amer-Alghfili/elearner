@@ -213,12 +213,10 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
     }
   }
 
-  function removeFolder(path: number[], formData: FormData) {
-    React.startTransition(async () => {
-      const updated = optimistic
+  async function removeAction(path: number[], formData: FormData) {
+    const update = (resources: Resource[]) => {
+      return resources
         .map(function mapResource(resource, index): Resource | null {
-          if (typeof resource.content === "string") return resource;
-
           const currentIndexPath = [...resource.indexPath, index];
 
           const found =
@@ -226,6 +224,8 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
             path.every((v, i) => v === currentIndexPath[i]);
 
           if (found) return null;
+
+          if (typeof resource.content === "string") return resource;
 
           return {
             ...resource,
@@ -235,40 +235,19 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
           };
         })
         .filter(Boolean);
-      setOptimistic(updated as Resource[]);
+    };
+    setOptimistic(update(optimistic) as Resource[]);
 
-      try {
-        await removeResource(formData);
-
-        const updated = resources
-          .map(function mapResource(resource, index): Resource | null {
-            if (typeof resource.content === "string") return resource;
-
-            const currentIndexPath = [...resource.indexPath, index];
-
-            const found =
-              path.length === currentIndexPath.length &&
-              path.every((v, i) => v === currentIndexPath[i]);
-
-            if (found) return null;
-
-            return {
-              ...resource,
-              content: resource.content
-                .map(mapResource)
-                .filter(Boolean) as Resource[],
-            };
-          })
-          .filter(Boolean);
-        setResources(updated as Resource[]);
-      } catch (err: any) {
-        toaster.create({
-          title: err.message,
-          type: "error",
-          closable: true,
-        });
-      }
-    });
+    try {
+      await removeResource(formData);
+      setResources(update(resources) as Resource[]);
+    } catch (err: any) {
+      toaster.create({
+        title: err.message,
+        type: "error",
+        closable: true,
+      });
+    }
   }
 
   return (
@@ -290,7 +269,27 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
                 href={resource.content}
                 icon={icon}
               >
-                {resource.title}
+                <MenuContext
+                  list={[
+                    {
+                      value: "remove-website",
+                      closeOnSelect: false,
+                      children: (
+                        <RemoveFolder
+                          id={Number(resource.id)}
+                          onRemove={(formData) =>
+                            removeAction(
+                              [...resource.indexPath, index],
+                              formData
+                            )
+                          }
+                        />
+                      ),
+                    },
+                  ]}
+                >
+                  {resource.title}
+                </MenuContext>
               </SidebarLink>
             );
           }
@@ -367,7 +366,7 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
                             <RemoveFolder
                               id={Number(resource.id)}
                               onRemove={(formData) =>
-                                removeFolder(
+                                removeAction(
                                   [...resource.indexPath, index],
                                   formData
                                 )
