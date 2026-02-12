@@ -10,6 +10,7 @@ import {
   IconProps,
   LinkBox,
   LinkOverlay,
+  Box,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import {
@@ -144,8 +145,8 @@ export function Sidebar({
           ))}
         >
           Notebooks
-        </SidebarLinksGroup>
-        <SidebarLinksGroup
+        </SidebarLinksGroup> */}
+        {/* <SidebarLinksGroup
           icon={<BulbWithFolderIcon />}
           subLinks={flashcards.map((flashcard) => (
             <SidebarLink
@@ -287,16 +288,28 @@ function SidebarItem({
 export function SidebarLink({
   action,
   href,
+  icon,
   children,
 }: {
   action?: React.ReactNode;
   href?: string;
+  icon?: React.ReactNode;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
 
   const isActive =
     href != null && href !== "" && pathname.endsWith(href as string);
+
+  const content =
+    icon == null ? (
+      <TruncateText>{children}</TruncateText>
+    ) : (
+      <Flex gap="0.5em" w="full">
+        {icon}
+        <TruncateText>{children}</TruncateText>
+      </Flex>
+    );
 
   if (action != null) {
     return (
@@ -315,14 +328,10 @@ export function SidebarLink({
             bg: "stroke.transparent",
           }}
         >
-          <TruncateText>
-            <LinkOverlay asChild>
-              {href != null && (
-                <NextLink href={href as any}>{children}</NextLink>
-              )}
-              {href == null && children}
-            </LinkOverlay>
-          </TruncateText>
+          <LinkOverlay asChild w="80%">
+            {href != null && <NextLink href={href as any}>{content}</NextLink>}
+            {href == null && content}
+          </LinkOverlay>
           {action}
         </Flex>
       </LinkBox>
@@ -344,14 +353,12 @@ export function SidebarLink({
         bg: "stroke.transparent",
       }}
     >
-      <TruncateText>
-        {href != null && (
-          <Link asChild w="full" textDecoration="none">
-            <NextLink href={href as any}>{children}</NextLink>
-          </Link>
-        )}
-        {href == null && children}
-      </TruncateText>
+      {href != null && (
+        <Link asChild w="full" textDecoration="none">
+          <NextLink href={href as any}>{content}</NextLink>
+        </Link>
+      )}
+      {href == null && content}
     </Link>
   );
 }

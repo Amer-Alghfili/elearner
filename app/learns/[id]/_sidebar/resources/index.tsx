@@ -231,8 +231,11 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
             );
 
             return (
-              <SidebarLink key={resource.id} href={resource.content}>
-                {icon}
+              <SidebarLink
+                key={resource.id}
+                href={resource.content}
+                icon={icon}
+              >
                 {resource.title}
               </SidebarLink>
             );
