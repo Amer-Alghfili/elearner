@@ -139,10 +139,7 @@ export async function renameFolder(formData: FormData): Promise<void> {
   }
 }
 
-export async function removeResource(
-  _: unknown,
-  formData: FormData
-): Promise<void> {
+export async function removeResource(formData: FormData): Promise<void> {
   try {
     const id = formData.get("id") as string;
 

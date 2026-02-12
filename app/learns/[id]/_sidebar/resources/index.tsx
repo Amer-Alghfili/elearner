@@ -215,7 +215,63 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
     }
   }
 
-  function removeFolder(path: number[]) {}
+  function removeFolder(path: number[], formData: FormData) {
+    React.startTransition(async () => {
+      const updated = optimistic
+        .map(function mapResource(resource, index): Resource | null {
+          if (typeof resource.content === "string") return resource;
+
+          const currentIndexPath = [...resource.indexPath, index];
+
+          const found =
+            path.length === currentIndexPath.length &&
+            path.every((v, i) => v === currentIndexPath[i]);
+
+          if (found) return null;
+
+          return {
+            ...resource,
+            content: resource.content
+              .map(mapResource)
+              .filter(Boolean) as Resource[],
+          };
+        })
+        .filter(Boolean);
+      setOptimistic(updated as Resource[]);
+
+      try {
+        await removeResource(formData);
+
+        const updated = resources
+          .map(function mapResource(resource, index): Resource | null {
+            if (typeof resource.content === "string") return resource;
+
+            const currentIndexPath = [...resource.indexPath, index];
+
+            const found =
+              path.length === currentIndexPath.length &&
+              path.every((v, i) => v === currentIndexPath[i]);
+
+            if (found) return null;
+
+            return {
+              ...resource,
+              content: resource.content
+                .map(mapResource)
+                .filter(Boolean) as Resource[],
+            };
+          })
+          .filter(Boolean);
+        setResources(updated as Resource[]);
+      } catch (err: any) {
+        toaster.create({
+          title: err.message,
+          type: "error",
+          closable: true,
+        });
+      }
+    });
+  }
 
   return (
     <>
@@ -315,8 +371,12 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
                         <MenuItem value="remove-folder" closeOnSelect={false}>
                           <RemoveFolder
                             id={Number(resource.id)}
-                            path={[...resource.indexPath, index]}
-                            onRemove={removeFolder}
+                            onRemove={(formData) =>
+                              removeFolder(
+                                [...resource.indexPath, index],
+                                formData
+                              )
+                            }
                           />
                         </MenuItem>
                       </MenuContent>
@@ -449,23 +509,16 @@ function AddWebsiteDialog({
 
 function RemoveFolder({
   id,
-  path,
   onRemove,
 }: {
   id: number;
-  path: number[];
-  onRemove: (path: number[]) => void;
+  onRemove: (formData: FormData) => void;
 }) {
-  const [state, action, loading] = React.useActionState(
-    removeResource,
-    undefined
-  );
-
   return (
     <RemoveButton showIcon={false} content="Remove Folder">
-      <form action={action} onClick={(e) => e.stopPropagation()}>
+      <form action={onRemove} onClick={(e) => e.stopPropagation()}>
         <Input id="id" name="id" value={id} hidden={true} readOnly={true} />
-        <Button type="submit" loading={loading} bg="feedback.error">
+        <Button type="submit" bg="feedback.error">
           Delete
         </Button>
       </form>
