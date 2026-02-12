@@ -19,6 +19,7 @@ import {
 import { toaster } from "@/components/ui/toaster";
 import RemoveButton from "@/components/button/remove";
 import MenuContext from "@/components/MenuContext";
+import { da } from "zod/v4/locales";
 
 export type Resource = {
   id: string;
@@ -44,16 +45,7 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
     parentResource: number | null;
   }>({ open: false, parentResource: null });
 
-  function addWebsite(url: string, title: string, icon: string | null) {
-    const newResource: Resource = {
-      id: v4(),
-      title,
-      icon,
-      content: url,
-      indexPath: websiteForm.indexPath || [],
-      parentResourceId: websiteForm.parentResource,
-    };
-
+  function addWebsite(newResource: Resource) {
     function mapResources(resource: Resource): Resource {
       if (typeof resource.content === "string") return resource;
 
@@ -283,7 +275,9 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
                               formData
                             )
                           }
-                        />
+                        >
+                          Remove
+                        </RemoveFolder>
                       ),
                     },
                   ]}
@@ -371,7 +365,9 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
                                   formData
                                 )
                               }
-                            />
+                            >
+                              Remove
+                            </RemoveFolder>
                           ),
                         },
                       ]}
@@ -414,6 +410,7 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
         key={JSON.stringify(websiteForm)}
         learnId={learnId}
         parentResource={websiteForm.parentResource as number | null}
+        indexPath={websiteForm.indexPath || []}
         open={websiteForm.open}
         onClose={() =>
           setWebsiteForm({
@@ -431,15 +428,17 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
 function AddWebsiteDialog({
   learnId,
   open,
+  indexPath,
   parentResource,
   onClose,
   onAdd,
 }: {
   learnId: number;
   open: boolean;
+  indexPath: number[];
   parentResource: number | null;
   onClose: VoidFunction;
-  onAdd: (url: string, title: string, icon: string | null) => void;
+  onAdd: (resource: Resource) => void;
 }) {
   const [state, action, loading] = React.useActionState(
     createResource,
@@ -456,7 +455,15 @@ function AddWebsiteDialog({
         closable: true,
       });
     } else if (s.data) {
-      onAdd(s.data.url, s.data.title, s.data.icon);
+      const { data } = s;
+
+      onAdd({
+        ...data,
+        id: data.id.toString(),
+        content: data.link as string,
+        parentResourceId: parentResource,
+        indexPath,
+      });
       onClose();
     }
   });
@@ -505,12 +512,14 @@ function AddWebsiteDialog({
 function RemoveFolder({
   id,
   onRemove,
+  children,
 }: {
   id: number;
   onRemove: (formData: FormData) => void;
+  children: React.ReactNode;
 }) {
   return (
-    <RemoveButton showIcon={false} content="Remove Folder">
+    <RemoveButton showIcon={false} content={children}>
       <form action={onRemove} onClick={(e) => e.stopPropagation()}>
         <Input id="id" name="id" value={id} hidden={true} readOnly={true} />
         <Button type="submit" bg="feedback.error">

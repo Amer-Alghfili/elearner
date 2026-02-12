@@ -40,7 +40,7 @@ export default function RemoveButton({
   ...rest
 }: RemoveButtonProps & { children: React.ReactNode } & Omit<
     IconButtonProps,
-    "children"
+    "children" | "content"
   >) {
   return (
     <DialogRoot>

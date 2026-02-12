@@ -52,7 +52,7 @@ export async function getWebsiteMetadata(url: string): Promise<{
 export async function createResource(
   _: unknown,
   formData: FormData
-): Promise<State<{ url: string; title: string; icon: string | null }>> {
+): Promise<State<Resource>> {
   const url = formData.get("link") as string;
 
   const { title, iconLink } = await getWebsiteMetadata(url);
@@ -85,11 +85,7 @@ export async function createResource(
     });
 
     return {
-      data: {
-        title: res.title,
-        url: res.link as string,
-        icon: validate.data.icon,
-      },
+      data: res,
     };
   }
 
