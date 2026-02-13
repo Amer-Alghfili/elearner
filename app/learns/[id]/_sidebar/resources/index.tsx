@@ -9,7 +9,7 @@ import {
   DialogRoot,
 } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
-import { Button, Flex, Image, Input, InputProps } from "@chakra-ui/react";
+import { Box, Button, Flex, Image, Input, InputProps } from "@chakra-ui/react";
 import {
   createFolder,
   createResource,
@@ -19,12 +19,13 @@ import {
 import { toaster } from "@/components/ui/toaster";
 import RemoveButton from "@/components/button/remove";
 import MenuContext from "@/components/MenuContext";
-import { da } from "zod/v4/locales";
+import { MenuContent, MenuRoot, MenuTrigger } from "@/components/ui/menu";
+import EmojiPicker from "emoji-picker-react";
 
 export type Resource = {
   id: string;
   title: string;
-  icon: string | null;
+  icon: string;
   content: string | Resource[];
   indexPath: number[];
   parentResourceId: number | null;
@@ -37,7 +38,10 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
   const [optimistic, setOptimistic] =
     React.useOptimistic<Resource[]>(resources);
 
-  const [updatingId, setUpdatingId] = React.useState<number[] | null>(null);
+  const [renamingId, setRenamingId] = React.useState<number[] | null>(null);
+  const [changingIconId, setChangingIconId] = React.useState<number[] | null>(
+    null
+  );
 
   const [websiteForm, setWebsiteForm] = React.useState<{
     open: boolean;
@@ -170,7 +174,7 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
       resources.map(function mapResources(resource, index): Resource {
         const currentIndexPath = [...resource.indexPath, index];
 
-        const found = (updatingId as []).every(
+        const found = (renamingId as []).every(
           (value, index) => Number(value) === currentIndexPath[index]
         );
 
@@ -195,7 +199,7 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
       await rename(formData);
 
       setResources(resourcesUpdater);
-      setUpdatingId(null);
+      setRenamingId(null);
     } catch (err: any) {
       toaster.create({
         title: err.message,
@@ -251,17 +255,23 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
           index
         ): React.ReactNode {
           const currentIndexPath = [...resource.indexPath, index];
-          const update =
-            updatingId != null &&
-            updatingId.length === currentIndexPath.length &&
-            updatingId.every((v, i) => v === currentIndexPath[i]);
+
+          const rename =
+            renamingId != null &&
+            renamingId.length === currentIndexPath.length &&
+            renamingId.every((v, i) => v === currentIndexPath[i]);
 
           if (typeof resource.content === "string") {
+            const changeIcon =
+              changingIconId != null &&
+              changingIconId.length === currentIndexPath.length &&
+              changingIconId.every((v, i) => v === currentIndexPath[i]);
+
             const icon = resource.icon && (
               <Image w="1.2rem" h="1.2rem" src={resource.icon} alt="favicon" />
             );
 
-            return update ? (
+            return rename ? (
               <Rename
                 id={resource.id}
                 value={resource.title}
@@ -279,7 +289,23 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
                     {
                       value: "rename-website",
                       children: "Rename",
-                      onClick: () => setUpdatingId(currentIndexPath),
+                      onClick: () => setRenamingId(currentIndexPath),
+                    },
+                    {
+                      value: "change-icon",
+                      children: (
+                        <MenuRoot
+                          open={changeIcon}
+                          onInteractOutside={() => setChangingIconId(null)}
+                        >
+                          <MenuTrigger>Change Icon</MenuTrigger>
+                          <MenuContent>
+                            <IconPicker icon={resource.icon} />
+                          </MenuContent>
+                        </MenuRoot>
+                      ),
+                      closeOnSelect: false,
+                      onClick: () => setChangingIconId(currentIndexPath),
                     },
                     {
                       value: "remove-website",
@@ -315,7 +341,7 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
               <SidebarLink>
                 <Flex gap="0.5em" alignItems="center">
                   <FolderIcon stroke="text.secondary" />
-                  {update ? (
+                  {rename ? (
                     <Rename
                       id={resource.id}
                       value={resource.title}
@@ -327,7 +353,7 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
                         {
                           value: "rename-folder",
                           children: "Rename",
-                          onClick: () => setUpdatingId(currentIndexPath),
+                          onClick: () => setRenamingId(currentIndexPath),
                         },
                         {
                           value: "add-website",
@@ -567,28 +593,17 @@ function Rename({
   );
 }
 
-// function IconField() {
-//   const { control } = useFormContext<WebsiteForm>();
+function IconPicker({ icon }: { icon: string }) {
+  const isFavicon = icon.startsWith("http");
 
-//   const { field } = useController({ name: "favicon", control });
-
-//   const content = field.value != null && (
-//     <img src={field.value} alt="link faveicon" />
-//   );
-
-//   return (
-//     <MenuRoot>
-//       <MenuTrigger>{content}</MenuTrigger>
-//       <MenuContent portalled={false}>
-//         <EmojiPicker
-//           skinTonesDisabled={true}
-//           previewConfig={{
-//             defaultEmoji: field.value || "",
-//             showPreview: false,
-//           }}
-//           onEmojiClick={(emoji) => field.onChange(emoji.emoji)}
-//         />
-//       </MenuContent>
-//     </MenuRoot>
-//   );
-// }
+  return (
+    <EmojiPicker
+      skinTonesDisabled={true}
+      previewConfig={{
+        defaultEmoji: isFavicon ? "" : icon,
+        showPreview: false,
+      }}
+      // onEmojiClick={(emoji) => field.onChange(emoji.emoji)}
+    />
+  );
+}

@@ -57,7 +57,7 @@ export async function Sidebar({ learnId }: { learnId: number }) {
     group.push({
       id: resource.id.toString(),
       title: resource.title,
-      icon: resource.icon,
+      icon: resource.icon as string,
       content: nest(resource, [i]),
       indexPath: [],
       parentResourceId: resource.parentResource,
@@ -80,7 +80,7 @@ export async function Sidebar({ learnId }: { learnId: number }) {
       return {
         id: res.id.toString(),
         title: res.title,
-        icon: res.icon,
+        icon: res.icon as string,
         content: nest(res, [...indexPath, i]),
         indexPath,
         parentResourceId: res.parentResource,
