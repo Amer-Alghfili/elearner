@@ -102,7 +102,7 @@ export function Sidebar({
       overflow="auto"
       w={sidebarExpanded ? "20rem" : "4rem"}
       px={sidebarExpanded ? "1.5em" : 0}
-      pt="2em"
+      py="2em"
       gap="2em"
       borderWidth="1px"
       borderColor="stroke"
@@ -127,7 +127,7 @@ export function Sidebar({
       </Flex>
 
       <Stack alignItems={sidebarExpanded ? "flex-start" : "center"} gap="1.5em">
-        {/* <SidebarLinksGroup
+        <SidebarLinksGroup
           icon={<NotebookIcon />}
           action={<CreateNotebook learnId={learnId} />}
           subLinks={notebooks.map((notebook) => (
@@ -146,8 +146,8 @@ export function Sidebar({
           ))}
         >
           Notebooks
-        </SidebarLinksGroup> */}
-        {/* <SidebarLinksGroup
+        </SidebarLinksGroup>
+        <SidebarLinksGroup
           icon={<BulbWithFolderIcon />}
           subLinks={flashcards.map((flashcard) => (
             <SidebarLink
@@ -178,7 +178,7 @@ export function Sidebar({
           ))}
         >
           Practice Tasks
-        </SidebarLinksGroup> */}
+        </SidebarLinksGroup>
         <Resources resources={resources} learnId={learnId} />
       </Stack>
     </Stack>
@@ -203,7 +203,6 @@ export function SidebarLinksGroup({
   if (sidebarExpanded) {
     return (
       <Collapsible.Root
-        open={true}
         w={sidebarExpanded ? "full" : "auto"}
         textStyle="md-semibold"
       >

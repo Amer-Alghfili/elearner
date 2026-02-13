@@ -244,20 +244,22 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
         };
       });
 
-    setOptimistic(resourcesUpdater);
+    React.startTransition(async () => {
+      setOptimistic(resourcesUpdater);
 
-    try {
-      await updateIcon(id, icon);
+      try {
+        await updateIcon(id, icon);
 
-      setResources(resourcesUpdater);
-      setChangingIconId(null);
-    } catch (err: any) {
-      toaster.create({
-        title: err.message,
-        type: "error",
-        closable: true,
-      });
-    }
+        setResources(resourcesUpdater);
+        setChangingIconId(null);
+      } catch (err: any) {
+        toaster.create({
+          title: err.message,
+          type: "error",
+          closable: true,
+        });
+      }
+    });
   }
 
   async function removeAction(path: number[], formData: FormData) {
@@ -332,42 +334,100 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
                 ps="1em"
               />
             ) : (
-              <SidebarLink
+              <MenuContext
                 key={resource.id}
-                href={resource.content}
-                icon={icon}
+                list={[
+                  {
+                    value: "rename-website",
+                    children: "Rename",
+                    onClick: () => setRenamingId(currentIndexPath),
+                  },
+                  {
+                    value: "change-icon",
+                    children: (
+                      <MenuRoot
+                        open={changeIcon}
+                        onInteractOutside={() => setChangingIconId(null)}
+                      >
+                        <MenuTrigger>Change Icon</MenuTrigger>
+                        <MenuContent>
+                          <IconPicker
+                            icon={resource.icon}
+                            favicon={resource.favicon}
+                            onChange={(emoji) =>
+                              changeIconAction(resource.id, emoji)
+                            }
+                          />
+                        </MenuContent>
+                      </MenuRoot>
+                    ),
+                    closeOnSelect: false,
+                    onClick: () => setChangingIconId(currentIndexPath),
+                  },
+                  {
+                    value: "remove-website",
+                    closeOnSelect: false,
+                    children: (
+                      <Remove
+                        id={Number(resource.id)}
+                        onRemove={(formData) =>
+                          removeAction([...resource.indexPath, index], formData)
+                        }
+                      >
+                        Remove
+                      </Remove>
+                    ),
+                  },
+                ]}
               >
+                <SidebarLink href={resource.content} icon={icon}>
+                  {resource.title}
+                </SidebarLink>
+              </MenuContext>
+            );
+          }
+
+          return (
+            <SidebarLinksGroup
+              key={resource.id}
+              showArrows={false}
+              subLinks={(resource.content || []).map(mapToSidebarItem)}
+            >
+              {rename ? (
+                <Rename
+                  id={resource.id}
+                  value={resource.title}
+                  onRename={renameAction}
+                />
+              ) : (
                 <MenuContext
+                  triggerProps={{ w: "full" }}
                   list={[
                     {
-                      value: "rename-website",
+                      value: "rename-folder",
                       children: "Rename",
                       onClick: () => setRenamingId(currentIndexPath),
                     },
                     {
-                      value: "change-icon",
-                      children: (
-                        <MenuRoot
-                          open={changeIcon}
-                          onInteractOutside={() => setChangingIconId(null)}
-                        >
-                          <MenuTrigger>Change Icon</MenuTrigger>
-                          <MenuContent>
-                            <IconPicker
-                              icon={resource.icon}
-                              favicon={resource.favicon}
-                              onChange={(emoji) =>
-                                changeIconAction(resource.id, emoji)
-                              }
-                            />
-                          </MenuContent>
-                        </MenuRoot>
-                      ),
-                      closeOnSelect: false,
-                      onClick: () => setChangingIconId(currentIndexPath),
+                      value: "add-website",
+                      onClick: () =>
+                        setWebsiteForm({
+                          open: true,
+                          indexPath: resource.indexPath,
+                          parentResource: Number(resource.id),
+                        }),
+                      children: "New Website",
                     },
                     {
-                      value: "remove-website",
+                      value: "add-folder",
+                      onClick: (e) => {
+                        e.preventDefault();
+                        addFolder([...(resource.indexPath as number[]), index]);
+                      },
+                      children: "New Folder",
+                    },
+                    {
+                      value: "remove-folder",
                       closeOnSelect: false,
                       children: (
                         <Remove
@@ -385,80 +445,11 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
                     },
                   ]}
                 >
-                  {resource.title}
+                  <SidebarLink icon={<FolderIcon stroke="text.secondary" />}>
+                    {resource.title}
+                  </SidebarLink>
                 </MenuContext>
-              </SidebarLink>
-            );
-          }
-
-          return (
-            <SidebarLinksGroup
-              key={resource.id}
-              showArrows={false}
-              subLinks={(resource.content || []).map(mapToSidebarItem)}
-            >
-              <SidebarLink>
-                <Flex gap="0.5em" alignItems="center">
-                  <FolderIcon stroke="text.secondary" />
-                  {rename ? (
-                    <Rename
-                      id={resource.id}
-                      value={resource.title}
-                      onRename={renameAction}
-                    />
-                  ) : (
-                    <MenuContext
-                      list={[
-                        {
-                          value: "rename-folder",
-                          children: "Rename",
-                          onClick: () => setRenamingId(currentIndexPath),
-                        },
-                        {
-                          value: "add-website",
-                          onClick: () =>
-                            setWebsiteForm({
-                              open: true,
-                              indexPath: resource.indexPath,
-                              parentResource: Number(resource.id),
-                            }),
-                          children: "New Website",
-                        },
-                        {
-                          value: "add-folder",
-                          onClick: (e) => {
-                            e.preventDefault();
-                            addFolder([
-                              ...(resource.indexPath as number[]),
-                              index,
-                            ]);
-                          },
-                          children: "New Folder",
-                        },
-                        {
-                          value: "remove-folder",
-                          closeOnSelect: false,
-                          children: (
-                            <Remove
-                              id={Number(resource.id)}
-                              onRemove={(formData) =>
-                                removeAction(
-                                  [...resource.indexPath, index],
-                                  formData
-                                )
-                              }
-                            >
-                              Remove
-                            </Remove>
-                          ),
-                        },
-                      ]}
-                    >
-                      {resource.title}
-                    </MenuContext>
-                  )}
-                </Flex>
-              </SidebarLink>
+              )}
             </SidebarLinksGroup>
           );
         })}
