@@ -1,5 +1,5 @@
 import React from "react";
-import { SidebarLink, SidebarLinksGroup } from "../client";
+import { SidebarLink, SidebarLinkContent, SidebarLinksGroup } from "../client";
 import { FolderIcon } from "@/components/Icons";
 import { v4 } from "uuid";
 import {
@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
 import {
+  Box,
   Button,
   Flex,
   Image,
@@ -320,11 +321,19 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
               changingIconId.length === currentIndexPath.length &&
               changingIconId.every((v, i) => v === currentIndexPath[i]);
 
-            const icon = resource.icon?.startsWith("http") ? (
-              <Image w="1.2rem" h="1.2rem" src={resource.icon} alt="favicon" />
-            ) : (
-              resource.icon
-            );
+            const icon =
+              resource.icon == null &&
+              resource.favicon == null ? null : resource.icon ==
+                resource.favicon ? (
+                <Image
+                  w="1rem"
+                  h="1rem"
+                  src={resource.icon as string}
+                  alt="favicon"
+                />
+              ) : (
+                <Box fontSize="1rem">{resource.icon}</Box>
+              );
 
             return rename ? (
               <Rename
@@ -380,8 +389,15 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
                   },
                 ]}
               >
-                <SidebarLink href={resource.content} icon={icon}>
-                  {resource.title}
+                <SidebarLink href={resource.content}>
+                  <SidebarLinkContent
+                    icon={icon}
+                    alignItems={
+                      resource.icon == resource.favicon ? "center" : "baseline"
+                    }
+                  >
+                    {resource.title}
+                  </SidebarLinkContent>
                 </SidebarLink>
               </MenuContext>
             );
@@ -445,8 +461,12 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
                     },
                   ]}
                 >
-                  <SidebarLink icon={<FolderIcon stroke="text.secondary" />}>
-                    {resource.title}
+                  <SidebarLink>
+                    <SidebarLinkContent
+                      icon={<FolderIcon stroke="text.secondary" />}
+                    >
+                      {resource.title}
+                    </SidebarLinkContent>
                   </SidebarLink>
                 </MenuContext>
               )}
@@ -653,7 +673,7 @@ function IconPicker({
   favicon: string | null;
   onChange: (emoji: string | null) => void;
 }) {
-  const isFavicon = icon?.startsWith("http");
+  const isFavicon = icon === favicon;
 
   return (
     <Stack>

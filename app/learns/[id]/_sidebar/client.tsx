@@ -12,6 +12,7 @@ import {
   LinkOverlay,
   Box,
   BoxProps,
+  FlexProps,
 } from "@chakra-ui/react";
 import NextLink, { LinkProps } from "next/link";
 import {
@@ -141,7 +142,7 @@ export function Sidebar({
                 />
               }
             >
-              {notebook.title}
+              <SidebarLinkContent>{notebook.title}</SidebarLinkContent>
             </SidebarLink>
           ))}
         >
@@ -155,7 +156,7 @@ export function Sidebar({
               action={<RemoveFlashcard id={flashcard.id} />}
             >
               <LinkOverlay onClick={() => toggleFlashcardForm({ flashcard })}>
-                {flashcard.question}
+                <SidebarLinkContent>{flashcard.question}</SidebarLinkContent>
               </LinkOverlay>
             </SidebarLink>
           ))}
@@ -172,7 +173,7 @@ export function Sidebar({
               <LinkOverlay
                 onClick={() => togglePracticeTaskForm({ practiceTask })}
               >
-                {practiceTask.title}
+                <SidebarLinkContent>{practiceTask.title}</SidebarLinkContent>
               </LinkOverlay>
             </SidebarLink>
           ))}
@@ -285,17 +286,30 @@ function SidebarItem({
   );
 }
 
+export function SidebarLinkContent({
+  icon,
+  ...props
+}: { icon?: React.ReactNode } & BoxProps) {
+  const { children } = props;
+
+  if (icon == null) return <TruncateText {...props}>{children}</TruncateText>;
+
+  return (
+    <Box display="flex" alignItems="center" gap="0.5em" w="full" {...props}>
+      {icon}
+      <TruncateText>{children}</TruncateText>
+    </Box>
+  );
+}
 export function SidebarLink({
   action,
   href,
-  icon,
   children,
   linkProps,
   ...props
 }: {
   action?: React.ReactNode;
   href?: string;
-  icon?: React.ReactNode;
   children: React.ReactNode;
   linkProps?: Omit<LinkProps<string>, "href">;
 } & BoxProps) {
@@ -303,16 +317,6 @@ export function SidebarLink({
 
   const isActive =
     href != null && href !== "" && pathname.endsWith(href as string);
-
-  const content =
-    icon == null ? (
-      <TruncateText>{children}</TruncateText>
-    ) : (
-      <Flex gap="0.5em" w="full">
-        {icon}
-        <TruncateText>{children}</TruncateText>
-      </Flex>
-    );
 
   if (action != null) {
     return (
@@ -334,9 +338,9 @@ export function SidebarLink({
           >
             <LinkOverlay asChild w="80%">
               {href != null && (
-                <NextLink href={href as any}>{content}</NextLink>
+                <NextLink href={href as any}>{children}</NextLink>
               )}
-              {href == null && content}
+              {href == null && children}
             </LinkOverlay>
             {action}
           </Flex>
@@ -362,13 +366,13 @@ export function SidebarLink({
       {...props}
     >
       {href != null && (
-        <Link asChild w="full">
+        <Link asChild w="full" textDecoration="none">
           <NextLink href={href as any} target="_blank" {...linkProps}>
-            {content}
+            {children}
           </NextLink>
         </Link>
       )}
-      {href == null && content}
+      {href == null && children}
     </Box>
   );
 }
