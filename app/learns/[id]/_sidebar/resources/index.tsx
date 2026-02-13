@@ -9,12 +9,12 @@ import {
   DialogRoot,
 } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
-import { Button, Flex, Image, Input } from "@chakra-ui/react";
+import { Button, Flex, Image, Input, InputProps } from "@chakra-ui/react";
 import {
   createFolder,
   createResource,
   removeResource,
-  renameFolder,
+  rename,
 } from "./actions";
 import { toaster } from "@/components/ui/toaster";
 import RemoveButton from "@/components/button/remove";
@@ -165,7 +165,7 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
     });
   }
 
-  async function renameFolderAction(formData: FormData) {
+  async function renameAction(formData: FormData) {
     const resourcesUpdater = (resources: Resource[]) =>
       resources.map(function mapResources(resource, index): Resource {
         const currentIndexPath = [...resource.indexPath, index];
@@ -192,7 +192,7 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
     setOptimistic(resourcesUpdater);
 
     try {
-      await renameFolder(formData);
+      await rename(formData);
 
       setResources(resourcesUpdater);
       setUpdatingId(null);
@@ -250,12 +250,25 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
           resource,
           index
         ): React.ReactNode {
+          const currentIndexPath = [...resource.indexPath, index];
+          const update =
+            updatingId != null &&
+            updatingId.length === currentIndexPath.length &&
+            updatingId.every((v, i) => v === currentIndexPath[i]);
+
           if (typeof resource.content === "string") {
             const icon = resource.icon && (
               <Image w="1.2rem" h="1.2rem" src={resource.icon} alt="favicon" />
             );
 
-            return (
+            return update ? (
+              <Rename
+                id={resource.id}
+                value={resource.title}
+                onRename={renameAction}
+                ps="1em"
+              />
+            ) : (
               <SidebarLink
                 key={resource.id}
                 href={resource.content}
@@ -264,10 +277,15 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
                 <MenuContext
                   list={[
                     {
+                      value: "rename-website",
+                      children: "Rename",
+                      onClick: () => setUpdatingId(currentIndexPath),
+                    },
+                    {
                       value: "remove-website",
                       closeOnSelect: false,
                       children: (
-                        <RemoveFolder
+                        <Remove
                           id={Number(resource.id)}
                           onRemove={(formData) =>
                             removeAction(
@@ -277,7 +295,7 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
                           }
                         >
                           Remove
-                        </RemoveFolder>
+                        </Remove>
                       ),
                     },
                   ]}
@@ -288,8 +306,6 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
             );
           }
 
-          const currentIndexPath = [...resource.indexPath, index];
-
           return (
             <SidebarLinksGroup
               key={resource.id}
@@ -299,39 +315,20 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
               <SidebarLink>
                 <Flex gap="0.5em" alignItems="center">
                   <FolderIcon stroke="text.secondary" />
-                  {updatingId != null &&
-                  updatingId.length === currentIndexPath.length &&
-                  updatingId.every((v, i) => v === currentIndexPath[i]) ? (
-                    <form action={renameFolderAction}>
-                      <Input
-                        defaultValue={resource.title}
-                        id="title"
-                        name="title"
-                        w="full"
-                        textStyle="sm-semibold"
-                        textDecoration="none"
-                        outline="none"
-                        p={0}
-                        h="auto"
-                        border="none"
-                        bg="transparent"
-                        borderRadius="8px"
-                      />
-                      <Input
-                        defaultValue={resource.id}
-                        id="id"
-                        name="id"
-                        hidden={true}
-                      />
-                      <Button type="submit" hidden={true} />
-                    </form>
+                  {update ? (
+                    <Rename
+                      id={resource.id}
+                      value={resource.title}
+                      onRename={renameAction}
+                    />
                   ) : (
                     <MenuContext
-                      triggerProps={{
-                        onDoubleClick: () =>
-                          setUpdatingId([...resource.indexPath, index]),
-                      }}
                       list={[
+                        {
+                          value: "rename-folder",
+                          children: "Rename",
+                          onClick: () => setUpdatingId(currentIndexPath),
+                        },
                         {
                           value: "add-website",
                           onClick: () =>
@@ -357,7 +354,7 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
                           value: "remove-folder",
                           closeOnSelect: false,
                           children: (
-                            <RemoveFolder
+                            <Remove
                               id={Number(resource.id)}
                               onRemove={(formData) =>
                                 removeAction(
@@ -367,7 +364,7 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
                               }
                             >
                               Remove
-                            </RemoveFolder>
+                            </Remove>
                           ),
                         },
                       ]}
@@ -509,7 +506,7 @@ function AddWebsiteDialog({
   );
 }
 
-function RemoveFolder({
+function Remove({
   id,
   onRemove,
   children,
@@ -527,6 +524,46 @@ function RemoveFolder({
         </Button>
       </form>
     </RemoveButton>
+  );
+}
+
+function Rename({
+  id,
+  value,
+  onRename,
+  ...props
+}: {
+  id: string;
+  value: string;
+  onRename: (formData: FormData) => void;
+} & InputProps) {
+  const ref = React.useCallback((ref: HTMLInputElement) => {
+    if (ref) {
+      ref.select();
+    }
+  }, []);
+
+  return (
+    <form action={onRename}>
+      <Input
+        ref={ref}
+        defaultValue={value}
+        id="title"
+        name="title"
+        w="full"
+        textStyle="sm-semibold"
+        textDecoration="none"
+        outline="none"
+        p={0}
+        h="auto"
+        border="none"
+        bg="transparent"
+        borderRadius="8px"
+        {...props}
+      />
+      <Input defaultValue={id} id="id" name="id" hidden={true} />
+      <Button type="submit" hidden={true} />
+    </form>
   );
 }
 

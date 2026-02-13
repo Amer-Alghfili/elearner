@@ -11,8 +11,9 @@ import {
   LinkBox,
   LinkOverlay,
   Box,
+  BoxProps,
 } from "@chakra-ui/react";
-import NextLink from "next/link";
+import NextLink, { LinkProps } from "next/link";
 import {
   BulbWithFolderIcon,
   BurgerIcon,
@@ -290,12 +291,15 @@ export function SidebarLink({
   href,
   icon,
   children,
+  linkProps,
+  ...props
 }: {
   action?: React.ReactNode;
   href?: string;
   icon?: React.ReactNode;
   children: React.ReactNode;
-}) {
+  linkProps?: Omit<LinkProps<string>, "href">;
+} & BoxProps) {
   const pathname = usePathname();
 
   const isActive =
@@ -313,34 +317,37 @@ export function SidebarLink({
 
   if (action != null) {
     return (
-      <LinkBox w="full">
-        <Flex
-          justifyContent="space-between"
-          alignItems="center"
-          textStyle="sm-semibold"
-          textDecoration="none"
-          outline="none"
-          py="0.3em"
-          px="1em"
-          borderRadius="8px"
-          bg={isActive ? "stroke.transparent" : "transparent"}
-          _hover={{
-            bg: "stroke.transparent",
-          }}
-        >
-          <LinkOverlay asChild w="80%">
-            {href != null && <NextLink href={href as any}>{content}</NextLink>}
-            {href == null && content}
-          </LinkOverlay>
-          {action}
-        </Flex>
-      </LinkBox>
+      <Box {...props}>
+        <LinkBox w="full">
+          <Flex
+            justifyContent="space-between"
+            alignItems="center"
+            textStyle="sm-semibold"
+            textDecoration="none"
+            outline="none"
+            py="0.3em"
+            px="1em"
+            borderRadius="8px"
+            bg={isActive ? "stroke.transparent" : "transparent"}
+            _hover={{
+              bg: "stroke.transparent",
+            }}
+          >
+            <LinkOverlay asChild w="80%">
+              {href != null && (
+                <NextLink href={href as any}>{content}</NextLink>
+              )}
+              {href == null && content}
+            </LinkOverlay>
+            {action}
+          </Flex>
+        </LinkBox>
+      </Box>
     );
   }
 
   return (
-    <Link
-      asChild
+    <Box
       w="full"
       textStyle="sm-semibold"
       textDecoration="none"
@@ -352,13 +359,17 @@ export function SidebarLink({
       _hover={{
         bg: "stroke.transparent",
       }}
+      cursor="pointer"
+      {...props}
     >
       {href != null && (
-        <Link asChild w="full" textDecoration="none">
-          <NextLink href={href as any}>{content}</NextLink>
+        <Link asChild w="full">
+          <NextLink href={href as any} target="_blank" {...linkProps}>
+            {content}
+          </NextLink>
         </Link>
       )}
       {href == null && content}
-    </Link>
+    </Box>
   );
 }

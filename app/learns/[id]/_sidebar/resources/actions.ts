@@ -110,7 +110,7 @@ export async function createFolder(
   return { id: res.id };
 }
 
-export async function renameFolder(formData: FormData): Promise<void> {
+export async function rename(formData: FormData): Promise<void> {
   try {
     const id = formData.get("id") as string;
     const title = formData.get("title") as string;
