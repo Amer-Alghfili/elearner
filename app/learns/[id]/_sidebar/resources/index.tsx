@@ -9,12 +9,19 @@ import {
   DialogRoot,
 } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
-import { Box, Button, Flex, Image, Input, InputProps } from "@chakra-ui/react";
 import {
-  changeIcon,
+  Button,
+  Flex,
+  Image,
+  Input,
+  InputProps,
+  Stack,
+} from "@chakra-ui/react";
+import {
+  updateIcon,
   createFolder,
   createResource,
-  removeResource,
+  deleteResource,
   rename,
 } from "./actions";
 import { toaster } from "@/components/ui/toaster";
@@ -22,12 +29,12 @@ import RemoveButton from "@/components/button/remove";
 import MenuContext from "@/components/MenuContext";
 import { MenuContent, MenuRoot, MenuTrigger } from "@/components/ui/menu";
 import EmojiPicker from "emoji-picker-react";
-import { emoji } from "zod";
 
 export type Resource = {
   id: string;
   title: string;
-  icon: string;
+  icon: string | null;
+  favicon: string | null;
   content: string | Resource[];
   indexPath: number[];
   parentResourceId: number | null;
@@ -117,6 +124,7 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
           id: v4(),
           title: "untitled",
           icon: null,
+          favicon: null,
           content: [],
           // will be override
           indexPath,
@@ -152,6 +160,7 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
             id: id.toString(),
             title: "untitled",
             icon: null,
+            favicon: null,
             content: [],
             // will be override
             indexPath,
@@ -211,7 +220,7 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
     }
   }
 
-  async function changeIconAction(id: string, icon: string) {
+  async function changeIconAction(id: string, icon: string | null) {
     const resourcesUpdater = (resources: Resource[]) =>
       resources.map(function mapResources(resource, index): Resource {
         const currentIndexPath = [...resource.indexPath, index];
@@ -238,7 +247,7 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
     setOptimistic(resourcesUpdater);
 
     try {
-      await changeIcon(id, icon);
+      await updateIcon(id, icon);
 
       setResources(resourcesUpdater);
       setChangingIconId(null);
@@ -277,7 +286,7 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
     setOptimistic(update(optimistic) as Resource[]);
 
     try {
-      await removeResource(formData);
+      await deleteResource(formData);
       setResources(update(resources) as Resource[]);
     } catch (err: any) {
       toaster.create({
@@ -346,6 +355,7 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
                           <MenuContent>
                             <IconPicker
                               icon={resource.icon}
+                              favicon={resource.favicon}
                               onChange={(emoji) =>
                                 changeIconAction(resource.id, emoji)
                               }
@@ -535,6 +545,7 @@ function AddWebsiteDialog({
         content: data.link as string,
         parentResourceId: parentResource,
         indexPath,
+        icon: data.icon,
       });
       onClose();
     }
@@ -644,22 +655,47 @@ function Rename({
 
 function IconPicker({
   icon,
+  favicon,
   onChange,
 }: {
-  icon: string;
-  onChange: (emoji: string) => void;
+  icon: string | null;
+  favicon: string | null;
+  onChange: (emoji: string | null) => void;
 }) {
   const isFavicon = icon?.startsWith("http");
 
   return (
-    <EmojiPicker
-      lazyLoadEmojis={false}
-      skinTonesDisabled={true}
-      previewConfig={{
-        defaultEmoji: isFavicon ? "" : icon,
-        showPreview: false,
-      }}
-      onEmojiClick={({ emoji }) => onChange(emoji)}
-    />
+    <Stack>
+      <Flex ps="0.5em" gap="0.5em">
+        <Button
+          variant="plain"
+          onClick={() => onChange(null)}
+          color="feedback.error"
+          _hover={{ bg: "accent.softCoral.transparent" }}
+          px="0.5em"
+          fontSize="0.8rem"
+        >
+          Remove
+        </Button>
+        <Button
+          variant="plain"
+          onClick={() => onChange(favicon)}
+          _hover={{ bg: "stroke.transparent" }}
+          px="0.5em"
+          fontSize="0.8rem"
+        >
+          Reset to default
+        </Button>
+      </Flex>
+      <EmojiPicker
+        lazyLoadEmojis={false}
+        skinTonesDisabled={true}
+        previewConfig={{
+          defaultEmoji: isFavicon ? "" : icon || "",
+          showPreview: false,
+        }}
+        onEmojiClick={({ emoji }) => onChange(emoji)}
+      />
+    </Stack>
   );
 }

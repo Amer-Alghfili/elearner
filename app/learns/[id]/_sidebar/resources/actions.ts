@@ -81,6 +81,7 @@ export async function createResource(
         icon: validate.data.icon,
         learn_id: Number(formData.get("learnId") as string),
         parentResource: parentResource == null ? null : Number(parentResource),
+        favicon: validate.data.icon,
       },
     });
 
@@ -135,7 +136,10 @@ export async function rename(formData: FormData): Promise<void> {
   }
 }
 
-export async function changeIcon(id: string, icon: string): Promise<void> {
+export async function updateIcon(
+  id: string,
+  icon: string | null
+): Promise<void> {
   try {
     await prisma.resource.update({
       where: { id: Number(id) },
@@ -146,7 +150,7 @@ export async function changeIcon(id: string, icon: string): Promise<void> {
   }
 }
 
-export async function removeResource(formData: FormData): Promise<void> {
+export async function deleteResource(formData: FormData): Promise<void> {
   try {
     const id = formData.get("id") as string;
 

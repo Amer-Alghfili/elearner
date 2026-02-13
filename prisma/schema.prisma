@@ -38,6 +38,7 @@ model Resource {
   title          String                           @db.VarChar(255)
   link           String?                          @db.VarChar(255)
   icon           String?                          @db.VarChar(255)
+  favicon        String?                          @db.VarChar(255)
   parentResource Int?     @map("parent_resource") @db.Integer()
   tags           Json?                            @db.Json()
   learn_id       Int
