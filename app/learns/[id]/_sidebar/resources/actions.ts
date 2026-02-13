@@ -135,6 +135,17 @@ export async function rename(formData: FormData): Promise<void> {
   }
 }
 
+export async function changeIcon(id: string, icon: string): Promise<void> {
+  try {
+    await prisma.resource.update({
+      where: { id: Number(id) },
+      data: { icon },
+    });
+  } catch {
+    throw new Error("Something went wrong");
+  }
+}
+
 export async function removeResource(formData: FormData): Promise<void> {
   try {
     const id = formData.get("id") as string;

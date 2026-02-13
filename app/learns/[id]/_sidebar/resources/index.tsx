@@ -11,6 +11,7 @@ import {
 import { Field } from "@/components/ui/field";
 import { Box, Button, Flex, Image, Input, InputProps } from "@chakra-ui/react";
 import {
+  changeIcon,
   createFolder,
   createResource,
   removeResource,
@@ -21,6 +22,7 @@ import RemoveButton from "@/components/button/remove";
 import MenuContext from "@/components/MenuContext";
 import { MenuContent, MenuRoot, MenuTrigger } from "@/components/ui/menu";
 import EmojiPicker from "emoji-picker-react";
+import { emoji } from "zod";
 
 export type Resource = {
   id: string;
@@ -209,6 +211,46 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
     }
   }
 
+  async function changeIconAction(id: string, icon: string) {
+    const resourcesUpdater = (resources: Resource[]) =>
+      resources.map(function mapResources(resource, index): Resource {
+        const currentIndexPath = [...resource.indexPath, index];
+
+        const found = (changingIconId as []).every(
+          (value, index) => Number(value) === currentIndexPath[index]
+        );
+
+        if (found) {
+          return {
+            ...resource,
+            icon,
+          };
+        }
+
+        if (typeof resource.content === "string") return resource;
+
+        return {
+          ...resource,
+          content: resource.content.map(mapResources),
+        };
+      });
+
+    setOptimistic(resourcesUpdater);
+
+    try {
+      await changeIcon(id, icon);
+
+      setResources(resourcesUpdater);
+      setChangingIconId(null);
+    } catch (err: any) {
+      toaster.create({
+        title: err.message,
+        type: "error",
+        closable: true,
+      });
+    }
+  }
+
   async function removeAction(path: number[], formData: FormData) {
     const update = (resources: Resource[]) => {
       return resources
@@ -267,8 +309,10 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
               changingIconId.length === currentIndexPath.length &&
               changingIconId.every((v, i) => v === currentIndexPath[i]);
 
-            const icon = resource.icon && (
+            const icon = resource.icon?.startsWith("http") ? (
               <Image w="1.2rem" h="1.2rem" src={resource.icon} alt="favicon" />
+            ) : (
+              resource.icon
             );
 
             return rename ? (
@@ -300,7 +344,12 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
                         >
                           <MenuTrigger>Change Icon</MenuTrigger>
                           <MenuContent>
-                            <IconPicker icon={resource.icon} />
+                            <IconPicker
+                              icon={resource.icon}
+                              onChange={(emoji) =>
+                                changeIconAction(resource.id, emoji)
+                              }
+                            />
                           </MenuContent>
                         </MenuRoot>
                       ),
@@ -593,17 +642,24 @@ function Rename({
   );
 }
 
-function IconPicker({ icon }: { icon: string }) {
-  const isFavicon = icon.startsWith("http");
+function IconPicker({
+  icon,
+  onChange,
+}: {
+  icon: string;
+  onChange: (emoji: string) => void;
+}) {
+  const isFavicon = icon?.startsWith("http");
 
   return (
     <EmojiPicker
+      lazyLoadEmojis={false}
       skinTonesDisabled={true}
       previewConfig={{
         defaultEmoji: isFavicon ? "" : icon,
         showPreview: false,
       }}
-      // onEmojiClick={(emoji) => field.onChange(emoji.emoji)}
+      onEmojiClick={({ emoji }) => onChange(emoji)}
     />
   );
 }
