@@ -36,10 +36,12 @@ export function useLearnControlManagement() {
 
 export function LearnPageContainer({
   learnId,
+  knowledgeItemsCount,
   Sidebar,
   children,
 }: {
   learnId: number;
+  knowledgeItemsCount: number;
   Sidebar: React.ReactNode;
   children: React.ReactNode;
 }) {
@@ -156,7 +158,7 @@ export function LearnPageContainer({
           w="full"
           transition="padding 0.3s ease-in-out"
         >
-          <Header withLogo={false} />
+          <Header withLogo={false} knowledgeItemsCount={knowledgeItemsCount} />
           <Box pt="3em">{children}</Box>
         </Box>
       </Flex>

@@ -5,6 +5,7 @@ import { Button, Heading, Link, Stack, Text } from "@chakra-ui/react";
 import { LearnPageContainer } from "./LearnPageContainer";
 import { Sidebar } from "./_sidebar";
 
+const today = new Date();
 export default async function LearnPageLayout({
   children,
   params,
@@ -29,10 +30,44 @@ export default async function LearnPageLayout({
 
   if (learn == null) return <NotFound />;
 
+  const learns = await prisma.learn.findMany({
+    select: {
+      id: true,
+    },
+    where: {
+      user_id: email as string,
+    },
+  });
+
+  let knowledgeItemsCount = await prisma.flashCard.count({
+    where: {
+      learn_id: {
+        in: learns.map(({ id }) => id),
+      },
+      due: {
+        lte: today,
+      },
+    },
+  });
+
+  if (!knowledgeItemsCount) {
+    knowledgeItemsCount = await prisma.practiceTask.count({
+      where: {
+        learn_id: {
+          in: learns.map(({ id }) => id),
+        },
+        due: {
+          lte: today,
+        },
+      },
+    });
+  }
+
   return (
     <Scaffold>
       <LearnPageContainer
         learnId={learnId}
+        knowledgeItemsCount={knowledgeItemsCount}
         Sidebar={<Sidebar learnId={learnId} />}
       >
         {children}

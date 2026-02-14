@@ -1,10 +1,12 @@
 import Header from "@/components/Header";
 import { Scaffold } from "@/components/Scaffold";
-import { Stack } from "@chakra-ui/react";
+import { Button, Card, Image, Stack } from "@chakra-ui/react";
 import { auth } from "@/auth";
 import { prisma } from "@/prisma";
 import LearnsContainer from "./LearnsContainer";
+import Link from "next/link";
 
+const today = new Date();
 export default async function HomePage() {
   const data = await auth();
 
@@ -28,10 +30,62 @@ export default async function HomePage() {
     },
   });
 
+  let knowledgeItemsCount = await prisma.flashCard.count({
+    where: {
+      learn_id: {
+        in: learns.map(({ id }) => id),
+      },
+      due: {
+        lte: today,
+      },
+    },
+  });
+
+  if (!knowledgeItemsCount) {
+    knowledgeItemsCount = await prisma.practiceTask.count({
+      where: {
+        learn_id: {
+          in: learns.map(({ id }) => id),
+        },
+        due: {
+          lte: today,
+        },
+      },
+    });
+  }
+
   return (
     <Scaffold>
       <Header />
       <Stack mt="6.4375em" alignItems="flex-start" gap="2em">
+        {knowledgeItemsCount > 0 && (
+          <Card.Root
+            maxH="10rem"
+            flexDirection="row"
+            w="full"
+            border="none"
+            borderRadius="12px"
+            bg="primary.thick"
+            color="neutral.background"
+          >
+            <Card.Body gap="0.5em">
+              <Card.Title>Pending knowledge items</Card.Title>
+              <Card.Description color="neutral.background">
+                Start reviewing what you have learnt 🔥
+              </Card.Description>
+              <Button asChild alignSelf="flex-start" mt="1em">
+                <Link href="#">Review</Link>
+              </Button>
+            </Card.Body>
+            <Image
+              src="/stacking-notes.png"
+              w="14em"
+              h="14em"
+              alt="stacking-notes image"
+              alignSelf="flex-end"
+            />
+          </Card.Root>
+        )}
         <LearnsContainer
           learns={learns.map((learn) => ({
             ...learn,
