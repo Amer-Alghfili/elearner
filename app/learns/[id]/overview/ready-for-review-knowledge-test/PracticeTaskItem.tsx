@@ -115,6 +115,11 @@ export function PracticeTaskItem({
     </Stack>
   );
 
+  const nextStage =
+    practiceTask.stage === "4"
+      ? "4"
+      : `${Number(practiceTask.stage as string) + 1}`;
+
   const back = (
     <Stack
       position="absolute"
@@ -136,12 +141,12 @@ export function PracticeTaskItem({
             onValueChange={({ value }) => field.onChange(value)}
           >
             <RadioCardItem
-              value={`${Number(practiceTask.stage as string) + 1}`}
+              value={nextStage}
               label={
                 <Stack>
                   <Text>
                     I did great, move it to next stage (#
-                    {Number(practiceTask.stage) + 1})
+                    {nextStage})
                   </Text>
                 </Stack>
               }

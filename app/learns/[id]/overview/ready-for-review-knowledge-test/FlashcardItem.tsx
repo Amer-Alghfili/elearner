@@ -174,6 +174,9 @@ export function FlashcardItem({ flashcard }: { flashcard: Flashcard }) {
     </Box>
   );
 
+  const nextStage =
+    flashcard.stage === "4" ? "4" : `${Number(flashcard.stage as string) + 1}`;
+
   const back = (
     <Stack
       position="absolute"
@@ -204,12 +207,12 @@ export function FlashcardItem({ flashcard }: { flashcard: Flashcard }) {
               _checked={{
                 bg: "feedback.success.transparent",
               }}
-              value={`${Number(flashcard.stage as string) + 1}`}
+              value={nextStage}
               label={
                 <Stack>
                   <Text color="text.secondary">
                     I did great, move it to next stage (#
-                    {Number(flashcard.stage) + 1})
+                    {nextStage})
                   </Text>
                 </Stack>
               }

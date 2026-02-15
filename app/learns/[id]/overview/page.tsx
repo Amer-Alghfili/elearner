@@ -27,9 +27,6 @@ export default async function OverviewTabPage({
         due: {
           lte: today,
         },
-        stage: {
-          lte: "4",
-        },
       },
     }),
     await prisma.flashCard.findMany({
@@ -37,9 +34,6 @@ export default async function OverviewTabPage({
         learn_id,
         due: {
           lte: today,
-        },
-        stage: {
-          lte: "4",
         },
       },
     }),
