@@ -5,6 +5,21 @@ import { State } from "@/types/server-state";
 import * as cheerio from "cheerio";
 import z from "zod";
 import { Resource } from "@/generated/prisma/client";
+import { v4 } from "uuid";
+
+function encodeUrl(url: string) {
+  let encoded = url.replace("https://", "https%253A%252F%252F");
+  if (encoded === url) {
+    encoded = url.replace("http://", "http%253A%252F%252F");
+
+    if (encoded === url) throw Error("Invalid URL");
+  }
+
+  return encoded
+    .replaceAll("/", "%252F")
+    .replaceAll("?", "%3F")
+    .replaceAll("&", "%26");
+}
 
 async function searchForIconLink(
   html: cheerio.CheerioAPI,
@@ -12,11 +27,6 @@ async function searchForIconLink(
 ): Promise<string | null> {
   const { protocol, host } = new URL(url);
   const prefix = `${protocol}//${host}`;
-
-  const faviconUrl = `${prefix}/favicon.ico`;
-  const res = await fetch(faviconUrl);
-
-  if (res.headers.get("Content-Type")?.startsWith("image")) return faviconUrl;
 
   let icon = html('link[rel="icon"]').attr("href") || null;
   if (icon) {
@@ -39,31 +49,39 @@ async function searchForIconLink(
       : `${prefix}/${icon.startsWith("/") ? icon : "/" + icon}`;
   }
 
+  const faviconUrl = `${prefix}/favicon.ico`;
+  const res = await fetch(faviconUrl);
+
+  if (res.headers.get("Content-Type")?.startsWith("image")) return faviconUrl;
+
   return null;
 }
 export async function getWebsiteMetadata(url: string): Promise<{
   title: string;
   iconLink: string | null;
 }> {
-  let encoded = url.replace("https://", "https%253A%252F%252F");
-  if (encoded === url) {
-    encoded = url.replace("http://", "http%253A%252F%252F");
+  const encoded = encodeUrl(url);
 
-    if (encoded === url) throw Error("Invalid URL");
-  }
-
-  encoded = encoded.replace("/", "%252F");
-
-  const res = await (await fetch(`http://localhost:8000/${encoded}`)).json();
+  const res = await (
+    await fetch(`http://localhost:8000/get-content/${encoded}`)
+  ).json();
 
   const html = cheerio.load(res.content);
 
   const title = html("title").text();
   const iconLink = await searchForIconLink(html, url);
 
+  const downloadedIconLink = await (
+    await fetch(
+      `http://localhost:8000/download-favicon/${v4()}/${encodeUrl(
+        iconLink as string
+      )}`
+    )
+  ).json();
+
   return {
     title,
-    iconLink,
+    iconLink: `http://localhost:8000${downloadedIconLink.path}`,
   };
 }
 
