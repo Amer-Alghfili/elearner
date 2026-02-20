@@ -5,6 +5,7 @@ import { State } from "@/types/server-state";
 import * as cheerio from "cheerio";
 import z from "zod";
 import { Resource } from "@/generated/prisma/client";
+import * as puppeteer from "puppeteer";
 
 async function searchForIconLink(
   html: cheerio.CheerioAPI,
@@ -36,9 +37,16 @@ export async function getWebsiteMetadata(url: string): Promise<{
   title: string;
   iconLink: string | null;
 }> {
-  const res = await (await fetch(url)).text();
+  const browser = await puppeteer.launch({
+    args: ["--disable-features=HttpsFirstBalancedModeAutoEnable"],
+  });
+  const page = await browser.newPage();
 
-  const html = cheerio.load(res);
+  await page.goto(url);
+
+  const htmlContent = await page.content();
+
+  const html = cheerio.load(htmlContent);
 
   const title = html("title").text();
   const iconLink = await searchForIconLink(html, url);
@@ -56,6 +64,7 @@ export async function createResource(
   const url = formData.get("link") as string;
 
   const { title, iconLink } = await getWebsiteMetadata(url);
+  console.log(title);
 
   const validate = z
     .object({
