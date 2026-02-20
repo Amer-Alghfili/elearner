@@ -5,31 +5,39 @@ import { State } from "@/types/server-state";
 import * as cheerio from "cheerio";
 import z from "zod";
 import { Resource } from "@/generated/prisma/client";
-import * as puppeteer from "puppeteer";
 
 async function searchForIconLink(
   html: cheerio.CheerioAPI,
   url: string
 ): Promise<string | null> {
+  const { protocol, host } = new URL(url);
+  const prefix = `${protocol}//${host}`;
+
+  const faviconUrl = `${prefix}/favicon.ico`;
+  const res = await fetch(faviconUrl);
+
+  if (res.headers.get("Content-Type")?.startsWith("image")) return faviconUrl;
+
   let icon = html('link[rel="icon"]').attr("href") || null;
   if (icon) {
-    return icon.startsWith("http") ? icon : `${url}/${icon}`;
+    return icon.startsWith("http") || icon.startsWith("www")
+      ? icon
+      : `${prefix}${icon.startsWith("/") ? icon : "/" + icon}`;
   }
 
   icon = html('link[rel="shortcut icon"]').attr("href") || null;
   if (icon) {
-    return icon.startsWith("http") ? icon : `${url}/${icon}`;
+    return icon.startsWith("http") || icon.startsWith("www")
+      ? icon
+      : `${prefix}/${icon.startsWith("/") ? icon : "/" + icon}`;
   }
 
   icon = html('link[rel="apple-touch-icon"]').attr("href") || null;
   if (icon) {
-    return icon.startsWith("http") ? icon : `${url}/${icon}`;
+    return icon.startsWith("http") || icon.startsWith("www")
+      ? icon
+      : `${prefix}/${icon.startsWith("/") ? icon : "/" + icon}`;
   }
-
-  const faviconUrl = `${url}/favicon.ico`;
-  const res = await fetch(faviconUrl);
-
-  if (res.headers.get("Content-Type")?.startsWith("image")) return faviconUrl;
 
   return null;
 }
@@ -37,16 +45,18 @@ export async function getWebsiteMetadata(url: string): Promise<{
   title: string;
   iconLink: string | null;
 }> {
-  const browser = await puppeteer.launch({
-    args: ["--disable-features=HttpsFirstBalancedModeAutoEnable"],
-  });
-  const page = await browser.newPage();
+  let encoded = url.replace("https://", "https%253A%252F%252F");
+  if (encoded === url) {
+    encoded = url.replace("http://", "http%253A%252F%252F");
 
-  await page.goto(url);
+    if (encoded === url) throw Error("Invalid URL");
+  }
 
-  const htmlContent = await page.content();
+  encoded = encoded.replace("/", "%252F");
 
-  const html = cheerio.load(htmlContent);
+  const res = await (await fetch(`http://localhost:8000/${encoded}`)).json();
+
+  const html = cheerio.load(res.content);
 
   const title = html("title").text();
   const iconLink = await searchForIconLink(html, url);
@@ -64,7 +74,6 @@ export async function createResource(
   const url = formData.get("link") as string;
 
   const { title, iconLink } = await getWebsiteMetadata(url);
-  console.log(title);
 
   const validate = z
     .object({
