@@ -48,32 +48,34 @@ model Resource {
 }
 
 model FlashCard {
-  id         Int                          @id @default(autoincrement())
-  stage      String                       @db.VarChar(255)
+  id         Int                           @id @default(autoincrement())
+  stage      String                        @db.VarChar(255)
   due        DateTime
-  createdAt  DateTime                     @default(now())
-  updatedAt  DateTime                     @updatedAt
+  answeredAt DateTime?
+  createdAt  DateTime                      @default(now())
+  updatedAt  DateTime                      @updatedAt
   learn_id   Int
-  question   String                       @db.VarChar(255)
-  answerType String   @map("answer_type") @db.VarChar(255)
+  question   String                        @db.VarChar(255)
+  answerType String    @map("answer_type") @db.VarChar(255)
   answer     String
-  hint       String?                      @db.VarChar(255)
+  hint       String?                       @db.VarChar(255)
   options    Json?
-  learn      Learn    @relation(fields: [learn_id], references: [id])
+  learn      Learn     @relation(fields: [learn_id], references: [id])
 
   @@map("learns_flash_cards")
 }
 
 model PracticeTask {
-  id          Int       @id @default(autoincrement())
+  id          Int        @id @default(autoincrement())
   learn_id    Int
-  stage       String    @db.VarChar(255)
+  stage       String     @db.VarChar(255)
   due         DateTime
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  title       String    @db.VarChar(255)
+  answeredAt  DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  title       String     @db.VarChar(255)
   description String
-  learn       Learn    @relation(fields: [learn_id], references: [id])
+  learn       Learn     @relation(fields: [learn_id], references: [id])
 
   @@map("learns_practice_tasks")
 }
