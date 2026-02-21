@@ -1,47 +1,77 @@
 import { Scaffold } from "@/components/Scaffold";
-import {
-  ProgressBar,
-  ProgressRoot,
-  ProgressValueText,
-} from "@/components/ui/progress";
-import { Box, Button, Flex, Heading, Stack, Textarea } from "@chakra-ui/react";
-import React from "react";
+import { prisma } from "@/prisma";
+import { ReviewLearnItem, Slider } from "./Slider";
 
-export default function ReviewLearnPage() {
+export default async function ReviewLearnPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const learnId = Number(id);
+
+  const today = new Date();
+
+  const activeFlashcards = await prisma.flashCard.findMany({
+    where: {
+      learn_id: learnId,
+      OR: [{ due: { lte: today } }, { answeredAt: today }],
+    },
+  });
+
+  const activePracticeTasks = await prisma.practiceTask.findMany({
+    where: {
+      learn_id: learnId,
+      OR: [{ due: { lte: today } }, { answeredAt: today }],
+    },
+  });
+
+  const list: ReviewLearnItem[] = [
+    ...activeFlashcards.map(
+      (f) =>
+        ({
+          id: f.id,
+          title: f.question,
+          hint: f.hint,
+          answer: f.answer,
+          type: "flashcard",
+          stage: Number(f.stage),
+        } as ReviewLearnItem)
+    ),
+    ...activePracticeTasks.map(
+      (f) =>
+        ({
+          id: f.id,
+          title: f.title,
+          hint: null,
+          answer: f.description,
+          type: "practiceTask",
+          stage: Number(f.stage),
+        } as ReviewLearnItem)
+    ),
+  ];
+
+  const reviewedCount =
+    activeFlashcards.filter(
+      (f) =>
+        f.answeredAt != null &&
+        f.answeredAt.getFullYear() === today.getFullYear() &&
+        f.answeredAt.getMonth() === today.getMonth() &&
+        f.answeredAt.getDate() === today.getDate()
+    ).length +
+    activePracticeTasks.filter(
+      (f) =>
+        f.answeredAt != null &&
+        f.answeredAt.getFullYear() === today.getFullYear() &&
+        f.answeredAt.getMonth() === today.getMonth() &&
+        f.answeredAt.getDate() === today.getDate()
+    ).length;
+
+  if (!list.length) return;
+
   return (
     <Scaffold h="100vh">
-      <Box as="form" h="full" maxW="40em" m="auto">
-        <Stack justifyContent="space-between" h="full" py="4em">
-          <ProgressRoot value={20} w="100%">
-            <Stack gap="0.5em">
-              <ProgressBar />
-              <ProgressValueText>2 of 10</ProgressValueText>
-            </Stack>
-          </ProgressRoot>
-          <Stack gap="3em">
-            <Heading as="h2" textAlign="center">
-              What is X ?
-            </Heading>
-            <Stack gap="1em">
-              <Flex w="full" gap="1em">
-                <Button variant="secondary" flex="100%">
-                  💡 Hint
-                </Button>
-                <Button variant="secondary" flex="100%">
-                  Show Answer
-                </Button>
-              </Flex>
-              <Textarea h="8em" />
-            </Stack>
-          </Stack>
-          <Flex gap="3em" justifyContent="space-between">
-            <Button variant="secondary" w="30%">
-              Previous
-            </Button>
-            <Button w="30%">Next</Button>
-          </Flex>
-        </Stack>
-      </Box>
+      <Slider list={list} reviewedCount={reviewedCount} />
     </Scaffold>
   );
 }
