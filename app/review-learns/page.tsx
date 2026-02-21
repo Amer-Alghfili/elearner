@@ -7,21 +7,10 @@ import {
   ProgressValueText,
 } from "@/components/ui/progress";
 import { prisma } from "@/prisma";
-import {
-  Box,
-  Button,
-  Card,
-  Flex,
-  Heading,
-  LinkBox,
-  LinkOverlay,
-  Stack,
-} from "@chakra-ui/react";
+import { Box, Button, Card, Flex, Heading, Stack } from "@chakra-ui/react";
 import Link from "next/link";
-import React from "react";
-import { ar } from "zod/v4/locales";
 
-export type ReviewLearnsPageType = {
+type ReviewLearnsPageType = {
   id: number;
   title: string;
   total: number;
@@ -46,12 +35,27 @@ export default async function ReviewLearnsPage() {
 
   const today = new Date();
 
+  const startOfToday = new Date();
+  startOfToday.setHours(0);
+
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  tomorrow.setHours(0);
+
   const learnIds = learns.map(({ id }) => id);
   for (const id of learnIds) {
     const activeFlashcards = await prisma.flashCard.findMany({
       where: {
         learn_id: id,
-        OR: [{ due: { lte: today } }, { answeredAt: today }],
+        OR: [
+          { due: { lte: today } },
+          {
+            answeredAt: {
+              lt: tomorrow,
+              gt: startOfToday,
+            },
+          },
+        ],
       },
       include: {
         learn: { select: { title: true } },
@@ -61,7 +65,15 @@ export default async function ReviewLearnsPage() {
     const activePracticeTasks = await prisma.practiceTask.findMany({
       where: {
         learn_id: id,
-        OR: [{ due: { lte: today } }, { answeredAt: today }],
+        OR: [
+          { due: { lte: today } },
+          {
+            answeredAt: {
+              lt: tomorrow,
+              gt: startOfToday,
+            },
+          },
+        ],
       },
       include: {
         learn: { select: { title: true } },
