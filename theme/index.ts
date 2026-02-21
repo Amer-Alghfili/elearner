@@ -10,6 +10,7 @@ import { tabs } from "./recipes/tabs";
 import { radioCard } from "./recipes/radio-card";
 import { select } from "./recipes/select";
 import { field } from "./recipes/field";
+import { progress } from "./recipes/progress";
 
 const config = defineConfig({
   globalCss: {
@@ -51,6 +52,7 @@ const config = defineConfig({
       checkbox,
       tabs,
       radioCard,
+      progress,
       select,
       field,
     },
