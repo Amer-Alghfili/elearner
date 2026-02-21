@@ -12,7 +12,10 @@ export const colors = {
       DEFAULT: { value: "#F87171" },
       transparent: { value: "rgba(248, 113, 113, 0.2)" },
     },
-    dustyPlum: { value: "#8B5CF6" },
+    dustyPlum: {
+      DEFAULT: { value: "#8B5CF6" },
+      transparent: { value: "rgba(138, 92, 246, 0.5)" },
+    },
   },
   neutral: {
     background: { value: "#FAFAF9" },
