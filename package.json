@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "next-typegen": "next typegen",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
