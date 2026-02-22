@@ -34,6 +34,8 @@ export default async function ReviewLearnPage({
           answer: f.answer,
           type: "flashcard",
           stage: Number(f.stage),
+          isAnswered: f.answeredAt != null,
+          submittedAnswer: f.submitted_answer,
         } as ReviewLearnItem)
     ),
     ...activePracticeTasks.map(
@@ -45,6 +47,7 @@ export default async function ReviewLearnPage({
           answer: f.description,
           type: "practiceTask",
           stage: Number(f.stage),
+          isAnswered: f.answeredAt != null,
         } as ReviewLearnItem)
     ),
   ];

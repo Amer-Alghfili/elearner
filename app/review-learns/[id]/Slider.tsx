@@ -7,6 +7,7 @@ import {
   ProgressValueText,
 } from "@/components/ui/progress";
 import {
+  Badge,
   Button,
   Flex,
   Heading,
@@ -19,6 +20,7 @@ import { toaster } from "@/components/ui/toaster";
 import { useRouter } from "next/navigation";
 import { ShowAnswer } from "./ShowAnswer";
 import { Tooltip } from "@/components/ui/tooltip";
+import { TickIcon } from "@/components/Icons";
 
 export type ReviewLearnItem = {
   id: number;
@@ -27,6 +29,8 @@ export type ReviewLearnItem = {
   answer: string;
   type: "flashcard" | "practiceTask";
   stage: number;
+  isAnswered: boolean;
+  submittedAnswer: string | null;
 };
 export function Slider({
   list,
@@ -105,9 +109,17 @@ export function Slider({
             </Stack>
           </ProgressRoot>
           <Stack gap="3em">
-            <Heading as="h2" textAlign="center">
-              {activeItem.title}
-            </Heading>
+            <Stack alignItems="center">
+              {activeItem.isAnswered && (
+                <Badge variant="solid" bg="accent.forestGreen">
+                  <TickIcon w="1rem" h="1rem" fill="white" stroke="white" />
+                  Answered
+                </Badge>
+              )}
+              <Heading as="h2" textAlign="center">
+                {activeItem.title}
+              </Heading>
+            </Stack>
             <Stack gap="1em">
               <Flex w="full" gap="1em">
                 {activeItem.hint && (
