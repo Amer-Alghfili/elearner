@@ -18,6 +18,7 @@ import { updateDueDate } from "./action";
 import { toaster } from "@/components/ui/toaster";
 import { useRouter } from "next/navigation";
 import { ShowAnswer } from "./ShowAnswer";
+import { Tooltip } from "@/components/ui/tooltip";
 
 export type ReviewLearnItem = {
   id: number;
@@ -43,6 +44,7 @@ export function Slider({
   );
 
   const [openAnswer, setOpenAnswer] = React.useState(false);
+  const [showHint, setShowHint] = React.useState(false);
 
   const progress = (reviewedCount / list.length) * 100;
   const activeItem = list[activeItemIndex];
@@ -61,6 +63,7 @@ export function Slider({
       } else {
         setActiveItemIndex((prev) => prev + 1);
       }
+      router.refresh();
     } else if (inState?.error) {
       toaster.create({
         title: inState.error,
@@ -108,9 +111,19 @@ export function Slider({
             <Stack gap="1em">
               <Flex w="full" gap="1em">
                 {activeItem.hint && (
-                  <Button variant="secondary" flex="100%">
-                    💡 Hint
-                  </Button>
+                  <Tooltip
+                    content={activeItem.hint}
+                    open={showHint}
+                    onOpenChange={({ open }) => setShowHint(open)}
+                  >
+                    <Button
+                      variant="secondary"
+                      flex="100%"
+                      onClick={() => setShowHint(true)}
+                    >
+                      💡 Hint
+                    </Button>
+                  </Tooltip>
                 )}
                 <Button
                   onClick={() => setOpenAnswer(true)}
