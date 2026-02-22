@@ -65,7 +65,7 @@ export default async function ReviewLearnsPage() {
     if (activeFlashcards.length || activePracticeTasks.length) {
       const title = activePracticeTasks.length
         ? activePracticeTasks[0].learn.title
-        : activePracticeTasks[0].learn.title;
+        : activeFlashcards[0].learn.title;
 
       const reviewedCount =
         activeFlashcards.filter(
