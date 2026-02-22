@@ -1,6 +1,9 @@
 import { Scaffold } from "@/components/Scaffold";
 import { prisma } from "@/prisma";
-import { ReviewLearnItem, Slider } from "./Slider";
+import {
+  ReviewLearnItem,
+  KnowledgeItemTestFlow,
+} from "./KnowledgeItemTestFlow";
 import {
   findFlashcardsReadyForReview,
   findPracticeTasksReadyForReview,
@@ -35,6 +38,7 @@ export default async function ReviewLearnPage({
           isAnswered: f.answeredAt != null,
           submittedAnswer: f.submitted_answer,
           answerType: f.answerType,
+          options: f.options,
         } as ReviewLearnItem)
     ),
     ...activePracticeTasks.map(
@@ -55,7 +59,7 @@ export default async function ReviewLearnPage({
 
   return (
     <Scaffold h="100vh">
-      <Slider list={list} />
+      <KnowledgeItemTestFlow list={list} />
     </Scaffold>
   );
 }

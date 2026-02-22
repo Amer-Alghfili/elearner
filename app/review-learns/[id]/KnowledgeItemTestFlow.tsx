@@ -9,6 +9,7 @@ import {
 import {
   Badge,
   Button,
+  createListCollection,
   Flex,
   Heading,
   Input,
@@ -22,6 +23,14 @@ import { ShowAnswer } from "./ShowAnswer";
 import { Tooltip } from "@/components/ui/tooltip";
 import { TickIcon } from "@/components/Icons";
 import { RadioCardItem, RadioCardRoot } from "@/components/ui/radio-card";
+import { Field } from "@/components/ui/field";
+import {
+  SelectContent,
+  SelectItem,
+  SelectLabel,
+  SelectRoot,
+  SelectTrigger,
+} from "@/components/ui/select";
 
 type AnswerType = "multiple-choices" | "true-false" | "open-ended";
 
@@ -35,8 +44,9 @@ export type ReviewLearnItem = {
   isAnswered: boolean;
   submittedAnswer: string | null;
   answerType: AnswerType;
+  options?: string[];
 };
-export function Slider({ list }: { list: ReviewLearnItem[] }) {
+export function KnowledgeItemTestFlow({ list }: { list: ReviewLearnItem[] }) {
   const [questions, setQuestions] = React.useState(
     list.toSorted((a, b) => {
       if (a.isAnswered && b.isAnswered) return 0;
@@ -169,10 +179,7 @@ export function Slider({ list }: { list: ReviewLearnItem[] }) {
                 </Button>
               </Flex>
               {activeItem.type === "flashcard" && (
-                <AnswerForm
-                  answer={activeItem.submittedAnswer || ""}
-                  type={activeItem.answerType}
-                />
+                <AnswerForm questionItem={activeItem} />
               )}
             </Stack>
           </Stack>
@@ -201,13 +208,30 @@ export function Slider({ list }: { list: ReviewLearnItem[] }) {
   );
 }
 
-function AnswerForm({ answer, type }: { answer: string; type: AnswerType }) {
-  //   if (type === "multiple-choices") return <MultipleChoiceAnswerForm />;
+function AnswerForm({ questionItem }: { questionItem: ReviewLearnItem }) {
+  if (questionItem.answerType === "multiple-choices")
+    return (
+      <MultipleChoicesField
+        answer={questionItem.submittedAnswer || ""}
+        options={questionItem.options as string[]}
+      />
+    );
 
-  if (type === "true-false")
-    return <TrueFalseField answer={answer as "true" | "false"} />;
+  if (questionItem.answerType === "true-false")
+    return (
+      <TrueFalseField
+        answer={questionItem.submittedAnswer as "true" | "false"}
+      />
+    );
 
-  return <Textarea id="answer" name="answer" defaultValue={answer} h="8em" />;
+  return (
+    <Textarea
+      id="answer"
+      name="answer"
+      defaultValue={questionItem.submittedAnswer || ""}
+      h="8em"
+    />
+  );
 }
 
 function TrueFalseField({ answer }: { answer: "true" | "false" }) {
@@ -242,44 +266,42 @@ function TrueFalseField({ answer }: { answer: "true" | "false" }) {
   );
 }
 
-// function MultipleChoicesField({ options }: { options: readonly string[] }) {
-//   const collection = createListCollection({
-//     items: options,
-//   });
+function MultipleChoicesField({
+  options,
+  answer,
+}: {
+  options: readonly string[];
+  answer: string;
+}) {
+  const [value, setValue] = React.useState(answer);
 
-//   const { formState, control } = useFormContext<{ answer: string }>();
+  const collection = createListCollection({
+    items: options,
+  });
 
-//   const { field } = useController({
-//     name: "answer",
-//     control,
-//   });
-
-//   return (
-//     <Field
-//       invalid={!!formState.errors.answer}
-//       errorText={formState.errors.answer?.message}
-//       w={{ base: "100%", md: "70%" }}
-//     >
-//       <SelectRoot
-//         required={true}
-//         disabled={field.disabled}
-//         collection={collection}
-//         value={[field.value]}
-//         onValueChange={({ value }) => field.onChange(value[0])}
-//         onBlur={field.onBlur}
-//       >
-//         <SelectLabel textStyle="sm-semibold">Answer</SelectLabel>
-//         <SelectTrigger>{field.value}</SelectTrigger>
-//         <SelectContent portalled={false}>
-//           {collection.items.map((option) => {
-//             return (
-//               <SelectItem key={option} item={option}>
-//                 {option}
-//               </SelectItem>
-//             );
-//           })}
-//         </SelectContent>
-//       </SelectRoot>
-//     </Field>
-//   );
-// }
+  return (
+    <>
+      <Input hidden={true} value={value} id="answer" name="answer" />
+      <Field w="full">
+        <SelectRoot
+          required={true}
+          collection={collection}
+          value={[value]}
+          onValueChange={({ value }) => setValue(value[0])}
+        >
+          <SelectLabel textStyle="sm-semibold">Answer</SelectLabel>
+          <SelectTrigger>{value}</SelectTrigger>
+          <SelectContent portalled={false}>
+            {collection.items.map((option) => {
+              return (
+                <SelectItem key={option} item={option}>
+                  {option}
+                </SelectItem>
+              );
+            })}
+          </SelectContent>
+        </SelectRoot>
+      </Field>
+    </>
+  );
+}
