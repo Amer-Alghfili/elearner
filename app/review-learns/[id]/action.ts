@@ -5,10 +5,10 @@ import { calculateDueDate } from "@/service/knowledge-test";
 import { State } from "@/types/server-state";
 import z from "zod";
 
-export async function updateDueDate(
+export async function submitAnswer(
   _: unknown,
   formData: FormData
-): Promise<State<{ id: string }>> {
+): Promise<State<{ id: string; answer: string | null }>> {
   const id = formData.get("id") as string;
   const stage = Number(formData.get("stage") as string);
   const type = formData.get("type") as string;
@@ -29,12 +29,14 @@ export async function updateDueDate(
     });
 
   if (res.success) {
-    const { id, type } = res.data;
+    const { id, type, answer } = res.data;
 
     const newDue = calculateDueDate(stage);
 
-    let result: string;
+    let result: { id: string; answer: string | null };
     if (type === "flashcard") {
+      if (!answer) return { data: { id: id, answer: null } };
+
       const res = await prisma.flashCard.update({
         where: {
           id: Number(id),
@@ -43,10 +45,11 @@ export async function updateDueDate(
           due: newDue,
           stage: stage.toString(),
           answeredAt: new Date(),
+          submitted_answer: answer,
         },
       });
 
-      result = res.id.toString();
+      result = { id: res.id.toString(), answer: res.submitted_answer };
     } else {
       const res = await prisma.practiceTask.update({
         where: {
@@ -59,11 +62,11 @@ export async function updateDueDate(
         },
       });
 
-      result = res.id.toString();
+      result = { id: res.id.toString(), answer: null };
     }
 
     return {
-      data: { id: result },
+      data: result,
     };
   }
 

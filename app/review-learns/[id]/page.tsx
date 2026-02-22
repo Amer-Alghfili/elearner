@@ -14,8 +14,6 @@ export default async function ReviewLearnPage({
   const { id } = await params;
   const learnId = Number(id);
 
-  const today = new Date();
-
   const activeFlashcards = await prisma.flashCard.findMany(
     findFlashcardsReadyForReview(learnId)
   );
@@ -52,27 +50,11 @@ export default async function ReviewLearnPage({
     ),
   ];
 
-  const reviewedCount =
-    activeFlashcards.filter(
-      (f) =>
-        f.answeredAt != null &&
-        f.answeredAt.getFullYear() === today.getFullYear() &&
-        f.answeredAt.getMonth() === today.getMonth() &&
-        f.answeredAt.getDate() === today.getDate()
-    ).length +
-    activePracticeTasks.filter(
-      (f) =>
-        f.answeredAt != null &&
-        f.answeredAt.getFullYear() === today.getFullYear() &&
-        f.answeredAt.getMonth() === today.getMonth() &&
-        f.answeredAt.getDate() === today.getDate()
-    ).length;
-
   if (!list.length) return;
 
   return (
     <Scaffold h="100vh">
-      <Slider list={list} reviewedCount={reviewedCount} />
+      <Slider list={list} />
     </Scaffold>
   );
 }

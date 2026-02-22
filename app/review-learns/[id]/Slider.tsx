@@ -15,7 +15,7 @@ import {
   Stack,
   Textarea,
 } from "@chakra-ui/react";
-import { updateDueDate } from "./action";
+import { submitAnswer } from "./action";
 import { toaster } from "@/components/ui/toaster";
 import { useRouter } from "next/navigation";
 import { ShowAnswer } from "./ShowAnswer";
@@ -32,32 +32,41 @@ export type ReviewLearnItem = {
   isAnswered: boolean;
   submittedAnswer: string | null;
 };
-export function Slider({
-  list,
-  reviewedCount,
-}: {
-  list: ReviewLearnItem[];
-  reviewedCount: number;
-}) {
+export function Slider({ list }: { list: ReviewLearnItem[] }) {
+  const [questions, setQuestions] = React.useState(
+    list.toSorted((a, b) => {
+      if (a.isAnswered && b.isAnswered) return 0;
+      if (a.isAnswered) return -1;
+
+      return 1;
+    })
+  );
+
   const router = useRouter();
 
-  const [activeItemIndex, setActiveItemIndex] = React.useState<number>(0);
+  const [activeItemIndex, setActiveItemIndex] = React.useState<number>(
+    function startFromFirstUnansweredQuestion() {
+      const index = questions.findIndex((q) => !q.isAnswered);
+      return index < 0 ? 0 : index;
+    }
+  );
   const [state, action, loading] = React.useActionState(
-    updateDueDate,
+    submitAnswer,
     undefined
   );
 
   const [openAnswer, setOpenAnswer] = React.useState(false);
   const [showHint, setShowHint] = React.useState(false);
 
-  const progress = (reviewedCount / list.length) * 100;
-  const activeItem = list[activeItemIndex];
+  const progress =
+    activeItemIndex === 0 ? 0 : (activeItemIndex / list.length) * 100;
+  const activeItem = questions[activeItemIndex];
 
   const postSubmission = React.useEffectEvent((inState: typeof state) => {
     setOpenAnswer(false);
 
-    if (inState?.data?.id === list[activeItemIndex].id.toString()) {
-      if (activeItemIndex === list.length - 1) {
+    if (inState?.data?.id === questions[activeItemIndex].id.toString()) {
+      if (activeItemIndex === questions.length - 1) {
         toaster.create({
           title: "You have reviewed all of the learn items 🎉",
           type: "success",
@@ -65,6 +74,16 @@ export function Slider({
         });
         router.replace("/home");
       } else {
+        if (inState.data.answer) {
+          const updated = [...questions];
+          updated[activeItemIndex] = {
+            ...updated[activeItemIndex],
+            isAnswered: true,
+            submittedAnswer: inState.data.answer,
+          };
+
+          setQuestions(updated);
+        }
         setActiveItemIndex((prev) => prev + 1);
       }
       router.refresh();
@@ -105,7 +124,7 @@ export function Slider({
           <ProgressRoot value={progress} w="100%">
             <Stack gap="0.5em">
               <ProgressBar />
-              <ProgressValueText>{`${reviewedCount} of ${list.length}`}</ProgressValueText>
+              <ProgressValueText>{`${activeItemIndex} of ${questions.length}`}</ProgressValueText>
             </Stack>
           </ProgressRoot>
           <Stack gap="3em">
@@ -146,7 +165,12 @@ export function Slider({
                 </Button>
               </Flex>
               {activeItem.type === "flashcard" && (
-                <Textarea id="answer" name="answer" h="8em" />
+                <Textarea
+                  id="answer"
+                  name="answer"
+                  defaultValue={activeItem.submittedAnswer || ""}
+                  h="8em"
+                />
               )}
             </Stack>
           </Stack>
