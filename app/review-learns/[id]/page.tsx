@@ -1,6 +1,10 @@
 import { Scaffold } from "@/components/Scaffold";
 import { prisma } from "@/prisma";
 import { ReviewLearnItem, Slider } from "./Slider";
+import {
+  findFlashcardsReadyForReview,
+  findPracticeTasksReadyForReview,
+} from "../filters";
 
 export default async function ReviewLearnPage({
   params,
@@ -12,19 +16,13 @@ export default async function ReviewLearnPage({
 
   const today = new Date();
 
-  const activeFlashcards = await prisma.flashCard.findMany({
-    where: {
-      learn_id: learnId,
-      OR: [{ due: { lte: today } }, { answeredAt: today }],
-    },
-  });
+  const activeFlashcards = await prisma.flashCard.findMany(
+    findFlashcardsReadyForReview(learnId)
+  );
 
-  const activePracticeTasks = await prisma.practiceTask.findMany({
-    where: {
-      learn_id: learnId,
-      OR: [{ due: { lte: today } }, { answeredAt: today }],
-    },
-  });
+  const activePracticeTasks = await prisma.practiceTask.findMany(
+    findPracticeTasksReadyForReview(learnId)
+  );
 
   const list: ReviewLearnItem[] = [
     ...activeFlashcards.map(

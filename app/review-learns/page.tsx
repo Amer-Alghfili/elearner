@@ -9,6 +9,10 @@ import {
 import { prisma } from "@/prisma";
 import { Box, Button, Card, Flex, Heading, Stack } from "@chakra-ui/react";
 import Link from "next/link";
+import {
+  findFlashcardsReadyForReview,
+  findPracticeTasksReadyForReview,
+} from "./filters";
 
 type ReviewLearnsPageType = {
   id: number;
@@ -45,36 +49,14 @@ export default async function ReviewLearnsPage() {
   const learnIds = learns.map(({ id }) => id);
   for (const id of learnIds) {
     const activeFlashcards = await prisma.flashCard.findMany({
-      where: {
-        learn_id: id,
-        OR: [
-          { due: { lte: today } },
-          {
-            answeredAt: {
-              lt: tomorrow,
-              gt: startOfToday,
-            },
-          },
-        ],
-      },
+      ...findFlashcardsReadyForReview(id),
       include: {
         learn: { select: { title: true } },
       },
     });
 
     const activePracticeTasks = await prisma.practiceTask.findMany({
-      where: {
-        learn_id: id,
-        OR: [
-          { due: { lte: today } },
-          {
-            answeredAt: {
-              lt: tomorrow,
-              gt: startOfToday,
-            },
-          },
-        ],
-      },
+      ...findPracticeTasksReadyForReview(id),
       include: {
         learn: { select: { title: true } },
       },
