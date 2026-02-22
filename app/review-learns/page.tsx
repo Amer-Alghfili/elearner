@@ -80,36 +80,31 @@ export default async function ReviewLearnsPage() {
       },
     });
 
-    if (activeFlashcards.length) {
-      const reviewedCount = activeFlashcards.filter(
-        (f) =>
-          f.answeredAt != null &&
-          f.answeredAt.getFullYear() === today.getFullYear() &&
-          f.answeredAt.getMonth() === today.getMonth() &&
-          f.answeredAt.getDate() === today.getDate()
-      ).length;
+    if (activeFlashcards.length || activePracticeTasks.length) {
+      const title = activePracticeTasks.length
+        ? activePracticeTasks[0].learn.title
+        : activePracticeTasks[0].learn.title;
+
+      const reviewedCount =
+        activeFlashcards.filter(
+          (f) =>
+            f.answeredAt != null &&
+            f.answeredAt.getFullYear() === today.getFullYear() &&
+            f.answeredAt.getMonth() === today.getMonth() &&
+            f.answeredAt.getDate() === today.getDate()
+        ).length +
+        activePracticeTasks.filter(
+          (f) =>
+            f.answeredAt != null &&
+            f.answeredAt.getFullYear() === today.getFullYear() &&
+            f.answeredAt.getMonth() === today.getMonth() &&
+            f.answeredAt.getDate() === today.getDate()
+        ).length;
 
       list.push({
         id,
-        title: activeFlashcards[0].learn.title,
-        total: activeFlashcards.length,
-        reviewedCount,
-      });
-    }
-
-    if (activePracticeTasks.length) {
-      const reviewedCount = activePracticeTasks.filter(
-        (f) =>
-          f.answeredAt != null &&
-          f.answeredAt.getFullYear() === today.getFullYear() &&
-          f.answeredAt.getMonth() === today.getMonth() &&
-          f.answeredAt.getDate() === today.getDate()
-      ).length;
-
-      list.push({
-        id,
-        title: activePracticeTasks[0].learn.title,
-        total: activePracticeTasks.length,
+        title,
+        total: activeFlashcards.length + activePracticeTasks.length,
         reviewedCount,
       });
     }
