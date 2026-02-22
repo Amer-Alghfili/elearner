@@ -34,6 +34,7 @@ export default async function ReviewLearnPage({
           stage: Number(f.stage),
           isAnswered: f.answeredAt != null,
           submittedAnswer: f.submitted_answer,
+          answerType: f.answerType,
         } as ReviewLearnItem)
     ),
     ...activePracticeTasks.map(

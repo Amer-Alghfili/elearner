@@ -21,6 +21,9 @@ import { useRouter } from "next/navigation";
 import { ShowAnswer } from "./ShowAnswer";
 import { Tooltip } from "@/components/ui/tooltip";
 import { TickIcon } from "@/components/Icons";
+import { RadioCardItem, RadioCardRoot } from "@/components/ui/radio-card";
+
+type AnswerType = "multiple-choices" | "true-false" | "open-ended";
 
 export type ReviewLearnItem = {
   id: number;
@@ -31,6 +34,7 @@ export type ReviewLearnItem = {
   stage: number;
   isAnswered: boolean;
   submittedAnswer: string | null;
+  answerType: AnswerType;
 };
 export function Slider({ list }: { list: ReviewLearnItem[] }) {
   const [questions, setQuestions] = React.useState(
@@ -165,11 +169,9 @@ export function Slider({ list }: { list: ReviewLearnItem[] }) {
                 </Button>
               </Flex>
               {activeItem.type === "flashcard" && (
-                <Textarea
-                  id="answer"
-                  name="answer"
-                  defaultValue={activeItem.submittedAnswer || ""}
-                  h="8em"
+                <AnswerForm
+                  answer={activeItem.submittedAnswer || ""}
+                  type={activeItem.answerType}
                 />
               )}
             </Stack>
@@ -198,3 +200,86 @@ export function Slider({ list }: { list: ReviewLearnItem[] }) {
     </>
   );
 }
+
+function AnswerForm({ answer, type }: { answer: string; type: AnswerType }) {
+  //   if (type === "multiple-choices") return <MultipleChoiceAnswerForm />;
+
+  if (type === "true-false")
+    return <TrueFalseField answer={answer as "true" | "false"} />;
+
+  return <Textarea id="answer" name="answer" defaultValue={answer} h="8em" />;
+}
+
+function TrueFalseField({ answer }: { answer: "true" | "false" }) {
+  const [value, setValue] = React.useState<string>(answer);
+
+  return (
+    <>
+      <Input hidden={true} id="answer" name="answer" value={value} />
+      <RadioCardRoot
+        w="full"
+        gap={0}
+        flexDirection="row"
+        value={value}
+        onValueChange={({ value }) => setValue(value as string)}
+      >
+        <RadioCardItem
+          alignItems="center"
+          borderRadius="none"
+          indicator={null}
+          value="true"
+          label="True"
+        />
+        <RadioCardItem
+          alignItems="center"
+          borderRadius="none"
+          indicator={null}
+          value="false"
+          label="False"
+        />
+      </RadioCardRoot>
+    </>
+  );
+}
+
+// function MultipleChoicesField({ options }: { options: readonly string[] }) {
+//   const collection = createListCollection({
+//     items: options,
+//   });
+
+//   const { formState, control } = useFormContext<{ answer: string }>();
+
+//   const { field } = useController({
+//     name: "answer",
+//     control,
+//   });
+
+//   return (
+//     <Field
+//       invalid={!!formState.errors.answer}
+//       errorText={formState.errors.answer?.message}
+//       w={{ base: "100%", md: "70%" }}
+//     >
+//       <SelectRoot
+//         required={true}
+//         disabled={field.disabled}
+//         collection={collection}
+//         value={[field.value]}
+//         onValueChange={({ value }) => field.onChange(value[0])}
+//         onBlur={field.onBlur}
+//       >
+//         <SelectLabel textStyle="sm-semibold">Answer</SelectLabel>
+//         <SelectTrigger>{field.value}</SelectTrigger>
+//         <SelectContent portalled={false}>
+//           {collection.items.map((option) => {
+//             return (
+//               <SelectItem key={option} item={option}>
+//                 {option}
+//               </SelectItem>
+//             );
+//           })}
+//         </SelectContent>
+//       </SelectRoot>
+//     </Field>
+//   );
+// }
