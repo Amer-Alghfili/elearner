@@ -1,10 +1,11 @@
-import { Box, Button, Flex, IconButton } from "@chakra-ui/react";
+import { Box, Button, Flex, IconButton, Link } from "@chakra-ui/react";
 import { ExitIcon } from "./Icons";
 import { logout } from "@/auth";
 import { Logo } from "./Logo";
 import { Alert } from "./ui/alert";
 import { FaRegLightbulb } from "react-icons/fa6";
 import { LuExternalLink } from "react-icons/lu";
+import NextLink from "next/link";
 
 export default function Header({
   withLogo = true,
@@ -23,9 +24,13 @@ export default function Header({
           icon={<FaRegLightbulb />}
           alignItems="center"
           endElement={
-            <IconButton variant="plain">
-              <LuExternalLink />
-            </IconButton>
+            <Link asChild>
+              <NextLink href="/review-learns">
+                <IconButton variant="plain">
+                  <LuExternalLink />
+                </IconButton>
+              </NextLink>
+            </Link>
           }
         />
       )}

@@ -74,7 +74,7 @@ export default async function HomePage() {
                 Start reviewing what you have learnt 🔥
               </Card.Description>
               <Button asChild alignSelf="flex-start" mt="1em">
-                <Link href="#">Review</Link>
+                <Link href="/review-learns">Review</Link>
               </Button>
             </Card.Body>
             <Image
