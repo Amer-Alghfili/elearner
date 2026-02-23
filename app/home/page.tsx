@@ -6,8 +6,9 @@ import { prisma } from "@/prisma";
 import LearnsContainer from "./LearnsContainer";
 import Link from "next/link";
 
-const today = new Date();
 export default async function HomePage() {
+  const today = new Date();
+
   const data = await auth();
 
   const learns = await prisma.learn.findMany({

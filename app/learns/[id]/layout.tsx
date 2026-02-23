@@ -5,7 +5,6 @@ import { Button, Heading, Link, Stack, Text } from "@chakra-ui/react";
 import { LearnPageContainer } from "./LearnPageContainer";
 import { Sidebar } from "./_sidebar";
 
-const today = new Date();
 export default async function LearnPageLayout({
   children,
   params,
@@ -39,6 +38,7 @@ export default async function LearnPageLayout({
     },
   });
 
+  const today = new Date();
   let knowledgeItemsCount = await prisma.flashCard.count({
     where: {
       learn_id: {
