@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "next-typegen": "next typegen",
-    "build": "npx prisma generate && next build",
+    "build": "npx @chakra-ui/cli typegen ./theme/index.ts && npx prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
     "typegen": "npx @chakra-ui/cli typegen ./theme/index.ts",
