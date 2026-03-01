@@ -8,8 +8,8 @@ services:
     volumes:
       - db:/data/postgres
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: elearner
     ports:
       - 5432:5432
