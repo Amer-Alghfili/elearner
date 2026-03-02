@@ -103,7 +103,7 @@ export async function createResource(
     .safeParse({
       url,
       title: url,
-      // icon: iconLink,
+      icon: null,
       parentResource: formData.get("parentResource"),
     });
 
