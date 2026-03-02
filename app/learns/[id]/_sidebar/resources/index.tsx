@@ -49,9 +49,9 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
     React.useOptimistic<Resource[]>(resources);
 
   const [renamingId, setRenamingId] = React.useState<number[] | null>(null);
-  const [changingIconId, setChangingIconId] = React.useState<number[] | null>(
-    null
-  );
+  // const [changingIconId, setChangingIconId] = React.useState<number[] | null>(
+  //   null
+  // );
 
   const [websiteForm, setWebsiteForm] = React.useState<{
     open: boolean;
@@ -221,47 +221,47 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
     }
   }
 
-  async function changeIconAction(id: string, icon: string | null) {
-    const resourcesUpdater = (resources: Resource[]) =>
-      resources.map(function mapResources(resource, index): Resource {
-        const currentIndexPath = [...resource.indexPath, index];
+  // async function changeIconAction(id: string, icon: string | null) {
+  //   const resourcesUpdater = (resources: Resource[]) =>
+  //     resources.map(function mapResources(resource, index): Resource {
+  //       const currentIndexPath = [...resource.indexPath, index];
 
-        const found = (changingIconId as []).every(
-          (value, index) => Number(value) === currentIndexPath[index]
-        );
+  //       const found = (changingIconId as []).every(
+  //         (value, index) => Number(value) === currentIndexPath[index]
+  //       );
 
-        if (found) {
-          return {
-            ...resource,
-            icon,
-          };
-        }
+  //       if (found) {
+  //         return {
+  //           ...resource,
+  //           icon,
+  //         };
+  //       }
 
-        if (typeof resource.content === "string") return resource;
+  //       if (typeof resource.content === "string") return resource;
 
-        return {
-          ...resource,
-          content: resource.content.map(mapResources),
-        };
-      });
+  //       return {
+  //         ...resource,
+  //         content: resource.content.map(mapResources),
+  //       };
+  //     });
 
-    React.startTransition(async () => {
-      setOptimistic(resourcesUpdater);
+  //   React.startTransition(async () => {
+  //     setOptimistic(resourcesUpdater);
 
-      try {
-        await updateIcon(id, icon);
+  //     try {
+  //       await updateIcon(id, icon);
 
-        setResources(resourcesUpdater);
-        setChangingIconId(null);
-      } catch (err: any) {
-        toaster.create({
-          title: err.message,
-          type: "error",
-          closable: true,
-        });
-      }
-    });
-  }
+  //       setResources(resourcesUpdater);
+  //       setChangingIconId(null);
+  //     } catch (err: any) {
+  //       toaster.create({
+  //         title: err.message,
+  //         type: "error",
+  //         closable: true,
+  //       });
+  //     }
+  //   });
+  // }
 
   async function removeAction(path: number[], formData: FormData) {
     const update = (resources: Resource[]) => {
@@ -316,10 +316,10 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
             renamingId.every((v, i) => v === currentIndexPath[i]);
 
           if (typeof resource.content === "string") {
-            const changeIcon =
-              changingIconId != null &&
-              changingIconId.length === currentIndexPath.length &&
-              changingIconId.every((v, i) => v === currentIndexPath[i]);
+            // const changeIcon =
+            //   changingIconId != null &&
+            //   changingIconId.length === currentIndexPath.length &&
+            //   changingIconId.every((v, i) => v === currentIndexPath[i]);
 
             const icon =
               resource.icon == null &&
@@ -351,28 +351,28 @@ export function Resources(props: { resources: Resource[]; learnId: number }) {
                     children: "Rename",
                     onClick: () => setRenamingId(currentIndexPath),
                   },
-                  {
-                    value: "change-icon",
-                    children: (
-                      <MenuRoot
-                        open={changeIcon}
-                        onInteractOutside={() => setChangingIconId(null)}
-                      >
-                        <MenuTrigger>Change Icon</MenuTrigger>
-                        <MenuContent>
-                          <IconPicker
-                            icon={resource.icon}
-                            favicon={resource.favicon}
-                            onChange={(emoji) =>
-                              changeIconAction(resource.id, emoji)
-                            }
-                          />
-                        </MenuContent>
-                      </MenuRoot>
-                    ),
-                    closeOnSelect: false,
-                    onClick: () => setChangingIconId(currentIndexPath),
-                  },
+                  // {
+                  //   value: "change-icon",
+                  //   children: (
+                  //     <MenuRoot
+                  //       open={changeIcon}
+                  //       onInteractOutside={() => setChangingIconId(null)}
+                  //     >
+                  //       <MenuTrigger>Change Icon</MenuTrigger>
+                  //       <MenuContent>
+                  //         <IconPicker
+                  //           icon={resource.icon}
+                  //           favicon={resource.favicon}
+                  //           onChange={(emoji) =>
+                  //             changeIconAction(resource.id, emoji)
+                  //           }
+                  //         />
+                  //       </MenuContent>
+                  //     </MenuRoot>
+                  //   ),
+                  //   closeOnSelect: false,
+                  //   onClick: () => setChangingIconId(currentIndexPath),
+                  // },
                   {
                     value: "remove-website",
                     closeOnSelect: false,

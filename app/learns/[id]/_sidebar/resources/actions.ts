@@ -56,7 +56,7 @@ async function searchForIconLink(
 
   return null;
 }
-export async function getWebsiteMetadata(url: string): Promise<{
+async function getWebsiteMetadata(url: string): Promise<{
   title: string;
   iconLink: string | null;
 }> {
@@ -91,7 +91,7 @@ export async function createResource(
 ): Promise<State<Resource>> {
   const url = formData.get("link") as string;
 
-  const { title, iconLink } = await getWebsiteMetadata(url);
+  // const { title, iconLink } = await getWebsiteMetadata(url);
 
   const validate = z
     .object({
@@ -102,8 +102,8 @@ export async function createResource(
     })
     .safeParse({
       url,
-      title,
-      icon: iconLink,
+      title: url,
+      // icon: iconLink,
       parentResource: formData.get("parentResource"),
     });
 
