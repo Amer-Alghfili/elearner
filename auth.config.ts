@@ -39,6 +39,12 @@ export const authConfig = {
 
       const isLoggedIn = !!auth?.user?.email;
 
+      // Landing page — public; redirect logged-in users to /home
+      if (nextUrl.pathname === "/") {
+        if (isLoggedIn) return Response.redirect(new URL("/home", nextUrl));
+        return true;
+      }
+
       const isOnLoginPage = nextUrl.pathname.startsWith("/login");
 
       if (isLoggedIn) {
