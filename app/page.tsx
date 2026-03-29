@@ -12,8 +12,9 @@ import {
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { domine } from "@/fonts";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { FaDiscord } from "react-icons/fa6";
+import { RiNotionLine } from "react-icons/ri";
 
 // ── Scroll-reveal wrapper ────────────────────────────────────────────
 function Reveal({
@@ -173,79 +174,639 @@ function FloatingBadge({
 
 // ── Illustrations ────────────────────────────────────────────────────
 
-function ContextSwitchingIllustration() {
+// Context switching illustration — keyframes, data, sub-components
+
+const CS_STYLES = `
+  @keyframes cs-floatLeft {
+    0%,100% { transform: translateY(-50%) translateX(0px); }
+    50%      { transform: translateY(-50%) translateX(-5px); }
+  }
+  @keyframes cs-floatRight {
+    0%,100% { transform: translateY(-50%) translateX(0px); }
+    50%      { transform: translateY(-50%) translateX(5px); }
+  }
+  @keyframes cs-floatDown {
+    0%,100% { transform: translateX(-50%) translateY(0px); }
+    50%      { transform: translateX(-50%) translateY(6px); }
+  }
+  @keyframes cs-ringPulse {
+    0%,100% { box-shadow: 0 0 0 6px rgba(220,38,38,0.07), 0 0 0 14px rgba(220,38,38,0.03); }
+    50%      { box-shadow: 0 0 0 11px rgba(220,38,38,0.12), 0 0 0 22px rgba(220,38,38,0.05); }
+  }
+  @keyframes cs-qRise {
+    0%   { opacity:0;   transform:translateY(0px);   }
+    15%  { opacity:0.8; }
+    80%  { opacity:0.3; transform:translateY(-20px); }
+    100% { opacity:0;   transform:translateY(-28px); }
+  }
+  .cs-pill:hover { background: rgba(0,0,0,0.05) !important; }
+`;
+
+type CSApp = {
+  name: string;
+  bg: string;
+  icon?: string;
+  color?: string;
+  fw?: number;
+  fs?: number;
+};
+
+type CSClusterData = {
+  id: string;
+  label: string;
+  labelColor: string;
+  cardBg: string;
+  cardBorder: string;
+  glow: string;
+  position: Record<string, string>;
+  animation: string;
+  apps: CSApp[];
+};
+
+const CS_CLUSTERS: CSClusterData[] = [
+  {
+    id: "flash",
+    label: "Flashcard apps",
+    labelColor: "#8B5CF6",
+    cardBg: "rgba(139,92,246,0.06)",
+    cardBorder: "rgba(139,92,246,0.2)",
+    glow: "rgba(139,92,246,0.1)",
+    position: { top: "50%", left: "2%" },
+    animation: "cs-floatLeft 4.3s ease-in-out infinite",
+    apps: [
+      { name: "Anki", bg: "#0093D0" },
+      { name: "Quizlet", bg: "#4257B2" },
+      {
+        name: "Brainscape",
+        bg: "#E05A2B",
+        icon: "B!",
+        color: "#fff",
+        fw: 800,
+        fs: 10,
+      },
+    ],
+  },
+  {
+    id: "notes",
+    label: "Note-taking apps",
+    labelColor: "#3B82F6",
+    cardBg: "rgba(59,130,246,0.06)",
+    cardBorder: "rgba(59,130,246,0.2)",
+    glow: "rgba(59,130,246,0.1)",
+    position: { bottom: "1%", left: "50%" },
+    animation: "cs-floatDown 4.8s ease-in-out infinite 0.5s",
+    apps: [
+      { name: "Notion", bg: "#1a1a1a" },
+      { name: "Obsidian", bg: "#4B2DA4" },
+      { name: "Evernote", bg: "#14A249" },
+    ],
+  },
+  {
+    id: "bookmark",
+    label: "Bookmark apps",
+    labelColor: "#F59E0B",
+    cardBg: "rgba(245,158,11,0.06)",
+    cardBorder: "rgba(245,158,11,0.2)",
+    glow: "rgba(245,158,11,0.1)",
+    position: { top: "50%", right: "2%" },
+    animation: "cs-floatRight 4s ease-in-out infinite 1s",
+    apps: [
+      { name: "Chrome", bg: "#E8EAED" },
+      { name: "Raindrop", bg: "#0284C7" },
+      {
+        name: "Pocket",
+        bg: "#EF4056",
+        icon: "P",
+        color: "#fff",
+        fw: 800,
+        fs: 14,
+      },
+    ],
+  },
+];
+
+const CS_QMARKS = [
+  { top: "7%", left: "44%", fs: 17, delay: "0s", dur: "2.9s" },
+  { top: "2%", left: "52%", fs: 12, delay: "1.1s", dur: "3.3s" },
+  { top: "13%", left: "49%", fs: 9, delay: "1.9s", dur: "2.6s" },
+  { top: "5%", left: "51%", fs: 14, delay: "2.5s", dur: "3.6s" },
+];
+
+function CSAppIcon({ app }: { app: CSApp }) {
+  if (app.name === "Notion") {
+    return (
+      <RiNotionLine
+        style={{ width: 18, height: 18, color: "#fff", display: "block" }}
+      />
+    );
+  }
+  if (app.name === "Anki") {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        width="18"
+        height="18"
+        style={{ display: "block" }}
+      >
+        <path
+          d="m15.845 22.627l-.169.131l-.182.091a1.3 1.3 0 0 1-.362.079c-.27.021-.611-.036-.989-.16c-.686-.223-1.537-.67-2.256-.973c-.343-.145-.633-.281-.829-.254c-.197.027-.44.236-.73.467c-.611.486-1.311 1.145-1.91 1.546c-.331.22-.644.368-.91.42q-.196.038-.37.021l-.201-.038l-.196-.082l-.177-.119l-.143-.145a1.3 1.3 0 0 1-.187-.32c-.104-.25-.154-.593-.154-.99c.001-.721.164-1.669.23-2.447c.031-.37.07-.687-.016-.866s-.359-.345-.67-.55c-.65-.431-1.494-.893-2.06-1.34c-.312-.246-.548-.498-.681-.735a1.3 1.3 0 0 1-.134-.345l-.025-.202l.016-.213l.059-.205l.094-.18q.095-.147.246-.277c.207-.175.517-.33.895-.452c.685-.222 1.637-.361 2.397-.539c.362-.084.676-.145.819-.281c.144-.138.217-.45.316-.808c.209-.752.387-1.696.638-2.373c.138-.373.305-.676.489-.874q.137-.147.286-.235l.185-.086l.207-.051l.214-.006l.2.033q.17.045.339.148c.231.143.473.389.706.711c.424.584.85 1.446 1.253 2.114c.192.318.347.598.522.692c.174.094.494.068.865.052c.78-.034 1.734-.157 2.455-.128c.397.017.736.081.983.195q.18.083.31.201l.14.148l.112.181l.072.201l.03.202q.01.173-.036.368c-.063.263-.223.57-.457.891c-.425.583-1.113 1.254-1.623 1.845c-.244.281-.463.514-.498.71c-.035.194.089.49.219.838c.273.731.684 1.601.879 2.295c.108.382.151.725.119.995a1.3 1.3 0 0 1-.095.358l-.098.179zm-1.54-18.929c-.018-.057-.07-.226-.122-.346c-.17-.387-.418-.846-.544-1.216c-.166-.483-.099-.88.102-1.096c.201-.214.592-.308 1.086-.177c.377.1.851.316 1.249.458c.125.044.297.084.354.096c.047-.032.193-.134.291-.221c.316-.282.675-.659.988-.894c.408-.305.807-.366 1.074-.241c.266.124.476.468.504.977c.021.391-.037.909-.049 1.331c-.004.132.011.309.017.366c.046.035.187.142.301.209c.365.213.835.438 1.155.662c.417.294.597.655.56.947c-.035.293-.296.599-.773.782c-.365.141-.875.246-1.28.364c-.126.037-.29.106-.343.129c-.019.056-.077.223-.105.351c-.091.413-.159.93-.274 1.304c-.151.487-.438.77-.727.826s-.661-.098-.983-.494c-.246-.303-.504-.756-.742-1.105a3 3 0 0 0-.229-.287a4 4 0 0 0-.366.009c-.421.042-.933.135-1.324.141c-.51.008-.867-.177-1.011-.435c-.142-.257-.11-.659.167-1.088c.212-.328.563-.713.822-1.047c.08-.104.171-.256.202-.305"
+          fill="#fff"
+        />
+      </svg>
+    );
+  }
+  if (app.name === "Quizlet") {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        width="18"
+        height="18"
+        style={{ display: "block" }}
+      >
+        <path
+          d="M12.779.025a11.8 11.8 0 0 0-5.338.896A11.8 11.8 0 0 0 3.058 4.11A11.93 11.93 0 0 0 .427 14.363a11.9 11.9 0 0 0 2.3 4.921a11.84 11.84 0 0 0 4.24 3.378a11.78 11.78 0 0 0 10.533-.226a.33.33 0 0 1 .331.018a9.14 9.14 0 0 0 5.197 1.545a.33.33 0 0 0 .332-.332v-4.038a.334.334 0 0 0-.276-.331a4.7 4.7 0 0 1-1.106-.319a.33.33 0 0 1-.191-.352a.3.3 0 0 1 .05-.133a11.94 11.94 0 0 0 .772-11.871a11.87 11.87 0 0 0-4.042-4.628A11.8 11.8 0 0 0 12.765.018zM4.843 11.898a7.24 7.24 0 0 1 1.205-4.005a7.2 7.2 0 0 1 3.215-2.657a7.13 7.13 0 0 1 7.815 1.558a7.24 7.24 0 0 1 1.555 7.854a7.2 7.2 0 0 1-2.643 3.234a7.15 7.15 0 0 1-9.049-.896a7.23 7.23 0 0 1-2.103-5.089z"
+          fill="#fff"
+        />
+      </svg>
+    );
+  }
+  if (app.name === "Obsidian") {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        width="18"
+        height="18"
+        style={{ display: "block" }}
+      >
+        <path
+          d="M19.355 18.538a68.967 68.959 0 0 0 1.858-2.954a.81.81 0 0 0-.062-.9c-.516-.685-1.504-2.075-2.042-3.362c-.553-1.321-.636-3.375-.64-4.377a1.7 1.7 0 0 0-.358-1.05l-3.198-4.064a4 4 0 0 1-.076.543c-.106.503-.307 1.004-.536 1.5c-.134.29-.29.6-.446.914l-.31.626c-.516 1.068-.997 2.227-1.132 3.59c-.124 1.26.046 2.73.815 4.481q.192.016.386.044a6.36 6.36 0 0 1 3.326 1.505c.916.79 1.744 1.922 2.415 3.5zM8.199 22.569q.11.019.22.02c.78.024 2.095.092 3.16.29c.87.16 2.593.64 4.01 1.055c1.083.316 2.198-.548 2.355-1.664c.114-.814.33-1.735.725-2.58l-.01.005c-.67-1.87-1.522-3.078-2.416-3.849a5.3 5.3 0 0 0-2.778-1.257c-1.54-.216-2.952.19-3.84.45c.532 2.218.368 4.829-1.425 7.531zM5.533 9.938q-.035.15-.098.29L2.82 16.059a1.6 1.6 0 0 0 .313 1.772l4.116 4.24c2.103-3.101 1.796-6.02.836-8.3c-.728-1.73-1.832-3.081-2.55-3.831zM9.32 14.01c.615-.183 1.606-.465 2.745-.534c-.683-1.725-.848-3.233-.716-4.577c.154-1.552.7-2.847 1.235-3.95q.17-.35.328-.664c.149-.297.288-.577.419-.86c.217-.47.379-.885.46-1.27c.08-.38.08-.72-.014-1.043c-.095-.325-.297-.675-.68-1.06a1.6 1.6 0 0 0-1.475.36l-4.95 4.452a1.6 1.6 0 0 0-.513.952l-.427 2.83c.672.59 2.328 2.316 3.335 4.711q.136.317.253.653"
+          fill="#C4B5FD"
+        />
+      </svg>
+    );
+  }
+  if (app.name === "Evernote") {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        width="18"
+        height="18"
+        style={{ display: "block" }}
+      >
+        <path
+          d="M8.222 5.393c0 .239-.02.637-.256.895c-.257.24-.652.259-.888.259H4.552c-.73 0-1.165 0-1.46.04c-.159.02-.356.1-.455.14c-.04.019-.04 0-.02-.02L8.38.796c.02-.02.04-.02.02.02c-.04.099-.118.298-.138.457c-.04.298-.04.736-.04 1.472v2.647zm5.348 17.869c-.67-.438-1.026-1.015-1.164-1.373a2.9 2.9 0 0 1-.217-1.095a3.007 3.007 0 0 1 3-3.004c.493 0 .888.398.888.895a.88.88 0 0 1-.454.776c-.099.06-.237.1-.336.12c-.098.02-.473.06-.65.218c-.198.16-.356.418-.356.697c0 .298.118.577.316.776c.355.358.829.557 1.342.557a2.436 2.436 0 0 0 2.427-2.447c0-1.214-.809-2.29-1.875-2.766c-.158-.08-.414-.14-.651-.2a8 8 0 0 0-.592-.1c-.829-.1-2.901-.755-3.04-2.605c0 0-.611 2.785-1.835 3.54c-.118.06-.276.12-.454.16c-.177.04-.374.06-.434.06c-1.993.12-4.105-.517-5.565-2.03c0 0-.987-.815-1.5-3.103c-.118-.558-.355-1.553-.493-2.488c-.06-.338-.08-.597-.099-.836c0-.975.592-1.631 1.342-1.73h4.026c.69 0 1.086-.18 1.342-.42c.336-.317.415-.775.415-1.312V1.354C9.05.617 9.703 0 10.669 0h.474c.197 0 .434.02.651.04c.158.02.296.06.533.12c1.204.298 1.46 1.532 1.46 1.532s2.27.398 3.415.597c1.085.199 3.77.378 4.282 3.104c1.204 6.487.474 12.775.415 12.775c-.849 6.129-5.901 5.83-5.901 5.83a4.1 4.1 0 0 1-2.428-.736m4.54-13.034c-.652-.06-1.204.2-1.402.697c-.04.1-.079.219-.059.278s.06.08.099.1c.237.12.631.179 1.204.239c.572.06.967.1 1.223.06c.04 0 .08-.02.119-.08c.04-.06.02-.18.02-.28c-.06-.536-.553-.934-1.204-1.014"
+          fill="#fff"
+        />
+      </svg>
+    );
+  }
+  if (app.name === "Chrome") {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        width="18"
+        height="18"
+        style={{ display: "block" }}
+      >
+        <path
+          d="M12 0C8.21 0 4.831 1.757 2.632 4.501l3.953 6.848A5.454 5.454 0 0 1 12 6.545h10.691A12 12 0 0 0 12 0"
+          fill="#EA4335"
+        />
+        <path
+          d="M1.931 5.47A11.94 11.94 0 0 0 0 12c0 6.012 4.42 10.991 10.189 11.864l3.953-6.847a5.45 5.45 0 0 1-6.865-2.29z"
+          fill="#34A853"
+        />
+        <path
+          d="M13.273 7.636a5.446 5.446 0 0 1 1.45 7.09l-5.344 9.257q.309.015.621.016c6.627 0 12-5.373 12-12c0-1.54-.29-3.011-.818-4.364z"
+          fill="#FBBC05"
+        />
+        <circle cx="12" cy="12" r="4.364" fill="#4285F4" />
+        <circle cx="12" cy="12" r="2.5" fill="#E8EAED" />
+      </svg>
+    );
+  }
+  if (app.name === "Raindrop") {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        width="18"
+        height="18"
+        style={{ display: "block" }}
+      >
+        <path
+          d="M12 3C12 3 5.5 10.5 5.5 15.5a6.5 6.5 0 0 0 13 0C18.5 10.5 12 3 12 3z"
+          fill="#38BDF8"
+        />
+        <path
+          d="M9.5 14c0-1.8 1.2-4 2.5-5.8"
+          stroke="rgba(255,255,255,0.5)"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          fill="none"
+        />
+        <ellipse
+          cx="10"
+          cy="15"
+          rx="1"
+          ry="1.5"
+          fill="rgba(255,255,255,0.35)"
+          transform="rotate(-15 10 15)"
+        />
+      </svg>
+    );
+  }
   return (
-    <div
+    <span
       style={{
-        width: "100%",
-        height: "100%",
-        background: "transparent",
-        position: "relative",
-        overflow: "hidden",
-        padding: 16,
+        fontSize: app.fs ?? 13,
+        fontWeight: app.fw ?? 400,
+        color: app.color ?? "inherit",
+        lineHeight: 1,
       }}
     >
-      {/* Notes window – top left, floats up */}
-      <MockWindow
-        color="blue"
-        title="Notes App"
-        rows={3}
-        style={{
-          position: "absolute",
-          top: 18,
-          left: 14,
-          width: 138,
-          animation: "ilFloat1 4s ease-in-out infinite",
-        }}
-      />
-      {/* Bookmarks – top right, floats down */}
-      <MockWindow
-        color="amber"
-        title="Bookmarks"
-        rows={3}
-        style={{
-          position: "absolute",
-          top: 10,
-          right: 10,
-          width: 124,
-          animation: "ilFloat2 5s ease-in-out infinite",
-        }}
-      />
-      {/* Flashcards – bottom center, floats up */}
-      <MockWindow
-        color="purple"
-        title="Flashcards App"
-        rows={2}
-        style={{
-          position: "absolute",
-          bottom: 18,
-          left: "50%",
-          transform: "translateX(-50%)",
-          width: 148,
-          animation: "ilFloat3 4.5s ease-in-out infinite 0.6s",
-        }}
-      />
-      {/* Centre chaos badge */}
+      {app.icon}
+    </span>
+  );
+}
+
+function CSAppPill({ app }: { app: CSApp }) {
+  return (
+    <div
+      className="cs-pill"
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 7,
+        padding: "5px 10px 5px 5px",
+        borderRadius: 99,
+        background: "rgba(0,0,0,0.03)",
+        border: "1px solid rgba(0,0,0,0.06)",
+        transition: "background 0.2s",
+        cursor: "default",
+      }}
+    >
       <div
         style={{
-          position: "absolute",
-          top: "46%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          background: "rgba(220,38,38,0.92)",
-          color: "white",
-          borderRadius: 99,
-          padding: "5px 12px",
-          fontSize: 10,
-          fontWeight: 800,
-          boxShadow: "0 4px 14px rgba(220,38,38,0.45)",
-          animation: "ilPulse 2.2s ease-in-out infinite",
+          width: 30,
+          height: 30,
+          borderRadius: 8,
+          background: app.bg,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexShrink: 0,
+        }}
+      >
+        <CSAppIcon app={app} />
+      </div>
+      <span
+        style={{
+          fontSize: 13,
+          fontWeight: 500,
+          color: "#4B4B4B",
+          letterSpacing: "0.01em",
           whiteSpace: "nowrap",
+        }}
+      >
+        {app.name}
+      </span>
+    </div>
+  );
+}
+
+function CSCluster({
+  data,
+  scale,
+  clusterRef,
+}: {
+  data: CSClusterData;
+  scale: number;
+  clusterRef?: React.RefObject<HTMLDivElement | null>;
+}) {
+  const isBottom = "bottom" in data.position;
+  const origin =
+    data.id === "flash"
+      ? "left center"
+      : data.id === "bookmark"
+        ? "right center"
+        : "center bottom";
+  return (
+    <div
+      ref={clusterRef}
+      style={{
+        position: "absolute",
+        display: "flex",
+        flexDirection: "column",
+        gap: 6,
+        animation: data.animation,
+        zIndex: 6,
+        transformOrigin: origin,
+        ...(scale < 1 ? { scale: String(scale) } : {}),
+        ...data.position,
+        ...(isBottom ? {} : { transform: "translateY(-50%)" }),
+      }}
+    >
+      <span
+        style={{
+          fontSize: 13,
+          fontWeight: 700,
+          letterSpacing: "0.06em",
+          textTransform: "uppercase",
+          textAlign: "center",
+          color: data.labelColor,
+          marginBottom: 2,
+        }}
+      >
+        {data.label}
+      </span>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 6,
+          padding: "11px 12px",
+          borderRadius: 16,
+          background: data.cardBg,
+          border: `1px solid ${data.cardBorder}`,
+          boxShadow: `0 2px 16px rgba(0,0,0,0.06), 0 0 32px ${data.glow}`,
+        }}
+      >
+        {data.apps.map((app) => (
+          <CSAppPill key={app.name} app={app} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ContextSwitchingIllustration() {
+  const injected = useRef(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const leftRef = useRef<HTMLDivElement>(null);
+  const rightRef = useRef<HTMLDivElement>(null);
+  const notesRef = useRef<HTMLDivElement>(null);
+  const centerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+  // const [paths, setPaths] = useState({ left: "", right: "", notes: "" });
+  const [paths, setPaths] = useState({ left: "", right: "", notes: "" });
+
+  const computePaths = useCallback(() => {
+    const root = rootRef.current;
+    const leftEl = leftRef.current;
+    const rightEl = rightRef.current;
+    const notesEl = notesRef.current;
+    const centerEl = centerRef.current;
+    if (!root || !leftEl || !rightEl || !notesEl || !centerEl) return;
+
+    const rootRect = root.getBoundingClientRect();
+    const W = rootRect.width;
+    const H = rootRect.height;
+    if (W === 0 || H === 0) return;
+
+    // Map a container-relative CSS point to SVG viewBox coordinates.
+    // The SVG uses viewBox="0 0 800 480" with preserveAspectRatio="xMidYMid meet",
+    // so it may have letterbox offsets.
+    const svgS = Math.min(W / 800, H / 480);
+    const ox = (W - 800 * svgS) / 2;
+    const oy = (H - 480 * svgS) / 2;
+    const toSvg = (x: number, y: number): [number, number] => [
+      Math.round((x - ox) / svgS),
+      Math.round((y - oy) / svgS),
+    ];
+
+    const rel = (el: HTMLElement) => {
+      const r = el.getBoundingClientRect();
+      return {
+        l: r.left - rootRect.left,
+        r: r.right - rootRect.left,
+        t: r.top - rootRect.top,
+        b: r.bottom - rootRect.top,
+        cx: (r.left + r.right) / 2 - rootRect.left,
+        cy: (r.top + r.bottom) / 2 - rootRect.top,
+      };
+    };
+
+    const L = rel(leftEl);
+    const R = rel(rightEl);
+    const N = rel(notesEl);
+    const C = rel(centerEl);
+
+    // Left cluster right-center → center badge left-center
+    const [lx, ly] = toSvg(L.r, L.cy);
+    const [clx, cly] = toSvg(C.l, C.cy);
+    const mlx = Math.round((lx + clx) / 2);
+
+    // Right cluster left-center → center badge right-center
+    const [rx, ry] = toSvg(R.l, R.cy);
+    const [crx, cry] = toSvg(C.r, C.cy);
+    const mrx = Math.round((rx + crx) / 2);
+
+    // Notes cluster top-center → center badge bottom-center
+    const [nx, ny] = toSvg(N.cx, N.t);
+    const [cnx, cny] = toSvg(C.cx, C.b);
+    const mny = Math.round((ny + cny) / 2);
+
+    setPaths({
+      left: `M ${lx},${ly}  C ${mlx},${ly}  ${mlx},${cly}  ${clx},${cly}`,
+      right: `M ${rx},${ry}  C ${mrx},${ry}  ${mrx},${cry}  ${crx},${cry}`,
+      notes: `M ${nx},${ny}  C ${nx},${mny}  ${cnx},${mny}  ${cnx},${cny}`,
+    });
+  }, []);
+
+  useEffect(() => {
+    if (injected.current) return;
+    injected.current = true;
+    const tag = document.createElement("style");
+    tag.textContent = CS_STYLES;
+    document.head.appendChild(tag);
+  }, []);
+
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([entry]) => {
+      const w = entry.contentRect.width;
+      const s = w < 700 ? Math.max(0.55, w / 700) : 1;
+      setScale(s);
+      // Let the scale CSS property settle before measuring
+      requestAnimationFrame(() => requestAnimationFrame(computePaths));
+    });
+    ro.observe(el);
+    requestAnimationFrame(() => requestAnimationFrame(computePaths));
+    return () => ro.disconnect();
+  }, [computePaths]);
+
+  return (
+    <div
+      ref={rootRef}
+      style={{
+        position: "relative",
+        width: "100%",
+        height: "100%",
+        overflow: "hidden",
+        background: "transparent",
+      }}
+    >
+      {/* SVG connectors — paths are computed from measured element positions */}
+      <svg
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          pointerEvents: "none",
+          zIndex: 5,
+        }}
+        viewBox="0 0 800 480"
+        preserveAspectRatio="xMidYMid meet"
+      >
+        <defs>
+          {(
+            [
+              ["mP", "#8B5CF6"],
+              ["mB", "#3B82F6"],
+              ["mA", "#F59E0B"],
+            ] as [string, string][]
+          ).map(([id, c]) => (
+            <marker
+              key={id}
+              id={id}
+              viewBox="0 0 10 10"
+              refX="8"
+              refY="5"
+              markerWidth="5"
+              markerHeight="5"
+              orient="auto-start-reverse"
+            >
+              <path
+                d="M2 1L8 5L2 9"
+                fill="none"
+                stroke={c}
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </marker>
+          ))}
+        </defs>
+        {paths.left && (
+          <path
+            d={paths.left}
+            fill="none"
+            stroke="#8B5CF6"
+            strokeWidth="1.5"
+            strokeDasharray="5 4"
+            opacity="0.5"
+            markerEnd="url(#mP)"
+          />
+        )}
+        {paths.notes && (
+          <path
+            d={paths.notes}
+            fill="none"
+            stroke="#3B82F6"
+            strokeWidth="1.5"
+            strokeDasharray="5 4"
+            opacity="0.5"
+            markerEnd="url(#mB)"
+          />
+        )}
+        {paths.right && (
+          <path
+            d={paths.right}
+            fill="none"
+            stroke="#F59E0B"
+            strokeWidth="1.5"
+            strokeDasharray="5 4"
+            opacity="0.5"
+            markerEnd="url(#mA)"
+          />
+        )}
+      </svg>
+
+      {/* Clusters */}
+      {CS_CLUSTERS.map((c) => (
+        <CSCluster
+          key={c.id}
+          data={c}
+          scale={scale}
+          clusterRef={
+            c.id === "flash"
+              ? leftRef
+              : c.id === "bookmark"
+                ? rightRef
+                : notesRef
+          }
+        />
+      ))}
+
+      {/* Center confused badge */}
+      <div
+        ref={centerRef}
+        style={{
+          position: "absolute",
+          left: "50%",
+          top: "23%",
+          transform: `translate(-50%, -50%) scale(${scale})`,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 9,
           zIndex: 10,
         }}
       >
-        😤 3 different apps open
+        <div
+          style={{
+            width: 80,
+            height: 80,
+            borderRadius: "50%",
+            border: "1.5px solid rgba(220,38,38,0.25)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: 42,
+            animation: "cs-ringPulse 2.6s ease-in-out infinite",
+          }}
+        >
+          🤯
+        </div>
+        <div
+          style={{
+            background: "rgba(220,38,38,0.08)",
+            border: "1px solid rgba(220,38,38,0.18)",
+            color: "#DC2626",
+            fontSize: 12,
+            fontWeight: 500,
+            padding: "4px 14px",
+            borderRadius: 99,
+            letterSpacing: "0.04em",
+            whiteSpace: "nowrap",
+          }}
+        >
+          context switching
+        </div>
       </div>
+
+      {/* Floating question marks */}
+      {CS_QMARKS.map((q, i) => (
+        <span
+          key={i}
+          style={{
+            position: "absolute",
+            top: q.top,
+            left: q.left,
+            fontSize: q.fs,
+            fontWeight: 700,
+            color: "#DC2626",
+            pointerEvents: "none",
+            zIndex: 15,
+            opacity: 0,
+            animation: `cs-qRise ${q.dur} ease-out infinite ${q.delay}`,
+          }}
+        >
+          ?
+        </span>
+      ))}
     </div>
   );
 }
@@ -1676,6 +2237,14 @@ export default function LandingPage() {
         @keyframes ilPopIn      { from { opacity:0; transform:scale(0.82); } to { opacity:1; transform:scale(1); } }
         @keyframes ilPulse      { 0%,100% { transform:translate(-50%,-50%) scale(1); } 50% { transform:translate(-50%,-50%) scale(1.06); } }
         @keyframes ilProgressFill { from { width:0%; } to { width:67%; } }
+
+        /* Context-switching illustration */
+        @keyframes qPop {
+          0%,100% { opacity:0; transform:translateY(0px); }
+          15%     { opacity:0.88; transform:translateY(-8px); }
+          50%     { opacity:0.3; transform:translateY(-18px); }
+          75%     { opacity:0; transform:translateY(-24px); }
+        }
 
         /* Sketch arrow: down on mobile, right on desktop */
         .sketch-arrow { transform: none; }
