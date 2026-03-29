@@ -6,6 +6,7 @@ import {
   Container,
   Flex,
   HStack,
+  Image,
   Link,
   Stack,
   Text,
@@ -540,274 +541,12 @@ function CSCluster({
 }
 
 function ContextSwitchingIllustration() {
-  const injected = useRef(false);
-  const rootRef = useRef<HTMLDivElement>(null);
-  const leftRef = useRef<HTMLDivElement>(null);
-  const rightRef = useRef<HTMLDivElement>(null);
-  const notesRef = useRef<HTMLDivElement>(null);
-  const centerRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(1);
-  // const [paths, setPaths] = useState({ left: "", right: "", notes: "" });
-  const [paths, setPaths] = useState({ left: "", right: "", notes: "" });
-
-  const computePaths = useCallback(() => {
-    const root = rootRef.current;
-    const leftEl = leftRef.current;
-    const rightEl = rightRef.current;
-    const notesEl = notesRef.current;
-    const centerEl = centerRef.current;
-    if (!root || !leftEl || !rightEl || !notesEl || !centerEl) return;
-
-    const rootRect = root.getBoundingClientRect();
-    const W = rootRect.width;
-    const H = rootRect.height;
-    if (W === 0 || H === 0) return;
-
-    // Map a container-relative CSS point to SVG viewBox coordinates.
-    // The SVG uses viewBox="0 0 800 480" with preserveAspectRatio="xMidYMid meet",
-    // so it may have letterbox offsets.
-    const svgS = Math.min(W / 800, H / 480);
-    const ox = (W - 800 * svgS) / 2;
-    const oy = (H - 480 * svgS) / 2;
-    const toSvg = (x: number, y: number): [number, number] => [
-      Math.round((x - ox) / svgS),
-      Math.round((y - oy) / svgS),
-    ];
-
-    const rel = (el: HTMLElement) => {
-      const r = el.getBoundingClientRect();
-      return {
-        l: r.left - rootRect.left,
-        r: r.right - rootRect.left,
-        t: r.top - rootRect.top,
-        b: r.bottom - rootRect.top,
-        cx: (r.left + r.right) / 2 - rootRect.left,
-        cy: (r.top + r.bottom) / 2 - rootRect.top,
-      };
-    };
-
-    const L = rel(leftEl);
-    const R = rel(rightEl);
-    const N = rel(notesEl);
-    const C = rel(centerEl);
-
-    // Left cluster right-center → center badge left-center
-    const [lx, ly] = toSvg(L.r, L.cy);
-    const [clx, cly] = toSvg(C.l, C.cy);
-    const mlx = Math.round((lx + clx) / 2);
-
-    // Right cluster left-center → center badge right-center
-    const [rx, ry] = toSvg(R.l, R.cy);
-    const [crx, cry] = toSvg(C.r, C.cy);
-    const mrx = Math.round((rx + crx) / 2);
-
-    // Notes cluster top-center → center badge bottom-center
-    const [nx, ny] = toSvg(N.cx, N.t);
-    const [cnx, cny] = toSvg(C.cx, C.b);
-    const mny = Math.round((ny + cny) / 2);
-
-    setPaths({
-      left: `M ${lx},${ly}  C ${mlx},${ly}  ${mlx},${cly}  ${clx},${cly}`,
-      right: `M ${rx},${ry}  C ${mrx},${ry}  ${mrx},${cry}  ${crx},${cry}`,
-      notes: `M ${nx},${ny}  C ${nx},${mny}  ${cnx},${mny}  ${cnx},${cny}`,
-    });
-  }, []);
-
-  useEffect(() => {
-    if (injected.current) return;
-    injected.current = true;
-    const tag = document.createElement("style");
-    tag.textContent = CS_STYLES;
-    document.head.appendChild(tag);
-  }, []);
-
-  useEffect(() => {
-    const el = rootRef.current;
-    if (!el) return;
-    const ro = new ResizeObserver(([entry]) => {
-      const w = entry.contentRect.width;
-      const s = w < 700 ? Math.max(0.55, w / 700) : 1;
-      setScale(s);
-      // Let the scale CSS property settle before measuring
-      requestAnimationFrame(() => requestAnimationFrame(computePaths));
-    });
-    ro.observe(el);
-    requestAnimationFrame(() => requestAnimationFrame(computePaths));
-    return () => ro.disconnect();
-  }, [computePaths]);
-
   return (
-    <div
-      ref={rootRef}
-      style={{
-        position: "relative",
-        width: "100%",
-        height: "100%",
-        overflow: "hidden",
-        background: "transparent",
-      }}
-    >
-      {/* SVG connectors — paths are computed from measured element positions */}
-      <svg
-        style={{
-          position: "absolute",
-          inset: 0,
-          width: "100%",
-          height: "100%",
-          pointerEvents: "none",
-          zIndex: 5,
-        }}
-        viewBox="0 0 800 480"
-        preserveAspectRatio="xMidYMid meet"
-      >
-        <defs>
-          {(
-            [
-              ["mP", "#8B5CF6"],
-              ["mB", "#3B82F6"],
-              ["mA", "#F59E0B"],
-            ] as [string, string][]
-          ).map(([id, c]) => (
-            <marker
-              key={id}
-              id={id}
-              viewBox="0 0 10 10"
-              refX="8"
-              refY="5"
-              markerWidth="5"
-              markerHeight="5"
-              orient="auto-start-reverse"
-            >
-              <path
-                d="M2 1L8 5L2 9"
-                fill="none"
-                stroke={c}
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </marker>
-          ))}
-        </defs>
-        {paths.left && (
-          <path
-            d={paths.left}
-            fill="none"
-            stroke="#8B5CF6"
-            strokeWidth="1.5"
-            strokeDasharray="5 4"
-            opacity="0.5"
-            markerEnd="url(#mP)"
-          />
-        )}
-        {paths.notes && (
-          <path
-            d={paths.notes}
-            fill="none"
-            stroke="#3B82F6"
-            strokeWidth="1.5"
-            strokeDasharray="5 4"
-            opacity="0.5"
-            markerEnd="url(#mB)"
-          />
-        )}
-        {paths.right && (
-          <path
-            d={paths.right}
-            fill="none"
-            stroke="#F59E0B"
-            strokeWidth="1.5"
-            strokeDasharray="5 4"
-            opacity="0.5"
-            markerEnd="url(#mA)"
-          />
-        )}
-      </svg>
-
-      {/* Clusters */}
-      {CS_CLUSTERS.map((c) => (
-        <CSCluster
-          key={c.id}
-          data={c}
-          scale={scale}
-          clusterRef={
-            c.id === "flash"
-              ? leftRef
-              : c.id === "bookmark"
-                ? rightRef
-                : notesRef
-          }
-        />
-      ))}
-
-      {/* Center confused badge */}
-      <div
-        ref={centerRef}
-        style={{
-          position: "absolute",
-          left: "50%",
-          top: "23%",
-          transform: `translate(-50%, -50%) scale(${scale})`,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: 9,
-          zIndex: 10,
-        }}
-      >
-        <div
-          style={{
-            width: 80,
-            height: 80,
-            borderRadius: "50%",
-            border: "1.5px solid rgba(220,38,38,0.25)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: 42,
-            animation: "cs-ringPulse 2.6s ease-in-out infinite",
-          }}
-        >
-          🤯
-        </div>
-        <div
-          style={{
-            background: "rgba(220,38,38,0.08)",
-            border: "1px solid rgba(220,38,38,0.18)",
-            color: "#DC2626",
-            fontSize: 12,
-            fontWeight: 500,
-            padding: "4px 14px",
-            borderRadius: 99,
-            letterSpacing: "0.04em",
-            whiteSpace: "nowrap",
-          }}
-        >
-          context switching
-        </div>
-      </div>
-
-      {/* Floating question marks */}
-      {CS_QMARKS.map((q, i) => (
-        <span
-          key={i}
-          style={{
-            position: "absolute",
-            top: q.top,
-            left: q.left,
-            fontSize: q.fs,
-            fontWeight: 700,
-            color: "#DC2626",
-            pointerEvents: "none",
-            zIndex: 15,
-            opacity: 0,
-            animation: `cs-qRise ${q.dur} ease-out infinite ${q.delay}`,
-          }}
-        >
-          ?
-        </span>
-      ))}
-    </div>
+    <Image
+      maxW="30em"
+      src="/context-switching.png"
+      alt="someone who is using a lot of platforms for learning"
+    />
   );
 }
 
@@ -1497,6 +1236,7 @@ function CombinedFeatureCard({
   solutionBullets,
   solutionIllustrationKey,
   delay = 0,
+  order,
 }: {
   painTitle: string;
   painBullets: string[];
@@ -1505,6 +1245,7 @@ function CombinedFeatureCard({
   solutionBullets: string[];
   solutionIllustrationKey: IllustrationKey;
   delay?: number;
+  order: number;
 }) {
   const PainIllustration = IllustrationComponents[painIllustrationKey];
   const SolutionIllustration = IllustrationComponents[solutionIllustrationKey];
@@ -1519,7 +1260,8 @@ function CombinedFeatureCard({
         overflow="hidden"
         shadow="0 1px 6px rgba(0,0,0,0.04)"
       >
-        <Flex direction={{ base: "column", md: "row" }} align="stretch">
+        {/* <Flex direction={{ base: "column", md: "row" }} align="stretch"> */}
+        <Stack>
           {/* ── Problem side ── */}
           <Stack flex="1" gap="5" p={{ base: "6", md: "8" }}>
             <Box
@@ -1534,7 +1276,7 @@ function CombinedFeatureCard({
             >
               <Box w="6px" h="6px" rounded="full" bg="accent.softCoral" />
               <Text textStyle="sm-semibold" color="accent.softCoral">
-                The Problem
+                #{order} Problem
               </Text>
             </Box>
             <Stack gap="3">
@@ -1567,10 +1309,11 @@ function CombinedFeatureCard({
               </Stack>
             </Stack>
             <Box
-              h={{ base: "200px", md: "220px" }}
-              rounded="xl"
+              // h={{ base: "200px", md: "220px" }}
+              // rounded="xl"
               overflow="hidden"
-              mt="auto"
+              m="auto"
+              // mt="auto"
             >
               <PainIllustration />
             </Box>
@@ -1608,51 +1351,7 @@ function CombinedFeatureCard({
               my={{ base: "0", md: "2" }}
               mx={{ base: "3", md: "0" }}
             >
-              {/* Sweeping curved arrow — down on mobile, right on desktop */}
-              <Box display={{ base: "none", md: "block" }}>
-                <svg
-                  width="100"
-                  height="54"
-                  viewBox="0 0 100 54"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M5 33 C10 55, 38 -1, 50 33 C62 53, 84 33, 95 33"
-                    stroke="#B8B0A8"
-                    stroke-width="1.7"
-                    stroke-linecap="round"
-                    opacity="0.3"
-                    fill="none"
-                  />
-                  <path
-                    d="M89 27 L95 33 L89 39"
-                    stroke="#B8B0A8"
-                    stroke-width="1.7"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    opacity="0.3"
-                    fill="none"
-                  />
-
-                  <path
-                    d="M5 27 C10 49, 38 -7, 50 27 C62 47, 84 27, 95 27"
-                    stroke="#B8B0A8"
-                    stroke-width="1.7"
-                    stroke-linecap="round"
-                    fill="none"
-                  />
-                  <path
-                    d="M89 21 L95 27 L89 33"
-                    stroke="#B8B0A8"
-                    stroke-width="1.7"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    fill="none"
-                  />
-                </svg>
-              </Box>
-              <Box display={{ base: "block", md: "none" }}>
+              <Box>
                 <svg
                   width="54"
                   height="100"
@@ -1770,7 +1469,7 @@ function CombinedFeatureCard({
               <SolutionIllustration />
             </Box>
           </Stack>
-        </Flex>
+        </Stack>
       </Box>
     </Reveal>
   );
@@ -2046,6 +1745,7 @@ export default function LandingPage() {
                 key={card.painTitle}
                 {...card}
                 delay={i * 100}
+                order={i + 1}
               />
             ))}
           </Stack>
