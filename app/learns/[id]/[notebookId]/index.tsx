@@ -68,7 +68,7 @@ export function Notebook({ notebook }: { notebook: NotebookType }) {
           data: block,
           file_id: id,
           order,
-        }))
+        })),
       );
     }
 
@@ -88,7 +88,10 @@ export function Notebook({ notebook }: { notebook: NotebookType }) {
         }
       } else {
         // From editor => title
-        const isFirstBlock = editor.getTextCursorPosition().prevBlock == null;
+        const currentBlock = editor.getTextCursorPosition();
+
+        const isFirstBlock =
+          currentBlock.prevBlock == null && currentBlock.parentBlock == null;
         if (isFirstBlock && e.key === "ArrowUp" && titleRef.current) {
           e.preventDefault();
           titleRef.current.setSelectionRange(title.length, title.length);
