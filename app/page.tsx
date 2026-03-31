@@ -53,6 +53,43 @@ function Reveal({
   );
 }
 
+// ── Scroll-reveal from side (for clouds) ─────────────────────────────
+function CloudReveal({
+  children,
+  fromLeft,
+  delay = 0,
+}: {
+  children: React.ReactNode;
+  fromLeft: boolean;
+  delay?: number;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setVisible(true);
+      },
+      { threshold: 0.04 },
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+  const tx = fromLeft ? "-70px" : "70px";
+  return (
+    <div
+      ref={ref}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateX(0)" : `translateX(${tx})`,
+        transition: `opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms, transform 1.2s cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms`,
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
 // ── Shared mockup primitives ─────────────────────────────────────────
 
 function MockWindow({
@@ -604,8 +641,6 @@ function BookmarkingPainIllustration() {
           >
             <div
               style={{
-                width: 1.5,
-                height: 1.5,
                 background: i === levels.length - 1 ? "#DC2626" : l.color,
                 borderRadius: "50%",
                 flexShrink: 0,
@@ -1534,6 +1569,516 @@ const combinedCards: {
   },
 ];
 
+// ── Learning Journey ─────────────────────────────────────────────────
+
+type JourneyApp = {
+  name: string;
+  bg: string;
+  emoji?: string;
+  textIcon?: string;
+  textColor?: string;
+  offsetY: number;
+};
+
+type JourneyStep = {
+  number: number;
+  title: string;
+  desc: string;
+  apps: JourneyApp[];
+  color: string;
+  bg: string;
+  border: string;
+  gradient: string;
+};
+
+const JOURNEY_STEPS: JourneyStep[] = [
+  {
+    number: 1,
+    title: "Pick resource",
+    desc: "You might choose one or more of the following",
+    color: "#D97706",
+    bg: "rgba(245,158,11,0.07)",
+    border: "rgba(245,158,11,0.22)",
+    gradient: "linear-gradient(135deg, #fffef8 0%, #fffbee 50%, #fef3c7 100%)",
+    apps: [
+      { name: "Books", bg: "#FEF3C7", emoji: "📚", offsetY: 0 },
+      { name: "Courses", bg: "#DCFCE7", emoji: "🎓", offsetY: 16 },
+      { name: "Playlists", bg: "#DBEAFE", emoji: "📺", offsetY: -10 },
+    ],
+  },
+  {
+    number: 2,
+    title: "Start learning",
+    desc: "You start watch/read and take notes",
+    color: "#2563EB",
+    bg: "rgba(59,130,246,0.07)",
+    border: "rgba(59,130,246,0.22)",
+    gradient: "linear-gradient(135deg, #f8fbff 0%, #eff6ff 50%, #dbeafe 100%)",
+    apps: [
+      { name: "Notion", bg: "#1a1a1a", offsetY: 0 },
+      { name: "Obsidian", bg: "#4B2DA4", offsetY: 18 },
+    ],
+  },
+  {
+    number: 3,
+    title: "Found an interesting resource",
+    desc: "Add it to bookmark for future reference",
+    color: "#EA580C",
+    bg: "rgba(234,88,12,0.07)",
+    border: "rgba(234,88,12,0.22)",
+    gradient: "linear-gradient(135deg, #fff9f5 0%, #fff2ea 50%, #ffedd5 100%)",
+    apps: [
+      { name: "Chrome", bg: "#E8EAED", offsetY: 0 },
+      { name: "Raindrop", bg: "#0284C7", offsetY: 14 },
+      {
+        name: "Pocket",
+        bg: "#EF4056",
+        textIcon: "P",
+        textColor: "#fff",
+        offsetY: -8,
+      },
+    ],
+  },
+  {
+    number: 4,
+    title: "Active recall",
+    desc: "Test your understanding and space it out over time for better retention",
+    color: "#7C3AED",
+    bg: "rgba(139,92,246,0.07)",
+    border: "rgba(139,92,246,0.22)",
+    gradient: "linear-gradient(135deg, #faf8ff 0%, #f5f3ff 50%, #ede9fe 100%)",
+    apps: [
+      { name: "Anki", bg: "#0093D0", offsetY: 0 },
+      { name: "Quizlet", bg: "#4257B2", offsetY: 14 },
+      {
+        name: "Brainscape",
+        bg: "#E05A2B",
+        textIcon: "B!",
+        textColor: "#fff",
+        offsetY: -6,
+      },
+    ],
+  },
+];
+
+function JourneyAppTile({
+  app,
+  tileIndex,
+}: {
+  app: JourneyApp;
+  tileIndex: number;
+}) {
+  const csApp: CSApp = {
+    name: app.name,
+    bg: app.bg,
+    icon: app.textIcon,
+    color: app.textColor ?? "#fff",
+    fw: 800,
+    fs: app.name === "Pocket" ? 18 : 12,
+  };
+  const floatDelay = `${tileIndex * 0.7}s`;
+  return (
+    <div
+      className="journey-tile"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 9,
+        transform: `translateY(${app.offsetY}px)`,
+      }}
+    >
+      <div
+        className="journey-icon-box"
+        style={{
+          width: 68,
+          height: 68,
+          borderRadius: "50%",
+          background: app.bg,
+          border: "1.5px solid rgba(0,0,0,0.07)",
+          boxShadow: "0 6px 18px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.06)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexShrink: 0,
+          animation: `journey-float 3.4s ease-in-out infinite ${floatDelay}`,
+        }}
+      >
+        {app.emoji ? (
+          <span style={{ fontSize: 30, lineHeight: 1 }}>{app.emoji}</span>
+        ) : (
+          <div
+            style={{
+              transform: "scale(1.75)",
+              transformOrigin: "center",
+              lineHeight: 0,
+            }}
+          >
+            <CSAppIcon app={csApp} />
+          </div>
+        )}
+      </div>
+      <span
+        style={{
+          fontSize: 11,
+          fontWeight: 500,
+          color: "#9CA3AF",
+          textAlign: "center",
+          whiteSpace: "nowrap",
+        }}
+      >
+        {app.name}
+      </span>
+    </div>
+  );
+}
+
+function JourneyStepCard({
+  step,
+  index,
+}: {
+  step: JourneyStep;
+  index: number;
+}) {
+  return (
+    <Reveal delay={index * 120}>
+      <div
+        style={{
+          background: step.gradient,
+          borderRadius: 20,
+          border: `1px solid ${step.border}`,
+          padding: "28px 32px",
+          boxShadow: "0 2px 16px rgba(0,0,0,0.05), 0 1px 4px rgba(0,0,0,0.03)",
+          position: "relative",
+          overflow: "hidden",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 24,
+          flexWrap: "wrap",
+        }}
+      >
+        {/* Step number + info */}
+        <div style={{ position: "relative", zIndex: 1 }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "baseline",
+              gap: 10,
+              marginBottom: 8,
+            }}
+          >
+            <span
+              style={{
+                fontSize: 46,
+                fontWeight: 800,
+                color: "#374151",
+                opacity: 0.22,
+                lineHeight: 1,
+                letterSpacing: "-0.03em",
+                fontFamily: "Georgia, serif",
+              }}
+            >
+              #{step.number}
+            </span>
+            <span
+              style={{
+                fontSize: 20,
+                fontWeight: 700,
+                color: "#1F1F1F",
+                letterSpacing: "-0.01em",
+              }}
+            >
+              {step.title}
+            </span>
+          </div>
+          <p
+            style={{
+              fontSize: 13.5,
+              color: "#9CA3AF",
+              lineHeight: 1.55,
+              margin: 0,
+              maxWidth: 260,
+            }}
+          >
+            {step.desc}
+          </p>
+        </div>
+        {/* App tiles scattered */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
+            gap: 20,
+            paddingTop: 20,
+            paddingBottom: 20,
+            position: "relative",
+            zIndex: 1,
+            flexShrink: 0,
+          }}
+        >
+          {step.apps.map((app, i) => (
+            <JourneyAppTile key={app.name} app={app} tileIndex={i} />
+          ))}
+        </div>
+      </div>
+    </Reveal>
+  );
+}
+
+// ── Cloud SVG (path from user's art) ─────────────────────────────────
+function CloudSVG({
+  fill = "#E2E3E7",
+  width = 173,
+  height = 107,
+}: {
+  fill?: string;
+  width?: number;
+  height?: number;
+}) {
+  return (
+    <svg
+      viewBox="0 0 173 107"
+      width={width}
+      height={height}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M153.4,242.9c10.3,0,19.5-4.8,25.5-12.3c5.5,7.7,14.5,12.7,24.7,12.7c9.7,0,18.3-4.6,23.9-11.6 c1.9,1,4.1,1.6,6.5,1.6c7.8,0,14.2-6.4,14.2-14.2c0-0.6-0.1-1.1-0.2-1.7c10.9-5.6,18.5-16.9,18.5-30c0-18.6-15.1-33.7-33.7-33.7 c-3.6,0-7,0.6-10.2,1.6c-7.2-11.2-19.8-18.6-34.1-18.6c-15.4,0-28.7,8.6-35.6,21.2c-2.1-0.4-4.2-0.7-6.4-0.7 c-14.4,0-26.5,10.1-29.5,23.6c-13.1,1-23.5,11.9-23.5,25.3c0,14,11.4,25.4,25.4,25.4c3.1,0,6-0.6,8.7-1.6 C133.2,237.7,142.7,242.9,153.4,242.9z"
+        transform="translate(-93.5, -136.7)"
+        fill={fill}
+      />
+    </svg>
+  );
+}
+
+function LearningJourneySection() {
+  return (
+    <Box position="relative" py={{ base: "16", md: "24" }} overflow="hidden">
+      <Box
+        position="absolute"
+        top="50%"
+        left="50%"
+        style={{ transform: "translate(-50%, -50%)" }}
+        w="1000px"
+        h="800px"
+        bg="radial-gradient(ellipse, rgba(59,130,246,0.04) 0%, transparent 70%)"
+        pointerEvents="none"
+      />
+      <Container
+        maxW="5xl"
+        px={{ base: "6", md: "12" }}
+        position="relative"
+        zIndex={1}
+      >
+        <Reveal>
+          <Stack
+            gap="3"
+            mb={{ base: "10", md: "12" }}
+            alignItems="center"
+            textAlign="center"
+          >
+            <Text textStyle="h2" color="text.primary">
+              How you learn{" "}
+              <Box as="span" color="primary">
+                usually
+              </Box>{" "}
+              🤔
+            </Text>
+            <Text
+              textStyle="lg"
+              color="text.secondary"
+              maxW="lg"
+              textAlign="center"
+            >
+              A typical study session spans multiple tools — each built for only
+              one part of the process.
+            </Text>
+          </Stack>
+        </Reveal>
+
+        <Stack gap={{ base: "3", md: "4" }}>
+          {JOURNEY_STEPS.map((step, i) => (
+            <JourneyStepCard key={step.number} step={step} index={i} />
+          ))}
+        </Stack>
+
+        {/* ── Bridge to next section ── */}
+        <Reveal delay={520}>
+          <Stack
+            alignItems="center"
+            gap="0"
+            mt={{ base: "16", md: "28" }}
+            mb={{ base: "4", md: "8" }}
+          >
+            {/* Top: wavy LINE — no arrowhead */}
+            <svg width="36" height="80" viewBox="0 0 36 80" fill="none">
+              <path
+                d="M18 0 C30 8, 6 26, 18 40 C30 54, 6 66, 18 80"
+                stroke="#C9C3BC"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                fill="none"
+              />
+            </svg>
+
+            {/* Clouds + central emoji */}
+            <Box
+              position="relative"
+              w="full"
+              minH="340px"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+            >
+              {/* ── Left clouds ── */}
+              <Box
+                position="absolute"
+                top="0"
+                left="0"
+                w="55%"
+                h="full"
+                pointerEvents="none"
+                overflow="visible"
+              >
+                {/* back, largest */}
+                <Box position="absolute" top="0%" left="0">
+                  <CloudReveal fromLeft delay={0}>
+                    <div className="cloud-float-1">
+                      <CloudSVG width={400} height={247} fill="#D8D9DE" />
+                    </div>
+                  </CloudReveal>
+                </Box>
+                {/* mid */}
+                <Box position="absolute" top="34%" left="4%">
+                  <CloudReveal fromLeft delay={120}>
+                    <div className="cloud-float-2">
+                      <CloudSVG width={310} height={192} fill="#E0E1E6" />
+                    </div>
+                  </CloudReveal>
+                </Box>
+                {/* front, smallest */}
+                <Box position="absolute" top="64%" left="2%">
+                  <CloudReveal fromLeft delay={220}>
+                    <div className="cloud-float-3">
+                      <CloudSVG width={240} height={148} fill="#E8E9EC" />
+                    </div>
+                  </CloudReveal>
+                </Box>
+              </Box>
+
+              {/* ── Right clouds (mirrored) ── */}
+              <Box
+                position="absolute"
+                top="0"
+                right="0"
+                w="55%"
+                h="full"
+                pointerEvents="none"
+                overflow="visible"
+              >
+                <Box position="absolute" top="0%" right="0">
+                  <CloudReveal fromLeft={false} delay={60}>
+                    <div
+                      className="cloud-float-2"
+                      style={{ transform: "scaleX(-1)" }}
+                    >
+                      <CloudSVG width={400} height={247} fill="#D8D9DE" />
+                    </div>
+                  </CloudReveal>
+                </Box>
+                <Box position="absolute" top="34%" right="4%">
+                  <CloudReveal fromLeft={false} delay={160}>
+                    <div
+                      className="cloud-float-3"
+                      style={{ transform: "scaleX(-1)" }}
+                    >
+                      <CloudSVG width={310} height={192} fill="#E0E1E6" />
+                    </div>
+                  </CloudReveal>
+                </Box>
+                <Box position="absolute" top="64%" right="2%">
+                  <CloudReveal fromLeft={false} delay={260}>
+                    <div
+                      className="cloud-float-1"
+                      style={{ transform: "scaleX(-1)" }}
+                    >
+                      <CloudSVG width={240} height={148} fill="#E8E9EC" />
+                    </div>
+                  </CloudReveal>
+                </Box>
+              </Box>
+
+              {/* Central emoji */}
+              <Flex
+                w="72px"
+                h="72px"
+                rounded="full"
+                bg="white"
+                alignItems="center"
+                justifyContent="center"
+                position="relative"
+                zIndex={1}
+                shadow="0 6px 28px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.05)"
+                border="1px solid"
+                borderColor="rgba(0,0,0,0.05)"
+              >
+                <span style={{ fontSize: 38, lineHeight: 1 }}>🤔</span>
+              </Flex>
+            </Box>
+
+            {/* Text */}
+            <Stack
+              gap="3"
+              alignItems="center"
+              textAlign="center"
+              pt="4"
+              pb="10"
+              px={{ base: "6", md: "0" }}
+              maxW="xl"
+            >
+              <Text textStyle="h3" color="text.primary" lineHeight={1.3}>
+                Every step uses a{" "}
+                <Box as="span" color="accent.softCoral">
+                  different app.
+                </Box>
+              </Text>
+              <Text textStyle="lg" color="text.secondary" maxW="xl">
+                No single tool ties them all together — until now. That&apos;s
+                why{" "}
+                <Box as="span" color="primary" fontWeight="bold">
+                  Elearner
+                </Box>{" "}
+                exists.
+              </Text>
+            </Stack>
+
+            {/* Bottom: wavy ARROW — with arrowhead */}
+            <svg width="36" height="90" viewBox="0 0 36 90" fill="none">
+              <path
+                d="M18 0 C30 10, 6 28, 18 45 C30 62, 6 73, 18 86"
+                stroke="#B8B0A8"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                fill="none"
+              />
+              <path
+                d="M12 80 L18 86 L24 80"
+                stroke="#B8B0A8"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                fill="none"
+              />
+            </svg>
+          </Stack>
+        </Reveal>
+      </Container>
+    </Box>
+  );
+}
+
 // ── Page ─────────────────────────────────────────────────────────────
 export default function LandingPage() {
   return (
@@ -1716,41 +2261,7 @@ export default function LandingPage() {
         </Container>
       </Box>
 
-      {/* ── Problems & Solutions ─────────────────────────────── */}
-      <Box
-        position="relative"
-        py={{ base: "16", md: "24" }}
-        overflow="hidden"
-        bg="neutral.background"
-      >
-        <Box
-          position="absolute"
-          top="0"
-          left="50%"
-          style={{ transform: "translateX(-50%)" }}
-          w="1100px"
-          h="800px"
-          bg="radial-gradient(ellipse, rgba(152,109,0,0.05) 0%, transparent 70%)"
-          pointerEvents="none"
-        />
-        <Container
-          maxW="5xl"
-          px={{ base: "6", md: "12" }}
-          position="relative"
-          zIndex={1}
-        >
-          <Stack gap="6">
-            {combinedCards.map((card, i) => (
-              <CombinedFeatureCard
-                key={card.painTitle}
-                {...card}
-                delay={i * 100}
-                order={i + 1}
-              />
-            ))}
-          </Stack>
-        </Container>
-      </Box>
+      <LearningJourneySection />
 
       {/* ── Bottom CTA ───────────────────────────────────────── */}
       <Box
@@ -1949,6 +2460,28 @@ export default function LandingPage() {
         /* Sketch arrow: down on mobile, right on desktop */
         .sketch-arrow { transform: none; }
         @media (min-width: 768px) { .sketch-arrow { transform: rotate(-90deg); } }
+
+        /* Cloud float animations */
+        @keyframes cloud-float {
+          0%,100% { transform: translateY(0px); }
+          50%      { transform: translateY(-8px); }
+        }
+        .cloud-float-1 { animation: cloud-float 5.5s ease-in-out infinite 0s; }
+        .cloud-float-2 { animation: cloud-float 6.5s ease-in-out infinite 1.2s; }
+        .cloud-float-3 { animation: cloud-float 4.8s ease-in-out infinite 0.7s; }
+
+        /* Learning journey tiles */
+        @keyframes journey-float {
+          0%,100% { transform: translateY(0px); }
+          50%      { transform: translateY(-7px); }
+        }
+        .journey-icon-box {
+          transition: box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .journey-tile:hover .journey-icon-box {
+          animation-play-state: paused;
+          box-shadow: 0 14px 32px rgba(0,0,0,0.18), 0 3px 10px rgba(0,0,0,0.09) !important;
+        }
       `}</style>
     </Box>
   );
