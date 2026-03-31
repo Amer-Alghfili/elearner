@@ -93,9 +93,37 @@ export function Notebook({ notebook }: { notebook: NotebookType }) {
         const isFirstBlock =
           currentBlock.prevBlock == null && currentBlock.parentBlock == null;
         if (isFirstBlock && e.key === "ArrowUp" && titleRef.current) {
-          e.preventDefault();
-          titleRef.current.setSelectionRange(title.length, title.length);
-          titleRef.current.focus();
+          const selection = window.getSelection();
+          let isOnFirstLine = true;
+
+          if (selection && selection.rangeCount > 0) {
+            const cursorRange = selection.getRangeAt(0).cloneRange();
+            cursorRange.collapse(true);
+            const cursorRect = cursorRange.getBoundingClientRect();
+
+            const editorEl =
+              document.activeElement?.closest("[contenteditable]");
+            if (editorEl) {
+              const walker = document.createTreeWalker(
+                editorEl,
+                NodeFilter.SHOW_TEXT,
+              );
+              const firstTextNode = walker.nextNode();
+              if (firstTextNode) {
+                const firstRange = document.createRange();
+                firstRange.setStart(firstTextNode, 0);
+                firstRange.collapse(true);
+                const firstLineRect = firstRange.getBoundingClientRect();
+                isOnFirstLine = cursorRect.top < firstLineRect.bottom;
+              }
+            }
+          }
+
+          if (isOnFirstLine) {
+            e.preventDefault();
+            titleRef.current.setSelectionRange(title.length, title.length);
+            titleRef.current.focus();
+          }
         }
       }
     }
