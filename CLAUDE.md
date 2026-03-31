@@ -2,6 +2,17 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## About Elearner
+
+Elearner is an all-in-one learning companion that consolidates the entire study workflow into a single platform. A typical learner juggles multiple tools across four key steps:
+
+1. **Pick resources** — books, online courses, YouTube playlists
+2. **Study and take notes** — note-taking apps like Notion or Obsidian
+3. **Bookmark useful resources** — browser bookmarks, Raindrop, Pocket
+4. **Active recall** — spaced-repetition flashcard apps like Anki or Quizlet
+
+Elearner replaces all of these: learners save resources, write notes, create flashcards (with spaced repetition), and track practice tasks — all organized around **learns** (study topics owned by a user).
+
 ## Commands
 
 ```bash
