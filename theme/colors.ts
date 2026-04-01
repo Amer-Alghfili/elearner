@@ -7,7 +7,10 @@ export const colors = {
   },
   accent: {
     steelBlue: { value: "#3B82F6" },
-    forestGreen: { value: "#15803D" },
+    forestGreen: {
+      DEFAULT: { value: "#15803D" },
+      transparent: { value: "rgba(21, 128, 61, 0.6)" },
+    },
     softCoral: {
       DEFAULT: { value: "#F87171" },
       transparent: { value: "rgba(248, 113, 113, 0.2)" },
