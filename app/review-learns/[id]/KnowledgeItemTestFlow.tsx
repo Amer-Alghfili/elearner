@@ -125,10 +125,12 @@ export function KnowledgeItemTestFlow({ list }: { list: ReviewLearnItem[] }) {
         activeItemIndex={activeItemIndex}
         expanded={sidebarExpanded}
         onToggle={toggleSidebar}
+        onNavigate={setActiveItemIndex}
       />
       <ReviewMobileDrawer
         questions={questions}
         activeItemIndex={activeItemIndex}
+        onNavigate={setActiveItemIndex}
       />
 
       {/* Main content — offset by sidebar on desktop */}
@@ -247,10 +249,18 @@ function questionTypeLabel(item: ReviewLearnItem): string {
 function QuestionList({
   questions,
   activeItemIndex,
+  onNavigate,
 }: {
   questions: ReviewLearnItem[];
   activeItemIndex: number;
+  onNavigate: (index: number) => void;
 }) {
+  const activeRef = React.useRef<HTMLButtonElement>(null);
+
+  React.useEffect(() => {
+    activeRef.current?.scrollIntoView({ block: "start", behavior: "smooth" });
+  }, []);
+
   return (
     <Stack gap="0.75em" overflow="auto">
       <Heading as="h3" textStyle="md-semibold">
@@ -261,8 +271,19 @@ function QuestionList({
         const isAnswered = item.isAnswered;
 
         return (
-          <Stack
+          <Box
+            as="button"
+            ref={isSelected ? activeRef : undefined}
             key={index}
+            cursor="pointer"
+            textAlign="start"
+            w="full"
+            bg="none"
+            border="none"
+            p={0}
+            onClick={() => onNavigate(index)}
+          >
+          <Stack
             gap="1em"
             px="0.75em"
             py="1em"
@@ -295,6 +316,7 @@ function QuestionList({
               {questionTypeLabel(item)}
             </Badge>
           </Stack>
+          </Box>
         );
       })}
     </Stack>
@@ -306,11 +328,13 @@ function ReviewSidebar({
   activeItemIndex,
   expanded,
   onToggle,
+  onNavigate,
 }: {
   questions: ReviewLearnItem[];
   activeItemIndex: number;
   expanded: boolean;
   onToggle: VoidFunction;
+  onNavigate: (index: number) => void;
 }) {
   return (
     <Stack
@@ -338,7 +362,7 @@ function ReviewSidebar({
         </IconButton>
       </Flex>
       {expanded && (
-        <QuestionList questions={questions} activeItemIndex={activeItemIndex} />
+        <QuestionList questions={questions} activeItemIndex={activeItemIndex} onNavigate={onNavigate} />
       )}
     </Stack>
   );
@@ -347,9 +371,11 @@ function ReviewSidebar({
 function ReviewMobileDrawer({
   questions,
   activeItemIndex,
+  onNavigate,
 }: {
   questions: ReviewLearnItem[];
   activeItemIndex: number;
+  onNavigate: (index: number) => void;
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -387,6 +413,7 @@ function ReviewMobileDrawer({
               <QuestionList
                 questions={questions}
                 activeItemIndex={activeItemIndex}
+                onNavigate={onNavigate}
               />
             </DrawerBody>
           </DrawerContent>
