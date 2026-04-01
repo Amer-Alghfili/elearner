@@ -228,7 +228,10 @@ export function KnowledgeItemTestFlow({ list }: { list: ReviewLearnItem[] }) {
                       />
                     ) : (
                       <Button
-                        onClick={() => setOpenAnswer(true)}
+                        onClick={() => {
+                          setOpenAnswer(true);
+                          setSidebarExpanded(false);
+                        }}
                         variant="secondary"
                         flex="100%"
                       >
@@ -262,7 +265,10 @@ export function KnowledgeItemTestFlow({ list }: { list: ReviewLearnItem[] }) {
         <ShowAnswer
           answer={activeItem.answer}
           open={openAnswer}
-          onClose={() => setOpenAnswer(false)}
+          onClose={() => {
+            setOpenAnswer(false);
+            setSidebarExpanded(true);
+          }}
         />
       </Box>
     </>
