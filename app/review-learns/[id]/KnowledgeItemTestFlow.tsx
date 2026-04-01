@@ -27,6 +27,8 @@ import { useRouter } from "next/navigation";
 import { ShowAnswer } from "./ShowAnswer";
 import { Tooltip } from "@/components/ui/tooltip";
 import { BurgerIcon, TickIcon } from "@/components/Icons";
+import { LuArrowLeft } from "react-icons/lu";
+import NextLink from "next/link";
 import { RadioCardItem, RadioCardRoot } from "@/components/ui/radio-card";
 import { Field } from "@/components/ui/field";
 import {
@@ -120,6 +122,20 @@ export function KnowledgeItemTestFlow({ list }: { list: ReviewLearnItem[] }) {
 
   return (
     <>
+      <IconButton
+        asChild
+        h="auto"
+        ms={sidebarExpanded ? "16rem" : 0}
+        border="none"
+        variant="plain"
+        textStyle="sm"
+        fontWeight="medium"
+      >
+        <NextLink href="/home">
+          <LuArrowLeft />
+          Go Home
+        </NextLink>
+      </IconButton>
       <ReviewSidebar
         questions={questions}
         activeItemIndex={activeItemIndex}
@@ -140,7 +156,7 @@ export function KnowledgeItemTestFlow({ list }: { list: ReviewLearnItem[] }) {
         h="100%"
         pt="4em"
         gap="5em"
-        pl={{ base: 0, md: sidebarExpanded ? "20rem" : "4rem" }}
+        ps={{ base: 0, md: sidebarExpanded ? "20rem" : "4rem" }}
         transition="padding-left 0.3s ease-in-out"
       >
         <Box
@@ -283,39 +299,39 @@ function QuestionList({
             p={0}
             onClick={() => onNavigate(index)}
           >
-          <Stack
-            gap="1em"
-            px="0.75em"
-            py="1em"
-            borderWidth="1px"
-            borderColor={isSelected ? "gray.400" : "stroke.transparent"}
-            borderRadius="md"
-            bg="neutral.background"
-          >
-            <Flex gap="0.5em" alignItems="center">
-              <Badge
-                size="sm"
-                bg={
-                  isAnswered
-                    ? "accent.forestGreen.transparent"
-                    : "neutral.surface"
-                }
-                borderColor="stroke.transparent"
-                borderWidth={isAnswered ? "none" : "1px"}
-                color={isAnswered ? "white" : "text.primary"}
-                minW="2em"
-                justifyContent="center"
-              >
-                {index + 1}
+            <Stack
+              gap="1em"
+              px="0.75em"
+              py="1em"
+              borderWidth="1px"
+              borderColor={isSelected ? "gray.400" : "stroke.transparent"}
+              borderRadius="md"
+              bg="neutral.background"
+            >
+              <Flex gap="0.5em" alignItems="center">
+                <Badge
+                  size="sm"
+                  bg={
+                    isAnswered
+                      ? "accent.forestGreen.transparent"
+                      : "neutral.surface"
+                  }
+                  borderColor="stroke.transparent"
+                  borderWidth={isAnswered ? "none" : "1px"}
+                  color={isAnswered ? "white" : "text.primary"}
+                  minW="2em"
+                  justifyContent="center"
+                >
+                  {index + 1}
+                </Badge>
+                <Text textStyle="sm" truncate>
+                  {item.title}
+                </Text>
+              </Flex>
+              <Badge size="xs" alignSelf="flex-start" bg="stroke.transparent">
+                {questionTypeLabel(item)}
               </Badge>
-              <Text textStyle="sm" truncate>
-                {item.title}
-              </Text>
-            </Flex>
-            <Badge size="xs" alignSelf="flex-start" bg="stroke.transparent">
-              {questionTypeLabel(item)}
-            </Badge>
-          </Stack>
+            </Stack>
           </Box>
         );
       })}
@@ -362,7 +378,11 @@ function ReviewSidebar({
         </IconButton>
       </Flex>
       {expanded && (
-        <QuestionList questions={questions} activeItemIndex={activeItemIndex} onNavigate={onNavigate} />
+        <QuestionList
+          questions={questions}
+          activeItemIndex={activeItemIndex}
+          onNavigate={onNavigate}
+        />
       )}
     </Stack>
   );
@@ -381,12 +401,13 @@ function ReviewMobileDrawer({
 
   return (
     <>
-      <Box
-        display={{ base: "block", md: "none" }}
+      <Flex
+        display={{ base: "flex", md: "none" }}
         position="fixed"
         top="1em"
         left="1em"
         zIndex="overlay"
+        gap="0.25em"
       >
         <IconButton
           h="auto"
@@ -396,7 +417,7 @@ function ReviewMobileDrawer({
         >
           <BurgerIcon />
         </IconButton>
-      </Box>
+      </Flex>
 
       <DrawerRoot
         open={open}
