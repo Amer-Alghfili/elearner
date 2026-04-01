@@ -132,7 +132,7 @@ export function KnowledgeItemTestFlow({ list }: { list: ReviewLearnItem[] }) {
       <IconButton
         asChild
         h="auto"
-        ms={sidebarExpanded ? "16rem" : 0}
+        ms={{ base: 0, md: sidebarExpanded ? "16rem" : 0 }}
         border="none"
         variant="plain"
         textStyle="sm"
@@ -438,7 +438,7 @@ function ReviewMobileDrawer({
       <Flex
         display={{ base: "flex", md: "none" }}
         position="fixed"
-        top="1em"
+        top="1.8em"
         left="1em"
         zIndex="overlay"
         gap="0.25em"
