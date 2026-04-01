@@ -38,6 +38,10 @@ import {
   SelectRoot,
   SelectTrigger,
 } from "@/components/ui/select";
+import {
+  ElearnerNoteEditor,
+  useElearnerCreateBlockNote,
+} from "@/components/ElearnerNoteEditor";
 
 type AnswerType = "multiple-choices" | "true-false" | "open-ended";
 
@@ -214,13 +218,20 @@ export function KnowledgeItemTestFlow({ list }: { list: ReviewLearnItem[] }) {
                         </Button>
                       </Tooltip>
                     )}
-                    <Button
-                      onClick={() => setOpenAnswer(true)}
-                      variant="secondary"
-                      flex="100%"
-                    >
-                      Show Answer
-                    </Button>
+                    {activeItem.type === "practiceTask" ? (
+                      <PracticeTaskItem
+                        key={activeItem.answer}
+                        description={activeItem.answer}
+                      />
+                    ) : (
+                      <Button
+                        onClick={() => setOpenAnswer(true)}
+                        variant="secondary"
+                        flex="100%"
+                      >
+                        Show Answer
+                      </Button>
+                    )}
                   </Flex>
                   {activeItem.type === "flashcard" && (
                     <AnswerForm questionItem={activeItem} />
@@ -253,6 +264,26 @@ export function KnowledgeItemTestFlow({ list }: { list: ReviewLearnItem[] }) {
       </Box>
     </>
   );
+}
+
+function PracticeTaskItem({ description }: { description: string }) {
+  const editor = useElearnerCreateBlockNote({
+    initialContent: null,
+  });
+
+  const convertHtmlToBlocks = React.useEffectEvent((description: string) => {
+    const blocks = editor.tryParseHTMLToBlocks(description);
+    editor.replaceBlocks(editor.document, blocks);
+  });
+
+  React.useEffect(
+    function () {
+      convertHtmlToBlocks(description);
+    },
+    [description],
+  );
+
+  return <ElearnerNoteEditor editor={editor} editable={false} />;
 }
 
 function questionTypeLabel(item: ReviewLearnItem): string {
