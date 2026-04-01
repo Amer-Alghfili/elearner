@@ -7,12 +7,13 @@ import z from "zod";
 
 export async function submitAnswer(
   _: unknown,
-  formData: FormData
+  formData: FormData,
 ): Promise<State<{ id: string; answer: string | null }>> {
   const id = formData.get("id") as string;
   const stage = Number(formData.get("stage") as string);
   const type = formData.get("type") as string;
   const answer = formData.get("answer") as string;
+  console.log(answer, type);
 
   const res = z
     .object({

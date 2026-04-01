@@ -99,7 +99,10 @@ export function KnowledgeItemTestFlow({ list }: { list: ReviewLearnItem[] }) {
         });
         router.replace("/home");
       } else {
-        if (inState.data.answer) {
+        if (
+          inState.data.answer ||
+          questions[activeItemIndex].type === "practiceTask"
+        ) {
           const updated = [...questions];
           updated[activeItemIndex] = {
             ...updated[activeItemIndex],
