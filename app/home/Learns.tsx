@@ -10,6 +10,7 @@ import {
   LinkBox,
   LinkOverlay,
   Stack,
+  Text,
   Textarea,
 } from "@chakra-ui/react";
 import { deleteLearn, Learn, postLearn } from "./actions";
@@ -35,7 +36,7 @@ export function Learns({ learns }: { learns: Learn[] }) {
   const router = useRouter();
 
   return learns.map((learn) => {
-    const { id, title, lastNoteFileId: LastNoteFileId } = learn;
+    const { id, title, lastNoteFileId: LastNoteFileId, description } = learn;
 
     const learnLink =
       LastNoteFileId == null
@@ -52,9 +53,14 @@ export function Learns({ learns }: { learns: Learn[] }) {
                 gap="1em"
                 justifyContent="space-between"
               >
-                <Heading as="h5">
-                  <LinkOverlay href={learnLink}>{title}</LinkOverlay>
-                </Heading>
+                <Stack>
+                  <Heading as="h5">
+                    <LinkOverlay href={learnLink}>{title}</LinkOverlay>
+                  </Heading>
+                  <Text color="text.secondary" textStyle="sm-medium">
+                    {description}
+                  </Text>
+                </Stack>
                 <Flex>
                   <Update learn={learn} />
                   <DialogRoot>
@@ -120,7 +126,7 @@ function Update({ learn }: { learn: Learn }) {
 
   const [state, formAction, isPending] = React.useActionState(
     postLearn,
-    undefined
+    undefined,
   );
 
   React.useEffect(
@@ -145,7 +151,7 @@ function Update({ learn }: { learn: Learn }) {
         setOpen(false);
       }
     },
-    [state]
+    [state],
   );
 
   return (
