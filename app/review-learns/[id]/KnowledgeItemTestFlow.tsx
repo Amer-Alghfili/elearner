@@ -2,11 +2,6 @@
 
 import React from "react";
 import {
-  ProgressBar,
-  ProgressRoot,
-  ProgressValueText,
-} from "@/components/ui/progress";
-import {
   Badge,
   Button,
   createListCollection,
@@ -15,6 +10,9 @@ import {
   Input,
   Stack,
   Textarea,
+  Text,
+  Box,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { submitAnswer } from "./action";
 import { toaster } from "@/components/ui/toaster";
@@ -53,7 +51,7 @@ export function KnowledgeItemTestFlow({ list }: { list: ReviewLearnItem[] }) {
       if (a.isAnswered) return -1;
 
       return 1;
-    })
+    }),
   );
 
   const router = useRouter();
@@ -62,18 +60,16 @@ export function KnowledgeItemTestFlow({ list }: { list: ReviewLearnItem[] }) {
     function startFromFirstUnansweredQuestion() {
       const index = questions.findIndex((q) => !q.isAnswered);
       return index < 0 ? 0 : index;
-    }
+    },
   );
   const [state, action, loading] = React.useActionState(
     submitAnswer,
-    undefined
+    undefined,
   );
 
   const [openAnswer, setOpenAnswer] = React.useState(false);
   const [showHint, setShowHint] = React.useState(false);
 
-  const progress =
-    activeItemIndex === 0 ? 0 : (activeItemIndex / list.length) * 100;
   const activeItem = questions[activeItemIndex];
 
   const postSubmission = React.useEffectEvent((inState: typeof state) => {
@@ -114,96 +110,264 @@ export function KnowledgeItemTestFlow({ list }: { list: ReviewLearnItem[] }) {
   }, [state]);
 
   return (
-    <>
-      <form
-        action={action}
-        style={{
-          height: "100%",
-          maxWidth: "40em",
-          margin: openAnswer ? 0 : "0 25% 0",
-          transition: "margin 0.3s ease-in-out",
-        }}
+    <Box display="flex" flexDirection="column" h="100%" pt="4em" gap="5em">
+      {/* Pagination strip: full width + edge padding on mobile, centered 40em on desktop */}
+      <Box
+        w="100%"
+        maxW={{ base: "100%", md: "80em" }}
+        ms={{ base: "0", md: openAnswer ? "0" : "auto" }}
+        me="auto"
+        transition="margin 0.3s ease-in-out"
       >
-        <Input id="type" name="type" hidden={true} value={activeItem.type} />
-        <Input id="id" name="id" hidden={true} value={activeItem.id} />
-        <Input
-          id="stage"
-          name="stage"
-          hidden={true}
-          value={
-            activeItem.stage === 4 ? activeItem.stage : activeItem.stage + 1
-          }
+        <ItemNavigatorStrip
+          questions={questions}
+          activeItemIndex={activeItemIndex}
+          onNavigate={setActiveItemIndex}
         />
-        <Stack justifyContent="space-between" h="full" py="4em">
-          <ProgressRoot value={progress} w="100%">
-            <Stack gap="0.5em">
-              <ProgressBar />
-              <ProgressValueText>{`${activeItemIndex} of ${questions.length}`}</ProgressValueText>
-            </Stack>
-          </ProgressRoot>
-          <Stack gap="3em">
-            <Stack alignItems="center">
-              {activeItem.isAnswered && (
-                <Badge variant="solid" bg="accent.forestGreen">
-                  <TickIcon w="1rem" h="1rem" fill="white" stroke="white" />
-                  Answered
-                </Badge>
-              )}
-              <Heading as="h2" textAlign="center">
-                {activeItem.title}
-              </Heading>
-            </Stack>
-            <Stack gap="1em">
-              <Flex w="full" gap="1em">
-                {activeItem.hint && (
-                  <Tooltip
-                    content={activeItem.hint}
-                    open={showHint}
-                    onOpenChange={({ open }) => setShowHint(open)}
-                  >
-                    <Button
-                      variant="secondary"
-                      flex="100%"
-                      onClick={() => setShowHint(true)}
-                    >
-                      💡 Hint
-                    </Button>
-                  </Tooltip>
+      </Box>
+
+      {/* Form: always centered */}
+      <Box
+        flex="1"
+        w="100%"
+        maxW="40em"
+        ms={{ base: "auto", md: openAnswer ? "0" : "auto" }}
+        me="auto"
+        transition="margin 0.3s ease-in-out"
+        overflow="auto"
+      >
+        <form action={action} style={{ height: "100%" }}>
+          <Input id="type" name="type" hidden={true} value={activeItem.type} />
+          <Input id="id" name="id" hidden={true} value={activeItem.id} />
+          <Input
+            id="stage"
+            name="stage"
+            hidden={true}
+            value={
+              activeItem.stage === 4 ? activeItem.stage : activeItem.stage + 1
+            }
+          />
+          <Stack justifyContent="space-between" h="full" pb="4em">
+            <Stack gap="3em">
+              <Stack alignItems="center">
+                {activeItem.isAnswered && (
+                  <Badge variant="solid" bg="accent.forestGreen">
+                    <TickIcon w="1rem" h="1rem" fill="white" stroke="white" />
+                    Answered
+                  </Badge>
                 )}
-                <Button
-                  onClick={() => setOpenAnswer(true)}
-                  variant="secondary"
-                  flex="100%"
-                >
-                  Show Answer
-                </Button>
-              </Flex>
-              {activeItem.type === "flashcard" && (
-                <AnswerForm questionItem={activeItem} />
-              )}
+                <Heading as="h2" textAlign="center">
+                  {activeItem.title}
+                </Heading>
+              </Stack>
+              <Stack gap="1em">
+                <Flex w="full" gap="1em">
+                  {activeItem.hint && (
+                    <Tooltip
+                      content={activeItem.hint}
+                      open={showHint}
+                      onOpenChange={({ open }) => setShowHint(open)}
+                    >
+                      <Button
+                        variant="secondary"
+                        flex="100%"
+                        onClick={() => setShowHint(true)}
+                      >
+                        💡 Hint
+                      </Button>
+                    </Tooltip>
+                  )}
+                  <Button
+                    onClick={() => setOpenAnswer(true)}
+                    variant="secondary"
+                    flex="100%"
+                  >
+                    Show Answer
+                  </Button>
+                </Flex>
+                {activeItem.type === "flashcard" && (
+                  <AnswerForm questionItem={activeItem} />
+                )}
+              </Stack>
             </Stack>
-          </Stack>
-          <Flex gap="3em" justifyContent="space-between">
-            {activeItemIndex !== 0 && (
-              <Button
-                onClick={() => setActiveItemIndex((prev) => prev - 1)}
-                variant="secondary"
-                w="30%"
-              >
-                Previous
+            <Flex gap="3em" justifyContent="space-between">
+              {activeItemIndex !== 0 && (
+                <Button
+                  onClick={() => setActiveItemIndex((prev) => prev - 1)}
+                  variant="secondary"
+                  w="30%"
+                >
+                  Previous
+                </Button>
+              )}
+              <Button type="submit" loading={loading} w="30%" ms="auto">
+                {activeItemIndex === list.length - 1 ? "Finish" : "Next"}
               </Button>
-            )}
-            <Button type="submit" loading={loading} w="30%" ms="auto">
-              {activeItemIndex === list.length - 1 ? "Finish" : "Next"}
-            </Button>
-          </Flex>
-        </Stack>
-      </form>
+            </Flex>
+          </Stack>
+        </form>
+      </Box>
+
       <ShowAnswer
         answer={activeItem.answer}
         open={openAnswer}
         onClose={() => setOpenAnswer(false)}
       />
+    </Box>
+  );
+}
+
+function ItemNavigatorStrip({
+  questions,
+  activeItemIndex,
+  onNavigate,
+}: {
+  questions: ReviewLearnItem[];
+  activeItemIndex: number;
+  onNavigate: (index: number) => void;
+}) {
+  const n = questions.length;
+
+  const itemsPerPage = useBreakpointValue({ base: 2, md: 3 }) ?? 3;
+
+  const [windowStart, setWindowStart] = React.useState(
+    () => Math.floor(activeItemIndex / 3) * 3,
+  );
+  const [animKey, setAnimKey] = React.useState(0);
+  const [slideDir, setSlideDir] = React.useState<"left" | "right">("left");
+
+  // Keep a ref so the effect below can compare without stale closure issues
+  const windowStartRef = React.useRef(windowStart);
+  React.useLayoutEffect(() => {
+    windowStartRef.current = windowStart;
+  });
+
+  // Sync window when activeItemIndex changes externally (e.g. form submission)
+  React.useEffect(() => {
+    const newPage = Math.floor(activeItemIndex / itemsPerPage) * itemsPerPage;
+    if (newPage !== windowStartRef.current) {
+      setSlideDir(activeItemIndex > windowStartRef.current ? "left" : "right");
+      setWindowStart(newPage);
+      setAnimKey((k) => k + 1);
+    }
+  }, [activeItemIndex, itemsPerPage]);
+
+  // Re-align window when items-per-page changes (e.g. viewport resize)
+  React.useEffect(() => {
+    const newPage = Math.floor(activeItemIndex / itemsPerPage) * itemsPerPage;
+    setWindowStart(newPage);
+  }, [itemsPerPage, activeItemIndex]);
+
+  const canGoNext = windowStart + itemsPerPage < n;
+  const canGoPrev = windowStart > 0;
+
+  const goNext = () => {
+    if (!canGoNext) return;
+    const newStart = windowStart + itemsPerPage;
+    setSlideDir("left");
+    setWindowStart(newStart);
+    setAnimKey((k) => k + 1);
+    onNavigate(newStart);
+  };
+
+  const goPrev = () => {
+    if (!canGoPrev) return;
+    const newStart = windowStart - itemsPerPage;
+    setSlideDir("right");
+    setWindowStart(newStart);
+    setAnimKey((k) => k + 1);
+    onNavigate(newStart);
+  };
+
+  const windowIndices = Array.from({ length: itemsPerPage }, (_, i) => {
+    const idx = windowStart + i;
+    return idx < n ? idx : null;
+  });
+
+  const slideAnimation =
+    slideDir === "left"
+      ? "itemNavSlideFromRight 0.28s ease forwards"
+      : "itemNavSlideFromLeft 0.28s ease forwards";
+
+  return (
+    <>
+      <style>{`
+        @keyframes itemNavSlideFromRight {
+          from { transform: translateX(48px); opacity: 0; }
+          to   { transform: translateX(0);    opacity: 1; }
+        }
+        @keyframes itemNavSlideFromLeft {
+          from { transform: translateX(-48px); opacity: 0; }
+          to   { transform: translateX(0);     opacity: 1; }
+        }
+      `}</style>
+      <Flex align="center" w="100%">
+        <Button
+          variant="ghost"
+          size="sm"
+          px="0.25em"
+          disabled={!canGoPrev}
+          onClick={goPrev}
+          aria-label="Previous"
+        >
+          {"<"}
+        </Button>
+
+        <Box flex="1" overflow="hidden">
+          <Flex key={animKey} gap="0.5em" style={{ animation: slideAnimation }}>
+            {windowIndices.map((idx, slot) => {
+              if (idx === null) {
+                return <Box key={`empty-${slot}`} flex="1" />;
+              }
+              const item = questions[idx];
+              const isActive = idx === activeItemIndex;
+              const isAnswered = item.isAnswered;
+
+              return (
+                <Flex
+                  key={idx}
+                  flex="1"
+                  h="8em"
+                  alignItems="center"
+                  justifyContent="center"
+                  minW={0}
+                  px="0.75em"
+                  py="0.6em"
+                  borderRadius="md"
+                  border={isActive ? "2px solid" : "1px solid"}
+                  borderColor={isActive ? "green.500" : "gray.200"}
+                  bg={isAnswered && !isActive ? "green.50" : "white"}
+                  cursor="pointer"
+                  onClick={() => onNavigate(idx)}
+                  overflow="hidden"
+                >
+                  <Text
+                    fontSize={{ base: "xs", md: "sm" }}
+                    fontWeight={isActive ? "semibold" : "normal"}
+                    color={isActive ? "green.600" : "inherit"}
+                    overflow="hidden"
+                    textOverflow="ellipsis"
+                    whiteSpace="nowrap"
+                  >
+                    {item.title}
+                  </Text>
+                </Flex>
+              );
+            })}
+          </Flex>
+        </Box>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          px="0.25em"
+          disabled={!canGoNext}
+          onClick={goNext}
+          aria-label="Next"
+        >
+          {">"}
+        </Button>
+      </Flex>
     </>
   );
 }
