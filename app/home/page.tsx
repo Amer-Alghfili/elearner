@@ -1,10 +1,10 @@
 import Header from "@/components/Header";
 import { Scaffold } from "@/components/Scaffold";
-import { Button, Card, Image, Stack } from "@chakra-ui/react";
+import { Button, Card, Image, Stack, Link } from "@chakra-ui/react";
 import { auth } from "@/auth";
 import { prisma } from "@/prisma";
 import LearnsContainer from "./LearnsContainer";
-import Link from "next/link";
+import VideoGuide from "./VideoGuide";
 
 export default async function HomePage() {
   const today = new Date();
@@ -87,6 +87,7 @@ export default async function HomePage() {
             />
           </Card.Root>
         )}
+        <VideoGuide />
         <LearnsContainer
           learns={learns.map((learn) => ({
             ...learn,
