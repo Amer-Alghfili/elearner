@@ -2174,7 +2174,7 @@ export default function LandingPage() {
 
         <Container
           maxW="4xl"
-          px={{ base: "6", md: "12" }}
+          px={{ base: "6", md: "0" }}
           textAlign="center"
           position="relative"
           zIndex={1}
@@ -2197,25 +2197,21 @@ export default function LandingPage() {
                 Your all-in-one learning companion
               </Text>
             </Box>
-            <Box
+            <Stack
+              textStyle="h1"
+              lineHeight={1.15}
+              maxW="3xl"
               style={{
                 opacity: 0,
                 animation:
                   "fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.25s forwards",
               }}
             >
-              <Text
-                textStyle="h1"
-                color="text.primary"
-                lineHeight={1.15}
-                maxW="3xl"
-              >
-                All of your learning problems,{" "}
-                <Box as="span" color="primary">
-                  solved in one place
-                </Box>
+              <Text color="text.primary">
+                Most tools help you store knowledge
               </Text>
-            </Box>
+              <Text color="primary">Elearner helps you progress</Text>
+            </Stack>
             <Box
               maxW="xl"
               style={{
@@ -2225,8 +2221,9 @@ export default function LandingPage() {
               }}
             >
               <Text textStyle="lg" color="text.secondary" textAlign="center">
-                Stop juggling apps. Keep your notes, bookmarks, and flashcards
-                together — exactly where your learning happens.
+                The problem isn’t effort. It’s not intelligence. It’s that
+                you’re managing your learning manually. Elearner helps for
+                systematic learning
               </Text>
             </Box>
             <Box
