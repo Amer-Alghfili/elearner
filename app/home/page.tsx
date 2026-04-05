@@ -69,12 +69,22 @@ export default async function HomePage() {
             bg="primary.thick"
             color="neutral.background"
           >
-            <Card.Body gap="0.5em">
-              <Card.Title>Pending knowledge items</Card.Title>
-              <Card.Description color="neutral.background">
-                Start reviewing what you have learnt 🔥
-              </Card.Description>
-              <Button asChild alignSelf="flex-start" mt="1em">
+            <Card.Body
+              gap="0.5em"
+              flexDirection={{ base: "row", md: "column" }}
+              justifyContent={{ base: "space-between", md: "flex-start" }}
+            >
+              <Stack gap="0.5em">
+                <Card.Title>Pending knowledge items</Card.Title>
+                <Card.Description color="neutral.background">
+                  Start reviewing what you have learnt 🔥
+                </Card.Description>
+              </Stack>
+              <Button
+                asChild
+                alignSelf="flex-start"
+                mt={{ base: "0", md: "1em" }}
+              >
                 <Link href="/review-learns">Review</Link>
               </Button>
             </Card.Body>
@@ -84,6 +94,7 @@ export default async function HomePage() {
               h="14em"
               alt="stacking-notes image"
               alignSelf="flex-end"
+              display={{ base: "none", md: "block" }}
             />
           </Card.Root>
         )}
