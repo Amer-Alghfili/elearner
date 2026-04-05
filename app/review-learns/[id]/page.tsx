@@ -25,6 +25,14 @@ export default async function ReviewLearnPage({
     findPracticeTasksReadyForReview(learnId)
   );
 
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+  const tomorrow = new Date(startOfToday);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  const isAnsweredToday = (answeredAt: Date | null) =>
+    answeredAt != null && answeredAt >= startOfToday && answeredAt < tomorrow;
+
   const list: ReviewLearnItem[] = [
     ...activeFlashcards.map(
       (f) =>
@@ -35,8 +43,10 @@ export default async function ReviewLearnPage({
           answer: f.answer,
           type: "flashcard",
           stage: Number(f.stage),
-          isAnswered: f.answeredAt != null,
-          submittedAnswer: f.submitted_answer,
+          isAnswered: isAnsweredToday(f.answeredAt),
+          submittedAnswer: isAnsweredToday(f.answeredAt)
+            ? f.submitted_answer
+            : null,
           answerType: f.answerType,
           options: f.options,
         } as ReviewLearnItem)
@@ -50,7 +60,7 @@ export default async function ReviewLearnPage({
           answer: f.description,
           type: "practiceTask",
           stage: Number(f.stage),
-          isAnswered: f.answeredAt != null,
+          isAnswered: isAnsweredToday(f.answeredAt),
         } as ReviewLearnItem)
     ),
   ];
