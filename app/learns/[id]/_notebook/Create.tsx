@@ -1,50 +1,25 @@
 import { PlusIcon } from "@/components/Icons";
-import { useForm } from "react-hook-form";
-import { NotebookType } from "../[notebookId]";
-import { createNotebook } from "./action";
-import { toaster } from "@/components/ui/toaster";
 import { useRouter } from "next/navigation";
 import { IconButton } from "@chakra-ui/react";
-import React from "react";
+import { useLearnNotebooksContext } from "../LearnPageContainer";
 
 export function CreateNotebook({ learnId }: { learnId: number }) {
-  const [recentlyCreatedNotebookId, setRecentlyCreatedNotebookId] =
-    React.useState<number | null>(null);
-
   const router = useRouter();
+  const { createNotebook } = useLearnNotebooksContext();
 
-  const methods = useForm<NotebookType>({
-    defaultValues: { learnId, title: "untitled" },
-  });
-
-  async function submit(notebook: NotebookType) {
-    const { error, data } = await createNotebook(notebook);
-
-    if (error) {
-      toaster.create({
-        title: error,
-        type: "error",
-        closable: true,
-      });
-    } else {
-      router.refresh();
-
-      setRecentlyCreatedNotebookId(data!.id);
+  async function handleCreate() {
+    const newId = await createNotebook(learnId);
+    if (newId != null) {
+      router.push(`/learns/${learnId}/${newId}` as any);
     }
   }
 
-  React.useEffect(
-    function redirectToCreatedNotebook() {
-      if (recentlyCreatedNotebookId == null) return;
-
-      router.push(`/learns/${learnId}/${recentlyCreatedNotebookId}` as any);
-    },
-    [recentlyCreatedNotebookId]
-  );
-
   return (
     <form
-      onSubmit={methods.handleSubmit(submit)}
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleCreate();
+      }}
       onClick={(e) => e.stopPropagation()}
     >
       <IconButton

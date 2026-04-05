@@ -5,19 +5,6 @@ import { Resource as ElearnerResource } from "./resources";
 import { Resource } from "@/generated/prisma/client";
 
 export async function Sidebar({ learnId }: { learnId: number }) {
-  const notebooks = await prisma.noteFile.findMany({
-    select: {
-      id: true,
-      title: true,
-    },
-    where: {
-      learn_id: learnId,
-    },
-    orderBy: {
-      createdAt: "asc",
-    },
-  });
-
   const flashcards = await prisma.flashCard.findMany({
     where: {
       learn_id: learnId,
@@ -93,7 +80,6 @@ export async function Sidebar({ learnId }: { learnId: number }) {
   return (
     <ClientSidebar
       learnId={learnId}
-      notebooks={notebooks}
       practiceTasks={practiceTasks}
       flashcards={flashcards.map((flashcard) => ({
         ...flashcard,

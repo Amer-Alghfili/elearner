@@ -29,9 +29,8 @@ import {
   MenuRoot,
   MenuTrigger,
 } from "@/components/ui/menu";
-import { usePathname, useRouter } from "next/navigation";
-import { NotebookType } from "../[notebookId]";
-import { useLearnControlManagement } from "../LearnPageContainer";
+import { usePathname } from "next/navigation";
+import { useLearnControlManagement, useLearnNotebooksContext } from "../LearnPageContainer";
 import { Flashcard } from "../_flashcard-form/types";
 import { Remove as RemoveFlashcard } from "../_flashcard-form/Remove";
 import TruncateText from "@/components/TruncateText";
@@ -43,20 +42,15 @@ import { Resource, Resources } from "./resources";
 
 export function Sidebar({
   learnId,
-  notebooks,
   flashcards,
   practiceTasks,
   resources,
 }: {
   learnId: number;
-  notebooks: Omit<NotebookType, "learnId">[];
   flashcards: Flashcard[];
   practiceTasks: PracticeTask[];
   resources: Resource[];
 }) {
-  const router = useRouter();
-  const pathname = usePathname();
-
   const {
     sidebarExpanded,
     toggleSidebar,
@@ -64,35 +58,7 @@ export function Sidebar({
     togglePracticeTaskForm,
   } = useLearnControlManagement();
 
-  const [recentlyRemovedNotebookId, setRecentlyRemovedNotebookId] =
-    React.useState<number | null>(null);
-
-  React.useEffect(
-    function syncActiveNotebookOnDelete() {
-      if (recentlyRemovedNotebookId == null) return;
-
-      if (!notebooks.length) {
-        setRecentlyRemovedNotebookId(null);
-        return router.replace(`/learns/${learnId}` as any);
-      }
-
-      if (notebooks.length === 1) return;
-
-      const split = pathname.split("/");
-
-      const activeNotebookId = split[split.length - 1];
-
-      if (activeNotebookId !== recentlyRemovedNotebookId.toString()) return;
-
-      split.pop();
-
-      router.push(
-        `${split.join("/")}/${notebooks[notebooks.length - 2].id}` as any
-      );
-      setRecentlyRemovedNotebookId(null);
-    },
-    [notebooks, pathname, recentlyRemovedNotebookId, router]
-  );
+  const { notebooks } = useLearnNotebooksContext();
 
   return (
     <Stack
@@ -135,10 +101,11 @@ export function Sidebar({
             <SidebarLink
               key={notebook.id}
               href={notebook.id.toString()}
+              prefetch={false}
               action={
                 <RemoveNotebook
                   id={notebook.id}
-                  setRecentlyRemovedNotebookId={setRecentlyRemovedNotebookId}
+                  learnId={learnId}
                 />
               }
             >
@@ -304,12 +271,14 @@ export function SidebarLinkContent({
 export function SidebarLink({
   action,
   href,
+  prefetch,
   children,
   linkProps,
   ...props
 }: {
   action?: React.ReactNode;
   href?: string;
+  prefetch?: boolean;
   children: React.ReactNode;
   linkProps?: Omit<LinkProps<string>, "href">;
 } & BoxProps) {
@@ -338,7 +307,7 @@ export function SidebarLink({
           >
             <LinkOverlay asChild w="80%">
               {href != null && (
-                <NextLink href={href as any}>{children}</NextLink>
+                <NextLink href={href as any} prefetch={prefetch}>{children}</NextLink>
               )}
               {href == null && children}
             </LinkOverlay>

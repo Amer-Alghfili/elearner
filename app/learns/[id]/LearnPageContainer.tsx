@@ -7,6 +7,11 @@ import { FlashcardForm } from "./_flashcard-form";
 import { Flashcard } from "./_flashcard-form/types";
 import { PracticeTask } from "./_practice-task-form/types";
 import { PracticeTaskForm } from "./_practice-task-form";
+import {
+  useLearnNotebooks,
+  LearnNotebooksAPI,
+  NotebookSummary,
+} from "./useLearnNotebooks";
 
 type FlashcardFormType = { flashcard?: Flashcard; open: boolean };
 type PracticeTaskFormType = { practiceTask?: PracticeTask; open: boolean };
@@ -34,17 +39,28 @@ export function useLearnControlManagement() {
   return React.useContext(LearnControlManagementContext);
 }
 
+const LearnNotebooksContext = React.createContext<LearnNotebooksAPI>(
+  {} as LearnNotebooksAPI,
+);
+
+export function useLearnNotebooksContext() {
+  return React.useContext(LearnNotebooksContext);
+}
+
 export function LearnPageContainer({
   learnId,
   knowledgeItemsCount,
+  initialNotebooks,
   Sidebar,
   children,
 }: {
   learnId: number;
   knowledgeItemsCount: number;
+  initialNotebooks: NotebookSummary[];
   Sidebar: React.ReactNode;
   children: React.ReactNode;
 }) {
+  const learnNotebooks = useLearnNotebooks(initialNotebooks);
   const [sidebarExpanded, setSidebarExpanded] = React.useState(true);
   const [flashcardForm, setFlashcardForm] = React.useState<FlashcardFormType>({
     open: false,
@@ -140,30 +156,35 @@ export function LearnPageContainer({
   }
 
   return (
-    <LearnControlManagementContext.Provider
-      value={{
-        sidebarExpanded,
-        flashcardForm,
-        practiceTaskForm,
-        toggleFlashcardForm,
-        togglePracticeTaskForm,
-        toggleSidebar,
-      }}
-    >
-      {Sidebar}
-      <Flex alignItems="flex-start" ps={{ base: 0, sm: 0, md: 0 }}>
-        <Box
-          ps={sidebarExpanded ? "17rem" : "4rem"}
-          pe={flashcardForm.open || practiceTaskForm.open ? "40vw" : 0}
-          w="full"
-          transition="padding 0.3s ease-in-out"
-        >
-          <Header withLogo={false} knowledgeItemsCount={knowledgeItemsCount} />
-          <Box pt="3em">{children}</Box>
-        </Box>
-      </Flex>
-      {flashcardForm.open && <FlashcardForm learnId={learnId} />}
-      {practiceTaskForm.open && <PracticeTaskForm learnId={learnId} />}
-    </LearnControlManagementContext.Provider>
+    <LearnNotebooksContext.Provider value={learnNotebooks}>
+      <LearnControlManagementContext.Provider
+        value={{
+          sidebarExpanded,
+          flashcardForm,
+          practiceTaskForm,
+          toggleFlashcardForm,
+          togglePracticeTaskForm,
+          toggleSidebar,
+        }}
+      >
+        {Sidebar}
+        <Flex alignItems="flex-start" ps={{ base: 0, sm: 0, md: 0 }}>
+          <Box
+            ps={sidebarExpanded ? "17rem" : "4rem"}
+            pe={flashcardForm.open || practiceTaskForm.open ? "40vw" : 0}
+            w="full"
+            transition="padding 0.3s ease-in-out"
+          >
+            <Header
+              withLogo={false}
+              knowledgeItemsCount={knowledgeItemsCount}
+            />
+            <Box pt="3em">{children}</Box>
+          </Box>
+        </Flex>
+        {flashcardForm.open && <FlashcardForm learnId={learnId} />}
+        {practiceTaskForm.open && <PracticeTaskForm learnId={learnId} />}
+      </LearnControlManagementContext.Provider>
+    </LearnNotebooksContext.Provider>
   );
 }

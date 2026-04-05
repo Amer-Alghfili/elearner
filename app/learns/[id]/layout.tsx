@@ -29,6 +29,19 @@ export default async function LearnPageLayout({
 
   if (learn == null) return <NotFound />;
 
+  const notebooks = await prisma.noteFile.findMany({
+    select: {
+      id: true,
+      title: true,
+    },
+    where: {
+      learn_id: learnId,
+    },
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
+
   const learns = await prisma.learn.findMany({
     select: {
       id: true,
@@ -68,6 +81,7 @@ export default async function LearnPageLayout({
       <LearnPageContainer
         learnId={learnId}
         knowledgeItemsCount={knowledgeItemsCount}
+        initialNotebooks={notebooks}
         Sidebar={<Sidebar learnId={learnId} />}
       >
         {children}

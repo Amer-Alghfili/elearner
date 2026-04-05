@@ -1,7 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { updateFileBlocks, updateFileTitle } from "./actions";
 import {
   ElearnerNoteEditor,
   useElearnerCreateBlockNote,
@@ -12,7 +10,10 @@ import { useDebounce } from "use-debounce";
 import { Button, Flex, Input, Stack } from "@chakra-ui/react";
 import { Field } from "@/components/ui/field";
 import { PlusIcon } from "@/components/Icons";
-import { useLearnControlManagement } from "../LearnPageContainer";
+import {
+  useLearnControlManagement,
+  useLearnNotebooksContext,
+} from "../LearnPageContainer";
 
 export type NotebookType = {
   id: number;
@@ -25,10 +26,11 @@ export function Notebook({ notebook }: { notebook: NotebookType }) {
 
   const [title, setTitle] = React.useState<string>(notebook.title);
 
-  const router = useRouter();
-
   const { toggleFlashcardForm, togglePracticeTaskForm } =
     useLearnControlManagement();
+
+  const { updateNotebookTitle, updateNotebookContent } =
+    useLearnNotebooksContext();
 
   const editor = useElearnerCreateBlockNote({
     initialContent:
@@ -40,39 +42,40 @@ export function Notebook({ notebook }: { notebook: NotebookType }) {
   const titleRef = React.useRef<HTMLInputElement>(null);
 
   const [documentState, setDocumentState] = React.useState<Block<any>[]>();
+  const hasEditedDocument = React.useRef(false);
 
-  const [titleValue] = useDebounce(title, 300);
   const [documentBlocks] = useDebounce(documentState, 300);
 
-  editor.onChange((e: any) => {
-    setDocumentState(e.document);
+  React.useEffect(() => {
+    return editor.onChange((e: any) => {
+      setDocumentState(e.document);
+    });
+  }, [editor]);
+
+  function handleTitleChange(newTitle: string) {
+    setTitle(newTitle);
+    updateNotebookTitle(id, newTitle);
+  }
+
+  const updateContent = React.useEffectEvent((documentBlocks: any) => {
+    if (!hasEditedDocument.current) {
+      hasEditedDocument.current = true;
+      return;
+    }
+
+    updateNotebookContent(
+      id,
+      ((documentBlocks as []) || []).map((block: any, order) => ({
+        id: block.id,
+        type: block.type,
+        data: block,
+        file_id: id,
+        order,
+      })),
+    );
   });
-
   React.useEffect(() => {
-    async function syncTitleWithBackend() {
-      await updateFileTitle(id, titleValue as string);
-
-      router.refresh();
-    }
-
-    syncTitleWithBackend();
-  }, [titleValue]);
-
-  React.useEffect(() => {
-    async function syncDocWithBackend() {
-      await updateFileBlocks(
-        id,
-        ((documentBlocks as []) || []).map((block: any, order) => ({
-          id: block.id,
-          type: block.type,
-          data: block,
-          file_id: id,
-          order,
-        })),
-      );
-    }
-
-    syncDocWithBackend();
+    updateContent(documentBlocks);
   }, [documentBlocks]);
 
   React.useEffect(function registerOnEnterClick() {
@@ -144,7 +147,7 @@ export function Notebook({ notebook }: { notebook: NotebookType }) {
             placeholder="Title"
             fontWeight="bold"
             value={title}
-            onChange={({ target }) => setTitle(target.value)}
+            onChange={({ target }) => handleTitleChange(target.value)}
           />
         </Field>
         <Flex

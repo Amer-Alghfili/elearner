@@ -5,7 +5,7 @@ import { NotebookType } from "../[notebookId]";
 import { State } from "@/types/server-state";
 
 export async function createNotebook(
-  notebook: NotebookType
+  notebook: Omit<NotebookType, "id">,
 ): Promise<State<NotebookType>> {
   const file = await prisma.noteFile.create({
     data: {
@@ -19,7 +19,7 @@ export async function createNotebook(
 
 export async function deleteNotebook(
   prev: State<NotebookType>,
-  formData: FormData
+  formData: FormData,
 ): Promise<State<NotebookType>> {
   const id = Number(formData.get("id"));
 

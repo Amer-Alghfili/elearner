@@ -1,33 +1,37 @@
 import React from "react";
-import { deleteNotebook } from "./action";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import RemoveButton from "@/components/button/remove";
-import { Button, Icon, Input } from "@chakra-ui/react";
+import { Button, Icon } from "@chakra-ui/react";
 import { LuTrash } from "react-icons/lu";
+import { useLearnNotebooksContext } from "../LearnPageContainer";
 
 export function RemoveNotebook({
   id,
-  setRecentlyRemovedNotebookId,
+  learnId,
 }: {
   id: number;
-  setRecentlyRemovedNotebookId: React.Dispatch<
-    React.SetStateAction<number | null>
-  >;
+  learnId: number;
 }) {
-  const [formState, action, loading] = React.useActionState(deleteNotebook, {});
-
   const router = useRouter();
+  const pathname = usePathname();
+  const { notebooks, removeNotebook } = useLearnNotebooksContext();
 
-  React.useEffect(
-    function reload() {
-      if (formState.data == null) return;
+  async function handleDelete() {
+    const isActive = pathname.endsWith(`/${id}`);
 
-      setRecentlyRemovedNotebookId(formState.data!.id);
+    await removeNotebook(id);
 
-      router.refresh();
-    },
-    [formState.data]
-  );
+    if (isActive) {
+      const remaining = notebooks.filter((n) => n.id !== id);
+      if (remaining.length > 0) {
+        router.push(
+          `/learns/${learnId}/${remaining[remaining.length - 1].id}` as any,
+        );
+      } else {
+        router.replace(`/learns/${learnId}` as any);
+      }
+    }
+  }
 
   return (
     <RemoveButton
@@ -40,9 +44,8 @@ export function RemoveNotebook({
         </Icon>
       }
     >
-      <form onClick={(e) => e.stopPropagation()} action={action}>
-        <Input id="id" name="id" value={id} hidden={true} readOnly={true} />
-        <Button type="submit" loading={loading} bg="feedback.error">
+      <form onClick={(e) => e.stopPropagation()} action={handleDelete}>
+        <Button type="submit" bg="feedback.error">
           Delete
         </Button>
       </form>
