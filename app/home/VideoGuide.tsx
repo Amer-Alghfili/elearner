@@ -16,8 +16,11 @@ export default function VideoGuide() {
         gap="0.75em"
         px="2em"
         py="1.75em"
-        bg="primary.thin"
         borderRadius="12px"
+        bg="linear-gradient(135deg, #FFFEF7 0%, #FEFCE8 60%, #FEFADC 100%)"
+        border="1px solid"
+        borderColor="rgba(234, 210, 100, 0.35)"
+        color="text.primary"
       >
         <Heading as="h4" fontSize="lg" fontWeight="bold" color="text.primary">
           Not sure how to use Elearner? 🤔
