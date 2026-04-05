@@ -2404,7 +2404,7 @@ export default function LandingPage() {
                     _hover={{ color: "rgba(255,255,255,0.85)" }}
                     transition="color 0.2s"
                   >
-                    <NextLink href={link.href}>
+                    <NextLink href={link.href as any}>
                       <Text textStyle="md">{link.label}</Text>
                     </NextLink>
                   </Link>
