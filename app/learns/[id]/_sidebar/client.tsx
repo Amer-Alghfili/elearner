@@ -3,6 +3,13 @@
 import { Logo } from "@/components/Logo";
 import {
   Collapsible,
+  DrawerBackdrop,
+  DrawerBody,
+  DrawerCloseTrigger,
+  DrawerContent,
+  DrawerHeader,
+  DrawerPositioner,
+  DrawerRoot,
   Flex,
   IconButton,
   Stack,
@@ -12,7 +19,6 @@ import {
   LinkOverlay,
   Box,
   BoxProps,
-  FlexProps,
 } from "@chakra-ui/react";
 import NextLink, { LinkProps } from "next/link";
 import {
@@ -62,6 +68,7 @@ export function Sidebar({
 
   return (
     <Stack
+      display={{ base: "none", md: "flex" }}
       position="fixed"
       top={0}
       bottom={0}
@@ -268,6 +275,127 @@ export function SidebarLinkContent({
     </Box>
   );
 }
+export function LearnMobileDrawer({
+  learnId,
+  flashcards,
+  practiceTasks,
+  resources,
+}: {
+  learnId: number;
+  flashcards: Flashcard[];
+  practiceTasks: PracticeTask[];
+  resources: Resource[];
+}) {
+  const [open, setOpen] = React.useState(false);
+  const { toggleFlashcardForm, togglePracticeTaskForm } =
+    useLearnControlManagement();
+  const { notebooks } = useLearnNotebooksContext();
+
+  return (
+    <>
+      <Flex
+        display={{ base: "flex", md: "none" }}
+        position="fixed"
+        top="1.8em"
+        left="1em"
+        zIndex="overlay"
+        gap="0.25em"
+      >
+        <IconButton
+          h="auto"
+          border="none"
+          variant="plain"
+          onClick={() => setOpen(true)}
+        >
+          <BurgerIcon />
+        </IconButton>
+      </Flex>
+
+      <DrawerRoot
+        open={open}
+        onOpenChange={({ open }) => setOpen(open)}
+        placement="start"
+      >
+        <DrawerBackdrop />
+        <DrawerPositioner>
+          <DrawerContent bg="neutral.surface" maxW="20rem">
+            <DrawerHeader>
+              <DrawerCloseTrigger />
+            </DrawerHeader>
+            <DrawerBody>
+              <Stack alignItems="flex-start" gap="1.5em">
+                <SidebarLinksGroup
+                  icon={<NotebookIcon />}
+                  action={<CreateNotebook learnId={learnId} />}
+                  subLinks={notebooks.map((notebook) => (
+                    <SidebarLink
+                      key={notebook.id}
+                      href={notebook.id.toString()}
+                      prefetch={false}
+                      action={
+                        <RemoveNotebook id={notebook.id} learnId={learnId} />
+                      }
+                    >
+                      <SidebarLinkContent>{notebook.title}</SidebarLinkContent>
+                    </SidebarLink>
+                  ))}
+                >
+                  Notebooks
+                </SidebarLinksGroup>
+                <SidebarLinksGroup
+                  icon={<BulbWithFolderIcon />}
+                  subLinks={flashcards.map((flashcard) => (
+                    <SidebarLink
+                      key={flashcard.id}
+                      action={<RemoveFlashcard id={flashcard.id} />}
+                    >
+                      <LinkOverlay
+                        onClick={() => {
+                          toggleFlashcardForm({ flashcard });
+                          setOpen(false);
+                        }}
+                      >
+                        <SidebarLinkContent>
+                          {flashcard.question}
+                        </SidebarLinkContent>
+                      </LinkOverlay>
+                    </SidebarLink>
+                  ))}
+                >
+                  Flashcards
+                </SidebarLinksGroup>
+                <SidebarLinksGroup
+                  icon={<KeyboardIcon />}
+                  subLinks={practiceTasks.map((practiceTask) => (
+                    <SidebarLink
+                      key={practiceTask.id}
+                      action={<RemovePracticeTask id={practiceTask.id} />}
+                    >
+                      <LinkOverlay
+                        onClick={() => {
+                          togglePracticeTaskForm({ practiceTask });
+                          setOpen(false);
+                        }}
+                      >
+                        <SidebarLinkContent>
+                          {practiceTask.title}
+                        </SidebarLinkContent>
+                      </LinkOverlay>
+                    </SidebarLink>
+                  ))}
+                >
+                  Practice Tasks
+                </SidebarLinksGroup>
+                <Resources resources={resources} learnId={learnId} />
+              </Stack>
+            </DrawerBody>
+          </DrawerContent>
+        </DrawerPositioner>
+      </DrawerRoot>
+    </>
+  );
+}
+
 export function SidebarLink({
   action,
   href,

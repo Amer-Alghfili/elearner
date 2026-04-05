@@ -1,5 +1,5 @@
 import { AnswerType } from "../_flashcard-form/types";
-import { Sidebar as ClientSidebar } from "./client";
+import { Sidebar as ClientSidebar, LearnMobileDrawer } from "./client";
 import { prisma } from "@/prisma";
 import { Resource as ElearnerResource } from "./resources";
 import { Resource } from "@/generated/prisma/client";
@@ -77,16 +77,21 @@ export async function Sidebar({ learnId }: { learnId: number }) {
     });
   }
 
+  const props = {
+    learnId,
+    practiceTasks,
+    flashcards: flashcards.map((flashcard) => ({
+      ...flashcard,
+      answerType: flashcard.answerType as AnswerType,
+      options: flashcard.options as string[] | null,
+    })),
+    resources: group,
+  };
+
   return (
-    <ClientSidebar
-      learnId={learnId}
-      practiceTasks={practiceTasks}
-      flashcards={flashcards.map((flashcard) => ({
-        ...flashcard,
-        answerType: flashcard.answerType as AnswerType,
-        options: flashcard.options as string[] | null,
-      }))}
-      resources={group}
-    />
+    <>
+      <ClientSidebar {...props} />
+      <LearnMobileDrawer {...props} />
+    </>
   );
 }
