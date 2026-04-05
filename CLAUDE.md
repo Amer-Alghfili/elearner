@@ -53,15 +53,15 @@ No test framework is configured.
 
 ### Key files
 
-| File | Purpose |
-|------|---------|
-| `auth.ts` | NextAuth setup (Credentials + Google providers) |
-| `auth.config.ts` | Auth callbacks, session shape, route protection |
-| `prisma.ts` | Prisma client singleton (PrismaPg adapter) |
-| `theme/index.ts` | Chakra UI theme root — import recipes here |
-| `theme/recipes/` | Chakra component recipes (button, input, checkbox…) |
-| `components/ElearnerNoteEditor.tsx` | BlockNote editor wrapper |
-| `service/knowledge-test.ts` | Spaced repetition scheduling logic |
+| File                                | Purpose                                             |
+| ----------------------------------- | --------------------------------------------------- |
+| `auth.ts`                           | NextAuth setup (Credentials + Google providers)     |
+| `auth.config.ts`                    | Auth callbacks, session shape, route protection     |
+| `prisma.ts`                         | Prisma client singleton (PrismaPg adapter)          |
+| `theme/index.ts`                    | Chakra UI theme root — import recipes here          |
+| `theme/recipes/`                    | Chakra component recipes (button, input, checkbox…) |
+| `components/ElearnerNoteEditor.tsx` | BlockNote editor wrapper                            |
+| `service/knowledge-test.ts`         | Spaced repetition scheduling logic                  |
 
 ### Database models (Prisma)
 
@@ -90,34 +90,3 @@ NextAuth 5 (beta). Session contains `user.email`. Middleware in `auth.config.ts`
 - Mutations go through server actions in `app/lib/`.
 - BlockNote blocks are serialized to JSON and stored per-block in `NoteFileBlock`/`LearnNoteBlock` with an `order` integer.
 - Spaced repetition stages and `due` dates are managed by `service/knowledge-test.ts`.
-
-### Spaced repetition review flow
-
-FlashCards and PracticeTasks share the same spaced repetition model: each has a `stage` (0–4), a `due` date, and an `answeredAt` timestamp.
-
-**Stage intervals** (`service/knowledge-test.ts`):
-
-| Stage | Next review in |
-|-------|---------------|
-| 0     | 1 day         |
-| 1     | 3 days        |
-| 2     | 7 days        |
-| 3     | 14 days       |
-| 4     | 30 days (max) |
-
-**What happens when a user answers** (`app/review-learns/[id]/action.ts`):
-1. The submitted stage is `current_stage + 1` (capped at 4), set via a hidden form field in the UI.
-2. `calculateDueDate(newStage)` computes the next `due` date.
-3. The item's `stage`, `due`, `answeredAt`, and (for flashcards) `submitted_answer` are updated in the database.
-
-**Which items appear for review** (`app/review-learns/filters.ts`):
-Items are shown if either:
-- Their `due` date is ≤ now (i.e. they are due or overdue), **or**
-- They were already answered today (`answeredAt` between start-of-today and start-of-tomorrow) — this keeps answered items visible for the rest of the day so users can revisit them.
-
-**Review UI** (`app/review-learns/[id]/KnowledgeItemTestFlow.tsx`):
-- Items are sorted with answered items first, unanswered after.
-- The user starts at the first unanswered item.
-- Flashcards support three answer types: `open-ended`, `multiple-choices`, and `true-false`.
-- Practice tasks display their description as read-only BlockNote content.
-- After answering the last item, the user is redirected to `/home` with a success toast.
