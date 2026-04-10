@@ -11,6 +11,7 @@ import {
   DrawerPositioner,
   DrawerRoot,
   Flex,
+  Heading,
   IconButton,
   Stack,
   Link,
@@ -19,6 +20,8 @@ import {
   LinkOverlay,
   Box,
   BoxProps,
+  Text,
+  Button,
 } from "@chakra-ui/react";
 import NextLink, { LinkProps } from "next/link";
 import {
@@ -36,7 +39,10 @@ import {
   MenuTrigger,
 } from "@/components/ui/menu";
 import { usePathname } from "next/navigation";
-import { useLearnControlManagement, useLearnNotebooksContext } from "../LearnPageContainer";
+import {
+  useLearnControlManagement,
+  useLearnNotebooksContext,
+} from "../LearnPageContainer";
 import { Flashcard } from "../_flashcard-form/types";
 import { Remove as RemoveFlashcard } from "../_flashcard-form/Remove";
 import TruncateText from "@/components/TruncateText";
@@ -45,6 +51,8 @@ import { RemovePracticeTask } from "../_practice-task-form/Remove";
 import { CreateNotebook } from "../_notebook/Create";
 import { RemoveNotebook } from "../_notebook/Remove";
 import { Resource, Resources } from "./resources";
+import { DialogBody, DialogContent, DialogRoot } from "@/components/ui/dialog";
+import { FaPlay } from "react-icons/fa";
 
 export function Sidebar({
   learnId,
@@ -109,12 +117,7 @@ export function Sidebar({
               key={notebook.id}
               href={notebook.id.toString()}
               prefetch={false}
-              action={
-                <RemoveNotebook
-                  id={notebook.id}
-                  learnId={learnId}
-                />
-              }
+              action={<RemoveNotebook id={notebook.id} learnId={learnId} />}
             >
               <SidebarLinkContent>{notebook.title}</SidebarLinkContent>
             </SidebarLink>
@@ -156,7 +159,71 @@ export function Sidebar({
         </SidebarLinksGroup>
         <Resources resources={resources} learnId={learnId} />
       </Stack>
+      {sidebarExpanded && <LearnVideoGuide />}
     </Stack>
+  );
+}
+
+function LearnVideoGuide() {
+  const [open, setOpen] = React.useState(false);
+
+  return (
+    <>
+      <Stack
+        w="full"
+        mt="auto"
+        gap="0.75em"
+        px="1.25em"
+        py="1.25em"
+        borderRadius="12px"
+        bg="linear-gradient(135deg, #FFFEF7 0%, #FEFCE8 60%, #FEFADC 100%)"
+        border="1px solid"
+        borderColor="rgba(234, 210, 100, 0.35)"
+        color="text.primary"
+      >
+        <Heading as="h4" fontSize="sm" fontWeight="bold" color="text.primary">
+          How to use this page ?
+        </Heading>
+        <Text fontSize="xs" color="text.secondary">
+          Watch this short video to get the most out of the learn page.
+        </Text>
+        <Button
+          variant="plain"
+          color="primary"
+          mt="0.5em"
+          alignSelf="flex-start"
+          p={0}
+          h="auto"
+          fontSize="sm"
+          onClick={() => setOpen(true)}
+        >
+          Watch video <FaPlay color="#986D00" />
+        </Button>
+      </Stack>
+
+      <DialogRoot
+        open={open}
+        onOpenChange={(e) => setOpen(e.open)}
+        size="xl"
+        placement="center"
+      >
+        <DialogContent borderRadius="12px">
+          <DialogBody p="0">
+            <iframe
+              width="100%"
+              style={{ aspectRatio: "16/9", borderRadius: "12px" }}
+              src={
+                open
+                  ? "https://www.youtube.com/embed/c-LtuKI9ti8?autoplay=1"
+                  : undefined
+              }
+              title="YouTube video"
+              allowFullScreen
+            />
+          </DialogBody>
+        </DialogContent>
+      </DialogRoot>
+    </>
   );
 }
 
@@ -387,6 +454,7 @@ export function LearnMobileDrawer({
                   Practice Tasks
                 </SidebarLinksGroup>
                 <Resources resources={resources} learnId={learnId} />
+                <LearnVideoGuide />
               </Stack>
             </DrawerBody>
           </DrawerContent>
@@ -435,7 +503,9 @@ export function SidebarLink({
           >
             <LinkOverlay asChild w="80%">
               {href != null && (
-                <NextLink href={href as any} prefetch={prefetch}>{children}</NextLink>
+                <NextLink href={href as any} prefetch={prefetch}>
+                  {children}
+                </NextLink>
               )}
               {href == null && children}
             </LinkOverlay>
