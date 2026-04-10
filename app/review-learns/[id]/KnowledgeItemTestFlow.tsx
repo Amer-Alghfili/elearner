@@ -502,6 +502,7 @@ function AnswerForm({ questionItem }: { questionItem: ReviewLearnItem }) {
 
   return (
     <Textarea
+      key={questionItem.id}
       id="answer"
       name="answer"
       defaultValue={questionItem.submittedAnswer || ""}
