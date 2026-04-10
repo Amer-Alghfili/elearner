@@ -48,6 +48,24 @@ export async function deleteLearn(id: number) {
         },
       });
 
+      await prisma.resource.deleteMany({
+        where: {
+          learn_id: id,
+        },
+      });
+
+      await prisma.flashCard.deleteMany({
+        where: {
+          learn_id: id,
+        },
+      });
+
+      await prisma.practiceTask.deleteMany({
+        where: {
+          learn_id: id,
+        },
+      });
+
       await prisma.learn.deleteMany({
         where: {
           id,
@@ -67,7 +85,7 @@ export async function deleteLearn(id: number) {
 
 export async function postLearn(
   _: unknown,
-  formData: FormData
+  formData: FormData,
 ): Promise<Learn[] | ZodError | undefined> {
   const data = await auth();
 

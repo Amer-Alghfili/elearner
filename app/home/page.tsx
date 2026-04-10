@@ -5,15 +5,26 @@ import { auth } from "@/auth";
 import { prisma } from "@/prisma";
 import LearnsContainer from "./LearnsContainer";
 import VideoGuide from "./VideoGuide";
+import { createSampleLearn } from "@/app/lib/sample-learn";
 
 export default async function HomePage() {
   const today = new Date();
 
   const data = await auth();
+  const email = data?.user?.email as string;
+
+  const user = await prisma.user.findUnique({
+    where: { email },
+    include: { _count: { select: { learns: true } } },
+  });
+
+  if (user && !user.sampleLearnsCreated && user._count.learns === 0) {
+    await createSampleLearn(email);
+  }
 
   const learns = await prisma.learn.findMany({
     where: {
-      user_id: data?.user?.email as string,
+      user_id: email,
     },
     orderBy: {
       createdAt: "desc",

@@ -8,9 +8,10 @@ datasource db {
 }
 
 model User {
-  email    String   @id @db.VarChar(255)
-  password String?  @db.VarChar(255)
-  learns   Learn[]
+  email               String   @id @db.VarChar(255)
+  password            String?  @db.VarChar(255)
+  sampleLearnsCreated Boolean  @default(false) @map("sample_learns_created")
+  learns              Learn[]
 
   @@map("users")
 }
