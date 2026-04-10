@@ -17,10 +17,10 @@ Elearner replaces all of these: learners save resources, write notes, create fla
 
 ```bash
 # Development
-npm run dev               # Start dev server (Turbopack)
+yarn run dev               # Start dev server (Turbopack)
 
 # Build (runs Chakra typegen + Prisma generate before Next.js build)
-npm run build
+yarn run build
 
 # Database
 npx prisma generate                        # Regenerate Prisma client
@@ -31,7 +31,7 @@ npx prisma studio                          # Open Prisma Studio
 npx @chakra-ui/cli typegen ./theme/index.ts  # Regenerate Chakra types (run after theme changes)
 
 # Lint
-npm run lint
+yarn run lint
 ```
 
 No test framework is configured.
@@ -39,6 +39,8 @@ No test framework is configured.
 ## Architecture
 
 **Stack**: Next.js 16 (App Router) · React 19 · TypeScript · PostgreSQL via Prisma 7 · NextAuth 5 · Chakra UI 3 · Mantine · BlockNote · Tailwind CSS 4
+
+**Package manager**: yarn
 
 ### App Router structure
 
