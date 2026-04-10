@@ -1,4 +1,4 @@
-import { Box, Button, Flex, IconButton, Link } from "@chakra-ui/react";
+import { Button, Flex, IconButton, Link } from "@chakra-ui/react";
 import { ExitIcon } from "./Icons";
 import { logout } from "@/auth";
 import { Logo } from "./Logo";
@@ -6,6 +6,7 @@ import { Alert } from "./ui/alert";
 import { FaRegLightbulb } from "react-icons/fa6";
 import { LuExternalLink } from "react-icons/lu";
 import NextLink from "next/link";
+import FeedbackButton from "./FeedbackButton";
 
 export default function Header({
   withLogo = true,
@@ -34,7 +35,8 @@ export default function Header({
           }
         />
       )}
-      <Box ms="auto">
+      <Flex ms="auto" display="flex" alignItems="center" gap="2em">
+        <FeedbackButton />
         <form action={logout}>
           <Button
             type="submit"
@@ -46,7 +48,7 @@ export default function Header({
             Logout
           </Button>
         </form>
-      </Box>
+      </Flex>
     </Flex>
   );
 }
