@@ -28,8 +28,14 @@ export default function VideoGuide() {
         <Text fontSize="sm" color="text.secondary">
           Watch this short video to see how to get the most out of Elearner.
         </Text>
-        <Button mt="2em" alignSelf="flex-start" onClick={() => setOpen(true)}>
-          Watch video <FaPlay />
+        <Button
+          variant="plain"
+          color="primary"
+          mt="2em"
+          alignSelf="flex-start"
+          onClick={() => setOpen(true)}
+        >
+          Watch video <FaPlay color="#986D00" />
         </Button>
       </Flex>
 
