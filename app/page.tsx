@@ -1943,7 +1943,7 @@ export default function LandingPage() {
             _hover={{ bg: "primary.thick" }}
             transition="background 0.2s"
           >
-            <NextLink href="/signup">Get started free</NextLink>
+            <NextLink href="/signup">Get Started</NextLink>
           </Button>
         </HStack>
       </Flex>
@@ -2048,7 +2048,7 @@ export default function LandingPage() {
                 }}
                 transition="all 0.2s"
               >
-                <NextLink href="/signup">Get started for free</NextLink>
+                <NextLink href="/signup">Get Started</NextLink>
               </Button>
             </Box>
           </Stack>
@@ -2107,7 +2107,7 @@ export default function LandingPage() {
                 }}
                 transition="all 0.2s"
               >
-                <NextLink href="/signup">Create your free account</NextLink>
+                <NextLink href="/signup">Create your account</NextLink>
               </Button>
             </Stack>
           </Reveal>
