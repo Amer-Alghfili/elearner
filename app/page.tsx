@@ -5,6 +5,7 @@ import {
   Button,
   Container,
   Flex,
+  Heading,
   HStack,
   Image,
   Link,
@@ -1510,76 +1511,6 @@ function CombinedFeatureCard({
   );
 }
 
-const JOURNEY_STEPS: any[] = [
-  {
-    number: 1,
-    title: "Pick resource",
-    desc: "You might choose one or more of the following",
-    color: "#D97706",
-    bg: "rgba(245,158,11,0.07)",
-    border: "rgba(245,158,11,0.22)",
-    gradient: "linear-gradient(135deg, #fffef8 0%, #fffbee 50%, #fef3c7 100%)",
-    apps: [
-      { name: "Books", bg: "#FEF3C7", emoji: "📚", offsetY: 0 },
-      { name: "Courses", bg: "#DCFCE7", emoji: "🎓", offsetY: 16 },
-      { name: "Playlists", bg: "#DBEAFE", emoji: "📺", offsetY: -10 },
-    ],
-  },
-  {
-    number: 2,
-    title: "Start learning",
-    desc: "You start watch/read and take notes",
-    color: "#2563EB",
-    bg: "rgba(59,130,246,0.07)",
-    border: "rgba(59,130,246,0.22)",
-    gradient: "linear-gradient(135deg, #f8fbff 0%, #eff6ff 50%, #dbeafe 100%)",
-    apps: [
-      { name: "Notion", bg: "#1a1a1a", offsetY: 0 },
-      { name: "Obsidian", bg: "#4B2DA4", offsetY: 18 },
-    ],
-  },
-  {
-    number: 3,
-    title: "Found an interesting resource",
-    desc: "Add it to bookmark for future reference",
-    color: "#EA580C",
-    bg: "rgba(234,88,12,0.07)",
-    border: "rgba(234,88,12,0.22)",
-    gradient: "linear-gradient(135deg, #fff9f5 0%, #fff2ea 50%, #ffedd5 100%)",
-    apps: [
-      { name: "Chrome", bg: "#E8EAED", offsetY: 0 },
-      { name: "Raindrop", bg: "#0284C7", offsetY: 14 },
-      {
-        name: "Pocket",
-        bg: "#EF4056",
-        textIcon: "P",
-        textColor: "#fff",
-        offsetY: -8,
-      },
-    ],
-  },
-  {
-    number: 4,
-    title: "Active recall",
-    desc: "Test your understanding and space it out over time for better retention",
-    color: "#7C3AED",
-    bg: "rgba(139,92,246,0.07)",
-    border: "rgba(139,92,246,0.22)",
-    gradient: "linear-gradient(135deg, #faf8ff 0%, #f5f3ff 50%, #ede9fe 100%)",
-    apps: [
-      { name: "Anki", bg: "#0093D0", offsetY: 0 },
-      { name: "Quizlet", bg: "#4257B2", offsetY: 14 },
-      {
-        name: "Brainscape",
-        bg: "#E05A2B",
-        textIcon: "B!",
-        textColor: "#fff",
-        offsetY: -6,
-      },
-    ],
-  },
-];
-
 // ── Cloud SVG (path from user's art) ─────────────────────────────────
 function CloudSVG({
   fill = "#E2E3E7",
@@ -1629,27 +1560,17 @@ function LearningJourneySection() {
         <Reveal>
           <Stack
             gap="1.5em"
-            mb={{ base: "6em", md: "12em" }}
+            mb={{ base: "6em", md: "20em" }}
             alignItems="center"
             textAlign="center"
           >
-            <Text textStyle="h1" color="text.primary">
+            <Heading as="h1" color="text.primary">
               As a{" "}
               <Box as="span" color="primary">
                 learner
               </Box>{" "}
-              you do these activities
-            </Text>
-            <Text
-              textStyle="h4"
-              fontWeight="medium"
-              color="text.secondary"
-              maxW="2xl"
-              textAlign="center"
-            >
-              A typical study session spans multiple tools — each built for only
-              one part of the process.
-            </Text>
+              you typically do these activities
+            </Heading>
           </Stack>
         </Reveal>
 
@@ -1673,7 +1594,7 @@ function LearningJourneySection() {
                 color="text.primary"
                 lineHeight={1.15}
               >
-                Learning session
+                Deep Focused Learning
               </Text>
               <Text
                 textStyle="h5"
@@ -1681,8 +1602,8 @@ function LearningJourneySection() {
                 color="text.secondary"
                 lineHeight={1.6}
               >
-                count on you to add it for me count on you to add it for me
-                count on you to add it for me
+                Engaging directly with study materials by reading, watching,
+                listening, taking notes, and understanding concepts.
               </Text>
             </Stack>
             <Box flex="1" display="flex" justifyContent="center">
@@ -1728,7 +1649,7 @@ function LearningJourneySection() {
                 color="text.primary"
                 lineHeight={1.15}
               >
-                Searching for resources
+                Searching for Resources and Bookmarking
               </Text>
               <Text
                 textStyle="h5"
@@ -1736,8 +1657,8 @@ function LearningJourneySection() {
                 color="text.secondary"
                 lineHeight={1.6}
               >
-                count on you to add it for me count on you to add it for me
-                count on you to add it for me
+                Finding useful resources from the web, social media, and
+                roadmaps, then saving and organizing them for later.
               </Text>
             </Stack>
           </Stack>
@@ -1762,7 +1683,7 @@ function LearningJourneySection() {
                 color="text.primary"
                 lineHeight={1.15}
               >
-                Active Recall &amp; Spaced Repetition
+                Active Recall and Spaced Repetition
               </Text>
               <Text
                 textStyle="h5"
@@ -1770,8 +1691,8 @@ function LearningJourneySection() {
                 color="text.secondary"
                 lineHeight={1.6}
               >
-                count on you to add it for me count on you to add it for me
-                count on you to add it for me
+                Testing yourself to retrieve information and reviewing it at
+                increasing intervals to strengthen long-term memory.
               </Text>
             </Stack>
             <Box
@@ -1792,23 +1713,7 @@ function LearningJourneySection() {
 
         {/* ── Bridge to next section ── */}
         <Reveal delay={520}>
-          <Stack
-            alignItems="center"
-            gap="0"
-            mt={{ base: "16", md: "30em" }}
-            mb={{ base: "4", md: "8" }}
-          >
-            {/* Top: wavy LINE — no arrowhead */}
-            <svg width="36" height="80" viewBox="0 0 36 80" fill="none">
-              <path
-                d="M18 0 C30 8, 6 26, 18 40 C30 54, 6 66, 18 80"
-                stroke="#C9C3BC"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                fill="none"
-              />
-            </svg>
-
+          <Stack alignItems="center" gap="0" my={{ base: "16", md: "30em" }}>
             {/* Clouds + central emoji */}
             <Box
               position="relative"
@@ -1925,39 +1830,62 @@ function LearningJourneySection() {
               maxW="xl"
             >
               <Text textStyle="h3" color="text.primary" lineHeight={1.3}>
-                Every step uses a{" "}
+                Every activity uses a{" "}
                 <Box as="span" color="accent.softCoral">
                   different app.
                 </Box>
               </Text>
               <Text textStyle="lg" color="text.secondary" maxW="xl">
-                No single tool ties them all together — until now. That&apos;s
-                why{" "}
+                No single tool ties them all together{" "}
+                <Box as="span" fontWeight="bold">
+                  until now
+                </Box>
+                . That&apos;s why{" "}
                 <Box as="span" color="primary" fontWeight="bold">
                   Elearner
                 </Box>{" "}
                 exists.
               </Text>
             </Stack>
+          </Stack>
+        </Reveal>
 
-            {/* Bottom: wavy ARROW — with arrowhead */}
-            <svg width="36" height="90" viewBox="0 0 36 90" fill="none">
-              <path
-                d="M18 0 C30 10, 6 28, 18 45 C30 62, 6 73, 18 86"
-                stroke="#B8B0A8"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                fill="none"
-              />
-              <path
-                d="M12 80 L18 86 L24 80"
-                stroke="#B8B0A8"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                fill="none"
-              />
-            </svg>
+        {/* ── Learn section ── */}
+        <Reveal delay={200}>
+          <Stack
+            alignItems="center"
+            gap="2em"
+            my={{ base: "16", md: "24" }}
+            px={{ base: "6", md: "0" }}
+          >
+            <Stack alignItems="center" gap="1em" textAlign="center">
+              <Heading as="h2" color="primary" lineHeight={1.3}>
+                All Your Learning Activities in One Place
+              </Heading>
+              <Text textStyle="lg" color="text.secondary">
+                Elearner combines{" "}
+                <Box as="span" fontWeight="bold" color="primary">
+                  notebooks
+                </Box>{" "}
+                for actual learning,{" "}
+                <Box as="span" fontWeight="bold" color="primary">
+                  resources
+                </Box>{" "}
+                for discovery and bookmarking, and{" "}
+                <Box as="span" fontWeight="bold" color="primary">
+                  flashcards
+                </Box>{" "}
+                for active recall and spaced repetition — all in a single,
+                seamless platform so you can focus on learning instead of
+                switching between tools.
+              </Text>
+            </Stack>
+            <Image
+              src="/learn-screenshot.png"
+              alt="Elearner learn view"
+              transform={{ base: "translateX(1em)", md: "translateX(1.3em)" }}
+              w="full"
+            />
           </Stack>
         </Reveal>
       </Container>
@@ -2215,88 +2143,36 @@ export default function LandingPage() {
           <Flex
             direction={{ base: "column", md: "row" }}
             justifyContent="space-between"
-            alignItems={{ base: "start", md: "start" }}
+            alignItems={{ base: "start", md: "center" }}
             gap="10"
           >
-            <Stack gap="3" maxW="xs">
-              <Text
-                {...domine}
-                fontSize="clamp(1.4rem,2vw,1.75rem)"
-                fontWeight="bold"
-                color="#F0DFB8"
-              >
-                Elearner
-              </Text>
-              <Text
-                textStyle="sm"
-                color="rgba(255,255,255,0.38)"
-                lineHeight={1.6}
-              >
-                Notes, bookmarks, and flashcards — all in one place, organized
-                around what you&apos;re learning.
-              </Text>
-            </Stack>
-            <Link
-              href="https://discord.gg/elearner"
-              target="_blank"
-              rel="noopener noreferrer"
-              textDecoration="none"
-              display="flex"
-              alignItems="center"
-              gap="3"
-              px="5"
-              py="3.5"
-              rounded="xl"
-              bg="rgba(88,101,242,0.12)"
-              border="1px solid"
-              borderColor="rgba(88,101,242,0.28)"
-              _hover={{
-                bg: "rgba(88,101,242,0.22)",
-                transform: "translateY(-2px)",
-                borderColor: "rgba(88,101,242,0.45)",
-              }}
-              transition="all 0.2s"
-              alignSelf={{ base: "start", md: "center" }}
+            <Text
+              {...domine}
+              fontSize="clamp(1.4rem,2vw,1.75rem)"
+              fontWeight="bold"
+              color="#F0DFB8"
             >
-              <FaDiscord size={24} color="#7289da" />
-              <Stack gap="0.5">
-                <Text textStyle="sm-semibold" color="white">
-                  Join our Discord
-                </Text>
-                <Text textStyle="sm" color="rgba(255,255,255,0.38)">
-                  Ask questions &amp; share resources
-                </Text>
-              </Stack>
-            </Link>
-            <Stack gap="3">
-              <Text
-                textStyle="sm-semibold"
-                color="rgba(255,255,255,0.35)"
-                textTransform="uppercase"
-                letterSpacing="0.08em"
-              >
-                Quick links
-              </Text>
-              <Stack gap="2">
-                {[
-                  { label: "Log in", href: "/login" },
-                  { label: "Sign up", href: "/signup" },
-                ].map((link) => (
-                  <Link
-                    key={link.href}
-                    asChild
-                    textDecoration="none"
-                    color="rgba(255,255,255,0.45)"
-                    _hover={{ color: "rgba(255,255,255,0.85)" }}
-                    transition="color 0.2s"
-                  >
-                    <NextLink href={link.href as any}>
-                      <Text textStyle="md">{link.label}</Text>
-                    </NextLink>
-                  </Link>
-                ))}
-              </Stack>
-            </Stack>
+              Elearner
+            </Text>
+            <Flex gap="2em">
+              {[
+                { label: "Log in", href: "/login" },
+                { label: "Sign up", href: "/signup" },
+              ].map((link) => (
+                <Link
+                  key={link.href}
+                  asChild
+                  textDecoration="none"
+                  color="rgba(255,255,255,0.45)"
+                  _hover={{ color: "rgba(255,255,255,0.85)" }}
+                  transition="color 0.2s"
+                >
+                  <NextLink href={link.href as any}>
+                    <Text textStyle="md">{link.label}</Text>
+                  </NextLink>
+                </Link>
+              ))}
+            </Flex>
           </Flex>
           <Box
             mt="12"
