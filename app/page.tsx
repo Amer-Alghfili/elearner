@@ -1628,12 +1628,12 @@ function LearningJourneySection() {
       >
         <Reveal>
           <Stack
-            gap="3"
+            gap="1.5em"
             mb={{ base: "6em", md: "12em" }}
             alignItems="center"
             textAlign="center"
           >
-            <Text textStyle="h2" color="text.primary">
+            <Text textStyle="h1" color="text.primary">
               As a{" "}
               <Box as="span" color="primary">
                 learner
@@ -1641,9 +1641,10 @@ function LearningJourneySection() {
               you do these activities
             </Text>
             <Text
-              textStyle="lg"
+              textStyle="h4"
+              fontWeight="medium"
               color="text.secondary"
-              maxW="lg"
+              maxW="2xl"
               textAlign="center"
             >
               A typical study session spans multiple tools — each built for only
@@ -1659,17 +1660,27 @@ function LearningJourneySection() {
             justifyContent="space-between"
             gap={{ base: "12", md: "20" }}
             py={{ base: "16", md: "0" }}
+            mb={{ base: "8em", md: "17em" }}
           >
-            <Stack flex="1" gap="1em">
+            <Stack
+              flex="1"
+              gap="1em"
+              textAlign={{ base: "center", md: "start" }}
+            >
               <Text
-                textStyle="h3"
+                textStyle="h2"
                 fontWeight="bold"
                 color="text.primary"
                 lineHeight={1.15}
               >
-                ✍️ Learning session
+                Learning session
               </Text>
-              <Text color="text.secondary" lineHeight={1.6}>
+              <Text
+                textStyle="h5"
+                fontWeight="medium"
+                color="text.secondary"
+                lineHeight={1.6}
+              >
                 count on you to add it for me count on you to add it for me
                 count on you to add it for me
               </Text>
@@ -1678,7 +1689,7 @@ function LearningJourneySection() {
               <Image
                 src="/read-and-write.png"
                 alt="read and write illustration"
-                maxW={{ base: "none", md: "450px" }}
+                maxW={{ base: "auto", md: "450px" }}
                 w="full"
               />
             </Box>
@@ -1687,10 +1698,11 @@ function LearningJourneySection() {
 
         <Reveal>
           <Stack
-            direction={{ base: "column", md: "row" }}
+            direction={{ base: "column-reverse", md: "row" }}
             alignItems="center"
             justifyContent="space-between"
             py={{ base: "16", md: "0" }}
+            mb={{ base: "8em", md: "17em" }}
           >
             <Box
               flex="1"
@@ -1705,16 +1717,25 @@ function LearningJourneySection() {
                 w="full"
               />
             </Box>
-            <Stack flex="1" gap="1em">
+            <Stack
+              flex="1"
+              gap="1em"
+              textAlign={{ base: "center", md: "start" }}
+            >
               <Text
-                textStyle="h3"
+                textStyle="h2"
                 fontWeight="bold"
                 color="text.primary"
                 lineHeight={1.15}
               >
                 Searching for resources
               </Text>
-              <Text color="text.secondary" lineHeight={1.6}>
+              <Text
+                textStyle="h5"
+                fontWeight="medium"
+                color="text.secondary"
+                lineHeight={1.6}
+              >
                 count on you to add it for me count on you to add it for me
                 count on you to add it for me
               </Text>
@@ -1730,16 +1751,25 @@ function LearningJourneySection() {
             gap={{ base: "12", md: "20" }}
             py={{ base: "16", md: "0" }}
           >
-            <Stack flex="1" gap="1em">
+            <Stack
+              flex="1"
+              gap="1em"
+              textAlign={{ base: "center", md: "start" }}
+            >
               <Text
-                textStyle="h3"
+                textStyle="h2"
                 fontWeight="bold"
                 color="text.primary"
                 lineHeight={1.15}
               >
                 Active Recall &amp; Spaced Repetition
               </Text>
-              <Text color="text.secondary" lineHeight={1.6}>
+              <Text
+                textStyle="h5"
+                fontWeight="medium"
+                color="text.secondary"
+                lineHeight={1.6}
+              >
                 count on you to add it for me count on you to add it for me
                 count on you to add it for me
               </Text>
