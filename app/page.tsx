@@ -1510,88 +1510,7 @@ function CombinedFeatureCard({
   );
 }
 
-// ── Data ─────────────────────────────────────────────────────────────
-const combinedCards: {
-  painTitle: string;
-  painBullets: string[];
-  painIllustrationKey: IllustrationKey;
-  solutionTitle: string;
-  solutionBullets: string[];
-  solutionIllustrationKey: IllustrationKey;
-}[] = [
-  {
-    painTitle: "Context Switching",
-    painBullets: [
-      "How many platforms are you currently using?",
-      "Separate apps for bookmarks, note-taking, and flashcards — all fragmented",
-      "Every tool solves a learning problem, yet nothing talks to each other",
-    ],
-    painIllustrationKey: "ContextSwitching",
-    solutionTitle: "One Platform, One Solution!",
-    solutionBullets: [
-      'Organized around "learns" — topics you want to master',
-      "Notes, flashcards, and resources bundled in a single container",
-      "All your daily learning tasks live on one page — no tab juggling",
-    ],
-    solutionIllustrationKey: "OnePlatform",
-  },
-  {
-    painTitle: "Bookmarking Resources",
-    painBullets: [
-      "Where do you store links for a complex topic you're studying?",
-      "Browser bookmarks aren't built for learning — they're for frequently visited sites",
-      "Resources buried in nested folders get abandoned and forgotten",
-    ],
-    painIllustrationKey: "BookmarkingPain",
-    solutionTitle: "Resources Tied to Your Learn",
-    solutionBullets: [
-      "Every learn has its own dedicated bookmark list",
-      "No separate folders or apps — resources are tied directly to the topic",
-      "Open any learn and your resources are immediately front and center",
-    ],
-    solutionIllustrationKey: "TiedResources",
-  },
-  {
-    painTitle: "Reviewing What You've Learnt",
-    painBullets: [
-      "Highlighting a quote doesn't mean you know it — that's passive, not active learning",
-      "Once you grasp a topic, there's no convenient way to review it later",
-      "Barely any app combines notes and flashcards — you're forced to switch tools",
-    ],
-    painIllustrationKey: "ReviewingPain",
-    solutionTitle: "Add Flashcards Without Leaving Your Notebook!",
-    solutionBullets: [
-      "Create a flashcard without ever closing your notes",
-      "Spaced repetition keeps you actively engaged, not just passively reading",
-      "Each learn has its own isolated flashcard set — no mixing between topics",
-    ],
-    solutionIllustrationKey: "Flashcards",
-  },
-];
-
-// ── Learning Journey ─────────────────────────────────────────────────
-
-type JourneyApp = {
-  name: string;
-  bg: string;
-  emoji?: string;
-  textIcon?: string;
-  textColor?: string;
-  offsetY: number;
-};
-
-type JourneyStep = {
-  number: number;
-  title: string;
-  desc: string;
-  apps: JourneyApp[];
-  color: string;
-  bg: string;
-  border: string;
-  gradient: string;
-};
-
-const JOURNEY_STEPS: JourneyStep[] = [
+const JOURNEY_STEPS: any[] = [
   {
     number: 1,
     title: "Pick resource",
@@ -1661,171 +1580,6 @@ const JOURNEY_STEPS: JourneyStep[] = [
   },
 ];
 
-function JourneyAppTile({
-  app,
-  tileIndex,
-}: {
-  app: JourneyApp;
-  tileIndex: number;
-}) {
-  const csApp: CSApp = {
-    name: app.name,
-    bg: app.bg,
-    icon: app.textIcon,
-    color: app.textColor ?? "#fff",
-    fw: 800,
-    fs: app.name === "Pocket" ? 18 : 12,
-  };
-  const floatDelay = `${tileIndex * 0.7}s`;
-  return (
-    <div
-      className="journey-tile"
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: 9,
-        transform: `translateY(${app.offsetY}px)`,
-      }}
-    >
-      <div
-        className="journey-icon-box"
-        style={{
-          width: 68,
-          height: 68,
-          borderRadius: "50%",
-          background: app.bg,
-          border: "1.5px solid rgba(0,0,0,0.07)",
-          boxShadow: "0 6px 18px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.06)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexShrink: 0,
-          animation: `journey-float 3.4s ease-in-out infinite ${floatDelay}`,
-        }}
-      >
-        {app.emoji ? (
-          <span style={{ fontSize: 30, lineHeight: 1 }}>{app.emoji}</span>
-        ) : (
-          <div
-            style={{
-              transform: "scale(1.75)",
-              transformOrigin: "center",
-              lineHeight: 0,
-            }}
-          >
-            <CSAppIcon app={csApp} />
-          </div>
-        )}
-      </div>
-      <span
-        style={{
-          fontSize: 11,
-          fontWeight: 500,
-          color: "#9CA3AF",
-          textAlign: "center",
-          whiteSpace: "nowrap",
-        }}
-      >
-        {app.name}
-      </span>
-    </div>
-  );
-}
-
-function JourneyStepCard({
-  step,
-  index,
-}: {
-  step: JourneyStep;
-  index: number;
-}) {
-  return (
-    <Reveal delay={index * 120}>
-      <div
-        style={{
-          background: step.gradient,
-          borderRadius: 20,
-          border: `1px solid ${step.border}`,
-          padding: "28px 32px",
-          boxShadow: "0 2px 16px rgba(0,0,0,0.05), 0 1px 4px rgba(0,0,0,0.03)",
-          position: "relative",
-          overflow: "hidden",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: 24,
-          flexWrap: "wrap",
-        }}
-      >
-        {/* Step number + info */}
-        <div style={{ position: "relative", zIndex: 1 }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "baseline",
-              gap: 10,
-              marginBottom: 8,
-            }}
-          >
-            <span
-              style={{
-                fontSize: 46,
-                fontWeight: 800,
-                color: "#374151",
-                opacity: 0.22,
-                lineHeight: 1,
-                letterSpacing: "-0.03em",
-                fontFamily: "Georgia, serif",
-              }}
-            >
-              #{step.number}
-            </span>
-            <span
-              style={{
-                fontSize: 20,
-                fontWeight: 700,
-                color: "#1F1F1F",
-                letterSpacing: "-0.01em",
-              }}
-            >
-              {step.title}
-            </span>
-          </div>
-          <p
-            style={{
-              fontSize: 13.5,
-              color: "#9CA3AF",
-              lineHeight: 1.55,
-              margin: 0,
-              maxWidth: 260,
-            }}
-          >
-            {step.desc}
-          </p>
-        </div>
-        {/* App tiles scattered */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "flex-start",
-            gap: 20,
-            paddingTop: 20,
-            paddingBottom: 20,
-            position: "relative",
-            zIndex: 1,
-            flexShrink: 0,
-          }}
-        >
-          {step.apps.map((app, i) => (
-            <JourneyAppTile key={app.name} app={app} tileIndex={i} />
-          ))}
-        </div>
-      </div>
-    </Reveal>
-  );
-}
-
 // ── Cloud SVG (path from user's art) ─────────────────────────────────
 function CloudSVG({
   fill = "#E2E3E7",
@@ -1875,16 +1629,16 @@ function LearningJourneySection() {
         <Reveal>
           <Stack
             gap="3"
-            mb={{ base: "10", md: "12" }}
+            mb={{ base: "6em", md: "12em" }}
             alignItems="center"
             textAlign="center"
           >
             <Text textStyle="h2" color="text.primary">
-              How you learn{" "}
+              As a{" "}
               <Box as="span" color="primary">
-                usually
+                learner
               </Box>{" "}
-              🤔
+              you do these activities
             </Text>
             <Text
               textStyle="lg"
@@ -1898,11 +1652,39 @@ function LearningJourneySection() {
           </Stack>
         </Reveal>
 
-        <Stack gap={{ base: "3", md: "4" }}>
-          {JOURNEY_STEPS.map((step, i) => (
-            <JourneyStepCard key={step.number} step={step} index={i} />
-          ))}
-        </Stack>
+        <Reveal>
+          <Stack
+            direction={{ base: "column", md: "row" }}
+            alignItems="center"
+            justifyContent="space-between"
+            gap={{ base: "12", md: "20" }}
+            py={{ base: "16", md: "0" }}
+            mb="30em"
+          >
+            <Stack flex="1" gap="1em">
+              <Text
+                textStyle="h3"
+                fontWeight="bold"
+                color="text.primary"
+                lineHeight={1.15}
+              >
+                ✍️ Learning session
+              </Text>
+              <Text color="text.secondary" lineHeight={1.6}>
+                count on you to add it for me count on you to add it for me
+                count on you to add it for me
+              </Text>
+            </Stack>
+            <Box flex="1" display="flex" justifyContent="center">
+              <Image
+                src="/read-and-write.png"
+                alt="read and write illustration"
+                minW={{ base: "none", md: "350px" }}
+                w="full"
+              />
+            </Box>
+          </Stack>
+        </Reveal>
 
         {/* ── Bridge to next section ── */}
         <Reveal delay={520}>
