@@ -1994,23 +1994,6 @@ export default function LandingPage() {
           zIndex={1}
         >
           <Stack gap="7" alignItems="center">
-            <Box
-              px="4"
-              py="1.5"
-              rounded="full"
-              bg="primary.transparent"
-              border="1px solid"
-              borderColor="rgba(152,109,0,0.28)"
-              style={{
-                opacity: 0,
-                animation:
-                  "fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.1s forwards",
-              }}
-            >
-              <Text textStyle="sm-semibold" color="primary.thick">
-                Your all-in-one learning companion
-              </Text>
-            </Box>
             <Stack
               textStyle="h1"
               lineHeight={1.15}
