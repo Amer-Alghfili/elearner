@@ -1659,7 +1659,6 @@ function LearningJourneySection() {
             justifyContent="space-between"
             gap={{ base: "12", md: "20" }}
             py={{ base: "16", md: "0" }}
-            mb="30em"
           >
             <Stack flex="1" gap="1em">
               <Text
@@ -1679,6 +1678,81 @@ function LearningJourneySection() {
               <Image
                 src="/read-and-write.png"
                 alt="read and write illustration"
+                maxW={{ base: "none", md: "450px" }}
+                w="full"
+              />
+            </Box>
+          </Stack>
+        </Reveal>
+
+        <Reveal>
+          <Stack
+            direction={{ base: "column", md: "row" }}
+            alignItems="center"
+            justifyContent="space-between"
+            py={{ base: "16", md: "0" }}
+          >
+            <Box
+              flex="1"
+              display="flex"
+              justifyContent="flex-start"
+              transform={{ base: "none", md: "translateX(-5em)" }}
+            >
+              <Image
+                src="/search-illustration.png"
+                alt="search illustration"
+                maxW={{ base: "none", md: "350px" }}
+                w="full"
+              />
+            </Box>
+            <Stack flex="1" gap="1em">
+              <Text
+                textStyle="h3"
+                fontWeight="bold"
+                color="text.primary"
+                lineHeight={1.15}
+              >
+                Searching for resources
+              </Text>
+              <Text color="text.secondary" lineHeight={1.6}>
+                count on you to add it for me count on you to add it for me
+                count on you to add it for me
+              </Text>
+            </Stack>
+          </Stack>
+        </Reveal>
+
+        <Reveal>
+          <Stack
+            direction={{ base: "column", md: "row" }}
+            alignItems="center"
+            justifyContent="space-between"
+            gap={{ base: "12", md: "20" }}
+            py={{ base: "16", md: "0" }}
+          >
+            <Stack flex="1" gap="1em">
+              <Text
+                textStyle="h3"
+                fontWeight="bold"
+                color="text.primary"
+                lineHeight={1.15}
+              >
+                Active Recall &amp; Spaced Repetition
+              </Text>
+              <Text color="text.secondary" lineHeight={1.6}>
+                count on you to add it for me count on you to add it for me
+                count on you to add it for me
+              </Text>
+            </Stack>
+            <Box
+              flex="1"
+              display="flex"
+              justifyContent="center"
+              transform="rotate(-25deg) translateY(-4em)"
+            >
+              <Image
+                src="/active-recall.png"
+                alt="active recall illustration"
                 minW={{ base: "none", md: "350px" }}
                 w="full"
               />
@@ -1691,7 +1765,7 @@ function LearningJourneySection() {
           <Stack
             alignItems="center"
             gap="0"
-            mt={{ base: "16", md: "28" }}
+            mt={{ base: "16", md: "30em" }}
             mb={{ base: "4", md: "8" }}
           >
             {/* Top: wavy LINE — no arrowhead */}
