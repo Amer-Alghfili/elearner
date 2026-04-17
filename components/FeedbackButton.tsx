@@ -9,20 +9,21 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toaster } from "@/components/ui/toaster";
-import { Button, Textarea } from "@chakra-ui/react";
+import { Button, Checkbox, Textarea } from "@chakra-ui/react";
 import React from "react";
 import { LuMessageSquare } from "react-icons/lu";
-import { sendFeedback } from "@/app/lib/feedback";
+import { submitFeedback } from "@/app/lib/feedback";
 
 export default function FeedbackButton() {
   const [open, setOpen] = React.useState(false);
   const [feedback, setFeedback] = React.useState("");
+  const [shareEmail, setShareEmail] = React.useState(false);
   const [isPending, setIsPending] = React.useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setIsPending(true);
-    const result = await sendFeedback(feedback);
+    const result = await submitFeedback(feedback, shareEmail);
     setIsPending(false);
 
     if (result.error) {
@@ -38,6 +39,7 @@ export default function FeedbackButton() {
         closable: true,
       });
       setFeedback("");
+      setShareEmail(false);
       setOpen(false);
     }
   }
@@ -64,7 +66,7 @@ export default function FeedbackButton() {
             <DialogHeader px="3rem">
               <DialogTitle textStyle="h4">Send Feedback</DialogTitle>
             </DialogHeader>
-            <DialogBody px="3rem">
+            <DialogBody px="3rem" display="flex" flexDir="column" gap="1rem">
               <Textarea
                 value={feedback}
                 onChange={(e) => setFeedback(e.target.value)}
@@ -76,6 +78,16 @@ export default function FeedbackButton() {
                 placeholder="What's on your mind?"
                 _placeholder={{ color: "#7A7A7A" }}
               />
+              <Checkbox.Root
+                checked={shareEmail}
+                onCheckedChange={({ checked }) =>
+                  setShareEmail(checked === true)
+                }
+              >
+                <Checkbox.HiddenInput />
+                <Checkbox.Control />
+                <Checkbox.Label>Share my email</Checkbox.Label>
+              </Checkbox.Root>
             </DialogBody>
             <DialogFooter px="3rem" pt="1rem" pb="2rem">
               <Button variant="secondary" onClick={() => setOpen(false)}>

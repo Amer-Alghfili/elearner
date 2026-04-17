@@ -1,26 +1,25 @@
 "use server";
 
-import { Resend } from "resend";
+import { auth } from "@/auth";
+import { prisma } from "@/prisma";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-export async function sendFeedback(
-  feedback: string
+export async function submitFeedback(
+  message: string,
+  shareEmail: boolean
 ): Promise<{ error?: string }> {
-  if (!feedback.trim()) {
+  if (!message.trim()) {
     return { error: "Feedback cannot be empty" };
   }
 
-  const { error } = await resend.emails.send({
-    from: "onboarding@resend.dev",
-    to: "ameralghfili@gmail.com",
-    subject: "Elearner Feedback",
-    text: feedback,
-  });
-
-  if (error) {
-    return { error: error.message };
+  let user_email: string | null = null;
+  if (shareEmail) {
+    const session = await auth();
+    user_email = session?.user?.email ?? null;
   }
+
+  await prisma.feedback.create({
+    data: { message, user_email },
+  });
 
   return {};
 }

@@ -119,3 +119,12 @@ model LearnNoteBlock {
 
   @@map("learns_note_blocks")
 }
+
+model Feedback {
+  id         Int      @id @default(autoincrement())
+  message    String
+  user_email String?  @db.VarChar(255)
+  createdAt  DateTime @default(now())
+
+  @@map("feedbacks")
+}
