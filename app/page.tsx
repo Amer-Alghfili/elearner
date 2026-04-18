@@ -1893,6 +1893,267 @@ function LearningJourneySection() {
   );
 }
 
+// ── Pricing Section ──────────────────────────────────────────────────
+function PricingSection() {
+  const freeFeatures = [
+    "3 learns",
+    "15 notebooks",
+    "30 flashcards",
+    "Unlimited resources",
+  ];
+  const premiumFeatures = [
+    "Unlimited learns",
+    "Unlimited notebooks",
+    "Unlimited flashcards",
+    "Unlimited resources",
+  ];
+
+  return (
+    <Box
+      id="pricing"
+      position="relative"
+      py={{ base: "16", md: "24" }}
+      overflow="hidden"
+      bg="neutral.background"
+    >
+      {/* Background glow */}
+      <Box
+        position="absolute"
+        top="50%"
+        left="50%"
+        style={{ transform: "translate(-50%, -50%)" }}
+        w="900px"
+        h="600px"
+        bg="radial-gradient(ellipse, rgba(152,109,0,0.07) 0%, transparent 68%)"
+        pointerEvents="none"
+      />
+
+      <Container
+        maxW="5xl"
+        px={{ base: "6", md: "12" }}
+        position="relative"
+        zIndex={1}
+      >
+        <Reveal>
+          <Stack
+            gap="5"
+            alignItems="center"
+            textAlign="center"
+            mb={{ base: "10", md: "14" }}
+          >
+            <Text textStyle="h2" color="text.primary" lineHeight={1.2}>
+              Simple pricing, Honest plans
+            </Text>
+
+            {/* Emphasized sentence */}
+            <Box maxW="xl">
+              <Text textStyle="lg" color="text.secondary" lineHeight={1.6}>
+                We don&apos;t hand you a countdown.{" "}
+                <Box as="span" color="primary" fontWeight="bold">
+                  We hand you the platform
+                </Box>{" "}
+                and let the experience speak for itself.
+              </Text>
+            </Box>
+          </Stack>
+        </Reveal>
+
+        {/* Plan cards */}
+        <Reveal delay={150}>
+          <Stack
+            direction={{ base: "column", md: "row" }}
+            gap={{ base: "5", md: "6" }}
+            alignItems={{ base: "stretch", md: "start" }}
+            maxW="3xl"
+            mx="auto"
+          >
+            {/* ── Free card ── */}
+            <Box
+              flex="1"
+              bg="white"
+              border="1px solid"
+              borderColor="stroke"
+              rounded="2xl"
+              p={{ base: "6", md: "8" }}
+              shadow="0 1px 6px rgba(0,0,0,0.04)"
+              display="flex"
+              flexDirection="column"
+              gap="6"
+            >
+              {/* Plan label */}
+              <Stack gap="1">
+                <Box
+                  display="inline-flex"
+                  alignItems="center"
+                  gap="2"
+                  px="3"
+                  py="1"
+                  rounded="full"
+                  bg="neutral.surface"
+                  border="1px solid"
+                  borderColor="stroke"
+                  alignSelf="start"
+                >
+                  <Text textStyle="sm-semibold" color="text.secondary">
+                    Free
+                  </Text>
+                </Box>
+                <Text textStyle="h3" color="text.primary" mt="2">
+                  $0
+                </Text>
+                <Text textStyle="sm" color="text.caption">
+                  No credit card required
+                </Text>
+              </Stack>
+
+              {/* Divider */}
+              <Box h="1px" bg="stroke" />
+
+              {/* Features */}
+              <Stack gap="3" flex="1">
+                {freeFeatures.map((f, i) => (
+                  <HStack key={i} gap="3">
+                    <Box
+                      flexShrink={0}
+                      w="18px"
+                      h="18px"
+                      rounded="full"
+                      bg="neutral.surface"
+                      border="1px solid"
+                      borderColor="stroke"
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                    >
+                      <svg width="9" height="7" viewBox="0 0 9 7" fill="none">
+                        <path
+                          d="M1 3.5L3.5 6L8 1"
+                          stroke="#919191"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </Box>
+                    <Text textStyle="sm" color="text.secondary">
+                      {f}
+                    </Text>
+                  </HStack>
+                ))}
+              </Stack>
+
+              {/* CTA */}
+              <Button
+                asChild
+                size="md"
+                variant="secondary"
+                rounded="full"
+                fontWeight="semibold"
+                w="full"
+              >
+                <NextLink href="/signup">Get Started</NextLink>
+              </Button>
+            </Box>
+
+            {/* ── Premium card ── */}
+            <Box
+              flex="1"
+              bg="rgba(152,109,0,0.05)"
+              border="1.5px solid"
+              borderColor="primary"
+              rounded="2xl"
+              p={{ base: "6", md: "8" }}
+              shadow="0 4px 24px rgba(152,109,0,0.15), 0 1px 6px rgba(0,0,0,0.04)"
+              display="flex"
+              flexDirection="column"
+              gap="6"
+              position="relative"
+            >
+              {/* Plan label */}
+              <Stack gap="1">
+                <Box
+                  display="inline-flex"
+                  alignItems="center"
+                  gap="2"
+                  px="3"
+                  py="1"
+                  rounded="full"
+                  bg="rgba(152,109,0,0.12)"
+                  alignSelf="start"
+                >
+                  <Text textStyle="sm-semibold" color="primary">
+                    Premium
+                  </Text>
+                </Box>
+                <HStack gap="2" alignItems="baseline" mt="2">
+                  <Text textStyle="h3" color="text.primary">
+                    $7
+                  </Text>
+                  <Text textStyle="sm" color="text.caption">
+                    / month
+                  </Text>
+                </HStack>
+                <Text textStyle="sm" color="text.caption">
+                  Billed monthly
+                </Text>
+              </Stack>
+
+              {/* Divider */}
+              <Box h="1px" bg="rgba(152,109,0,0.2)" />
+
+              {/* Features */}
+              <Stack gap="3" flex="1">
+                {premiumFeatures.map((f, i) => (
+                  <HStack key={i} gap="3">
+                    <Box
+                      flexShrink={0}
+                      w="18px"
+                      h="18px"
+                      rounded="full"
+                      bg="rgba(152,109,0,0.12)"
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                    >
+                      <svg width="9" height="7" viewBox="0 0 9 7" fill="none">
+                        <path
+                          d="M1 3.5L3.5 6L8 1"
+                          stroke="#986D00"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </Box>
+                    <Text textStyle="sm" color="text.secondary">
+                      {f}
+                    </Text>
+                  </HStack>
+                ))}
+              </Stack>
+
+              {/* CTA */}
+              <Button
+                asChild
+                size="md"
+                bg="primary"
+                color="white"
+                rounded="full"
+                fontWeight="semibold"
+                w="full"
+                _hover={{ bg: "primary.thick" }}
+                transition="background 0.2s"
+              >
+                <NextLink href="/signup">Upgrade to Premium</NextLink>
+              </Button>
+            </Box>
+          </Stack>
+        </Reveal>
+      </Container>
+    </Box>
+  );
+}
+
 // ── Page ─────────────────────────────────────────────────────────────
 export default function LandingPage() {
   return (
@@ -1922,7 +2183,7 @@ export default function LandingPage() {
         >
           Elearner
         </Text>
-        <HStack gap="3">
+        <HStack gap="2em">
           <Button
             asChild
             variant="plain"
@@ -1930,21 +2191,32 @@ export default function LandingPage() {
             fontWeight="medium"
             size="sm"
           >
-            <NextLink href="/login">Log in</NextLink>
+            <NextLink href="#pricing">Pricing</NextLink>
           </Button>
-          <Button
-            asChild
-            size="sm"
-            bg="primary"
-            color="white"
-            rounded="full"
-            px="5"
-            fontWeight="semibold"
-            _hover={{ bg: "primary.thick" }}
-            transition="background 0.2s"
-          >
-            <NextLink href="/signup">Get Started</NextLink>
-          </Button>
+          <Flex gap="3">
+            <Button
+              asChild
+              variant="plain"
+              color="text.secondary"
+              fontWeight="medium"
+              size="sm"
+            >
+              <NextLink href="/login">Log in</NextLink>
+            </Button>
+            <Button
+              asChild
+              size="sm"
+              bg="primary"
+              color="white"
+              rounded="full"
+              px="5"
+              fontWeight="semibold"
+              _hover={{ bg: "primary.thick" }}
+              transition="background 0.2s"
+            >
+              <NextLink href="/signup">Get Started</NextLink>
+            </Button>
+          </Flex>
         </HStack>
       </Flex>
 
@@ -2056,6 +2328,8 @@ export default function LandingPage() {
       </Box>
 
       <LearningJourneySection />
+
+      <PricingSection />
 
       {/* ── Bottom CTA ───────────────────────────────────────── */}
       <Box
