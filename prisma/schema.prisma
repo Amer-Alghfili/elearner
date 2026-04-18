@@ -8,12 +8,24 @@ datasource db {
 }
 
 model User {
-  email               String   @id @db.VarChar(255)
-  password            String?  @db.VarChar(255)
-  sampleLearnsCreated Boolean  @default(false) @map("sample_learns_created")
+  email               String        @id @db.VarChar(255)
+  password            String?       @db.VarChar(255)
+  sampleLearnsCreated Boolean       @default(false) @map("sample_learns_created")
   learns              Learn[]
+  subscription        Subscription?
 
   @@map("users")
+}
+
+model Subscription {
+  id         Int      @id @default(autoincrement())
+  user_email String   @unique
+  user       User     @relation(fields: [user_email], references: [email])
+  endsAt     DateTime @map("ends_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@map("subscriptions")
 }
 
 model Learn {

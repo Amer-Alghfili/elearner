@@ -7,14 +7,18 @@ import {
   DialogRoot,
 } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
-import { Button, Input, Textarea } from "@chakra-ui/react";
+import { Box, Button, Input, Textarea } from "@chakra-ui/react";
 import React from "react";
 import { postLearn } from "./actions";
 import { toaster } from "@/components/ui/toaster";
 import { isZodError } from "@/types/error";
 import { useRouter } from "next/navigation";
+import { Tooltip } from "@/components/ui/tooltip";
 
-export default function CreateLearn(props: AddButtonProps) {
+export default function CreateLearn(
+  props: AddButtonProps & { atLearnLimit?: boolean }
+) {
+  const { atLearnLimit, ...rest } = props;
   const [open, setOpen] = React.useState<boolean>();
 
   const [state, formAction, isPending] = React.useActionState(
@@ -52,14 +56,27 @@ export default function CreateLearn(props: AddButtonProps) {
 
   return (
     <>
-      <AddButton
-        onClick={() => setOpen(true)}
-        textStyle="h5"
-        iconProps={{ w: "1.5rem", h: "1.5rem" }}
-        {...props}
+      <Tooltip
+        content="You've reached the free plan limit"
+        disabled={!atLearnLimit}
       >
-        New Learn
-      </AddButton>
+        <Box
+          as="span"
+          display="inline-block"
+          cursor={atLearnLimit ? "not-allowed" : "default"}
+        >
+          <AddButton
+            onClick={() => !atLearnLimit && setOpen(true)}
+            disabled={atLearnLimit}
+            pointerEvents={atLearnLimit ? "none" : "auto"}
+            textStyle="h5"
+            iconProps={{ w: "1.5rem", h: "1.5rem" }}
+            {...rest}
+          >
+            New Learn
+          </AddButton>
+        </Box>
+      </Tooltip>
       <DialogRoot open={open} onOpenChange={({ open }) => setOpen(open)}>
         <DialogContent
           maxW="none"

@@ -59,11 +59,13 @@ export function Sidebar({
   flashcards,
   practiceTasks,
   resources,
+  atNotebookLimit,
 }: {
   learnId: number;
   flashcards: Flashcard[];
   practiceTasks: PracticeTask[];
   resources: Resource[];
+  atNotebookLimit: boolean;
 }) {
   const {
     sidebarExpanded,
@@ -111,7 +113,9 @@ export function Sidebar({
       <Stack alignItems={sidebarExpanded ? "flex-start" : "center"} gap="1.5em">
         <SidebarLinksGroup
           icon={<NotebookIcon />}
-          action={<CreateNotebook learnId={learnId} />}
+          action={
+            <CreateNotebook learnId={learnId} atNotebookLimit={atNotebookLimit} />
+          }
           subLinks={notebooks.map((notebook) => (
             <SidebarLink
               key={notebook.id}
@@ -347,11 +351,13 @@ export function LearnMobileDrawer({
   flashcards,
   practiceTasks,
   resources,
+  atNotebookLimit,
 }: {
   learnId: number;
   flashcards: Flashcard[];
   practiceTasks: PracticeTask[];
   resources: Resource[];
+  atNotebookLimit: boolean;
 }) {
   const [open, setOpen] = React.useState(false);
   const { toggleFlashcardForm, togglePracticeTaskForm } =
@@ -393,7 +399,12 @@ export function LearnMobileDrawer({
               <Stack alignItems="flex-start" gap="1.5em">
                 <SidebarLinksGroup
                   icon={<NotebookIcon />}
-                  action={<CreateNotebook learnId={learnId} />}
+                  action={
+                    <CreateNotebook
+                      learnId={learnId}
+                      atNotebookLimit={atNotebookLimit}
+                    />
+                  }
                   subLinks={notebooks.map((notebook) => (
                     <SidebarLink
                       key={notebook.id}

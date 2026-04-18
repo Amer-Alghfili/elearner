@@ -5,7 +5,10 @@ import CreateLearn from "./CreateLearn";
 import { Learns } from "./Learns";
 import { Learn } from "./actions";
 
-export default function LearnsContainer(props: { learns: Learn[] }) {
+export default function LearnsContainer(props: {
+  learns: Learn[];
+  atLearnLimit: boolean;
+}) {
   const [learns, setLearns] = React.useState<Learn[]>(props.learns);
 
   React.useEffect(
@@ -17,7 +20,7 @@ export default function LearnsContainer(props: { learns: Learn[] }) {
 
   return (
     <>
-      <CreateLearn />
+      <CreateLearn atLearnLimit={props.atLearnLimit} />
       <Learns learns={learns} />
     </>
   );

@@ -3,6 +3,7 @@ import { Sidebar as ClientSidebar, LearnMobileDrawer } from "./client";
 import { prisma } from "@/prisma";
 import { Resource as ElearnerResource } from "./resources";
 import { Resource } from "@/generated/prisma/client";
+import { hasReachedLimit } from "@/app/lib/plan-limits";
 
 export async function Sidebar({ learnId }: { learnId: number }) {
   const flashcards = await prisma.flashCard.findMany({
@@ -77,9 +78,12 @@ export async function Sidebar({ learnId }: { learnId: number }) {
     });
   }
 
+  const atNotebookLimit = await hasReachedLimit("notebooks");
+
   const props = {
     learnId,
     practiceTasks,
+    atNotebookLimit,
     flashcards: flashcards.map((flashcard) => ({
       ...flashcard,
       answerType: flashcard.answerType as AnswerType,

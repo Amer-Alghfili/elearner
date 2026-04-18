@@ -2,6 +2,7 @@
 
 import { auth } from "@/auth";
 import { Prisma } from "@/generated/prisma/client";
+import { hasReachedLimit } from "@/app/lib/plan-limits";
 import { prisma } from "@/prisma";
 import { ZodError } from "@/types/error";
 import z from "zod";
@@ -107,6 +108,13 @@ export async function postLearn(
     const email = data?.user?.email as string;
 
     try {
+      if (!id && (await hasReachedLimit("learns"))) {
+        return {
+          errorMessage:
+            "You've reached the limit, you need to upgrade your plan",
+        };
+      }
+
       if (id) {
         await prisma.learn.update({
           where: {

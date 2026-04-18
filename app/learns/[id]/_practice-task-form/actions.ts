@@ -1,5 +1,6 @@
 "use server";
 
+import { hasReachedLimit } from "@/app/lib/plan-limits";
 import { prisma } from "@/prisma";
 import { calculateDueDate } from "@/service/knowledge-test";
 import { State } from "@/types/server-state";
@@ -56,6 +57,12 @@ export async function postPracticeTask(
     const { id } = data;
 
     if (id == null) {
+      if (await hasReachedLimit("flashcardsAndTasks")) {
+        return {
+          error: "You've reached the limit, you need to upgrade your plan",
+        };
+      }
+
       const due = calculateDueDate(0);
 
       const created = await prisma.practiceTask.create({

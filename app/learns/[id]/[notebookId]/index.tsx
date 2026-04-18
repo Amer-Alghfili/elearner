@@ -7,13 +7,14 @@ import {
 import React from "react";
 import { Block } from "@blocknote/core";
 import { useDebounce } from "use-debounce";
-import { Button, Flex, Input, Stack } from "@chakra-ui/react";
+import { Box, Button, Flex, Input, Stack } from "@chakra-ui/react";
 import { Field } from "@/components/ui/field";
 import { PlusIcon } from "@/components/Icons";
 import {
   useLearnControlManagement,
   useLearnNotebooksContext,
 } from "../LearnPageContainer";
+import { Tooltip } from "@/components/ui/tooltip";
 
 export type NotebookType = {
   id: number;
@@ -21,7 +22,13 @@ export type NotebookType = {
   blocks?: any[];
   learnId: number;
 };
-export function Notebook({ notebook }: { notebook: NotebookType }) {
+export function Notebook({
+  notebook,
+  atCardLimit = false,
+}: {
+  notebook: NotebookType;
+  atCardLimit?: boolean;
+}) {
   const { id, blocks = [] } = notebook;
 
   const [title, setTitle] = React.useState<string>(notebook.title);
@@ -158,32 +165,58 @@ export function Notebook({ notebook }: { notebook: NotebookType }) {
           px="0.3em"
           py="0.3em"
         >
-          <Button
-            onClick={() => toggleFlashcardForm({})}
-            bg="#dededb"
-            borderColor="stroke.thick"
-            color="text.secondary"
-            borderRadius="3px"
-            size="xs"
-            fontWeight="bold"
-            _hover={{ bg: "neutral.surface" }}
+          <Tooltip
+            content="You've reached the free plan limit"
+            disabled={!atCardLimit}
           >
-            <PlusIcon fill="text.secondary" strokeWidth="0.3" />
-            Flashcard
-          </Button>
-          <Button
-            onClick={() => togglePracticeTaskForm({})}
-            bg="#dededb"
-            borderColor="stroke.thick"
-            color="text.secondary"
-            borderRadius="3px"
-            size="xs"
-            fontWeight="bold"
-            _hover={{ bg: "neutral.surface" }}
+            <Box
+              as="span"
+              display="inline-block"
+              cursor={atCardLimit ? "not-allowed" : "default"}
+            >
+              <Button
+                onClick={() => !atCardLimit && toggleFlashcardForm({})}
+                bg="#dededb"
+                borderColor="stroke.thick"
+                color="text.secondary"
+                borderRadius="3px"
+                size="xs"
+                fontWeight="bold"
+                _hover={{ bg: atCardLimit ? "#dededb" : "neutral.surface" }}
+                disabled={atCardLimit}
+                pointerEvents={atCardLimit ? "none" : "auto"}
+              >
+                <PlusIcon fill="text.secondary" strokeWidth="0.3" />
+                Flashcard
+              </Button>
+            </Box>
+          </Tooltip>
+          <Tooltip
+            content="You've reached the free plan limit"
+            disabled={!atCardLimit}
           >
-            <PlusIcon fill="text.secondary" strokeWidth="0.3" />
-            Practice Task
-          </Button>
+            <Box
+              as="span"
+              display="inline-block"
+              cursor={atCardLimit ? "not-allowed" : "default"}
+            >
+              <Button
+                onClick={() => !atCardLimit && togglePracticeTaskForm({})}
+                bg="#dededb"
+                borderColor="stroke.thick"
+                color="text.secondary"
+                borderRadius="3px"
+                size="xs"
+                fontWeight="bold"
+                _hover={{ bg: atCardLimit ? "#dededb" : "neutral.surface" }}
+                disabled={atCardLimit}
+                pointerEvents={atCardLimit ? "none" : "auto"}
+              >
+                <PlusIcon fill="text.secondary" strokeWidth="0.3" />
+                Practice Task
+              </Button>
+            </Box>
+          </Tooltip>
         </Flex>
       </Stack>
       <ElearnerNoteEditor editor={editor} />

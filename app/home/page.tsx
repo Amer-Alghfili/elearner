@@ -6,6 +6,7 @@ import { prisma } from "@/prisma";
 import LearnsContainer from "./LearnsContainer";
 import VideoGuide from "./VideoGuide";
 import { createSampleLearn } from "@/app/lib/sample-learn";
+import { hasReachedLimit } from "@/app/lib/plan-limits";
 
 export default async function HomePage() {
   const today = new Date();
@@ -115,6 +116,7 @@ export default async function HomePage() {
             ...learn,
             lastNoteFileId: learn.noteFiles[learn.noteFiles.length - 1]?.id,
           }))}
+          atLearnLimit={await hasReachedLimit("learns")}
         />
       </Stack>
     </Scaffold>

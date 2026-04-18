@@ -1,5 +1,6 @@
 "use server";
 
+import { hasReachedLimit } from "@/app/lib/plan-limits";
 import { prisma } from "@/prisma";
 import { NotebookType } from "../[notebookId]";
 import { State } from "@/types/server-state";
@@ -7,6 +8,10 @@ import { State } from "@/types/server-state";
 export async function createNotebook(
   notebook: Omit<NotebookType, "id">,
 ): Promise<State<NotebookType>> {
+  if (await hasReachedLimit("notebooks")) {
+    return { error: "You've reached the limit, you need to upgrade your plan" };
+  }
+
   const file = await prisma.noteFile.create({
     data: {
       title: notebook.title,
