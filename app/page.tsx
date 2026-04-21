@@ -2436,11 +2436,35 @@ export default function LandingPage() {
             pt="6"
             borderTop="1px solid"
             borderColor="rgba(255,255,255,0.05)"
-            textAlign="center"
           >
-            <Text textStyle="sm" color="rgba(255,255,255,0.2)">
-              © {new Date().getFullYear()} Elearner. All rights reserved.
-            </Text>
+            <Flex
+              justify={{ base: "center", md: "space-between" }}
+              align="center"
+              direction={{ base: "column", md: "row" }}
+              gap="4"
+            >
+              <Text textStyle="sm" color="rgba(255,255,255,0.2)">
+                © {new Date().getFullYear()} Elearner. All rights reserved.
+              </Text>
+              <Flex gap="6" flexWrap="wrap" justify="center">
+                {[
+                  { label: "Privacy Policy", href: "/privacy-policy" },
+                ].map((link) => (
+                  <Link
+                    key={link.href}
+                    asChild
+                    textDecoration="none"
+                    color="rgba(255,255,255,0.25)"
+                    _hover={{ color: "rgba(255,255,255,0.6)" }}
+                    transition="color 0.2s"
+                  >
+                    <NextLink href={link.href as any}>
+                      <Text textStyle="sm">{link.label}</Text>
+                    </NextLink>
+                  </Link>
+                ))}
+              </Flex>
+            </Flex>
           </Box>
         </Container>
       </Box>
