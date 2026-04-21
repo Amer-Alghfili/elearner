@@ -2449,6 +2449,10 @@ export default function LandingPage() {
               <Flex gap="6" flexWrap="wrap" justify="center">
                 {[
                   { label: "Privacy Policy", href: "/privacy-policy" },
+                  {
+                    label: "Terms of Service",
+                    href: "/terms-of-service",
+                  },
                 ].map((link) => (
                   <Link
                     key={link.href}
