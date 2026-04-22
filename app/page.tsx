@@ -2453,6 +2453,10 @@ export default function LandingPage() {
                     label: "Terms of Service",
                     href: "/terms-of-service",
                   },
+                  {
+                    label: "Refund Policy",
+                    href: "/refund-policy",
+                  },
                 ].map((link) => (
                   <Link
                     key={link.href}

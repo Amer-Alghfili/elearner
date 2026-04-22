@@ -40,7 +40,11 @@ export const authConfig = {
       const isLoggedIn = !!auth?.user?.email;
 
       // Public pages
-      const publicPaths = ["/privacy-policy", "/terms-and-conditions"];
+      const publicPaths = [
+        "/privacy-policy",
+        "/terms-and-conditions",
+        "/refund-policy",
+      ];
       if (publicPaths.includes(nextUrl.pathname)) return true;
 
       // Landing page — public; redirect logged-in users to /home
