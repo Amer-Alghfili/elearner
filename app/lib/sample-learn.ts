@@ -5,10 +5,10 @@ import { calculateDueDate } from "@/service/knowledge-test";
 function makeBlock(
   id: string,
   type: string,
-  content: { type: string; text: string; styles?: Record<string, unknown> }[],
-  props?: Record<string, unknown>,
-  children?: unknown[]
-) {
+  content: Prisma.InputJsonValue[],
+  props?: Record<string, Prisma.InputJsonValue>,
+  children?: Prisma.InputJsonValue[]
+): Prisma.InputJsonValue {
   return {
     id,
     type,
@@ -23,8 +23,8 @@ function makeBlock(
   };
 }
 
-function text(t: string, styles: Record<string, unknown> = {}) {
-  return { type: "text" as const, text: t, styles };
+function text(t: string, styles: Record<string, Prisma.InputJsonValue> = {}): Prisma.InputJsonValue {
+  return { type: "text", text: t, styles };
 }
 
 export async function createSampleLearn(email: string) {
