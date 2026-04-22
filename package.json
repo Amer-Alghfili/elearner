@@ -6,6 +6,7 @@
     "dev": "next dev",
     "next-typegen": "next typegen",
     "build": "npx @chakra-ui/cli typegen ./theme/index.ts && npx prisma generate && next build",
+    "build:prod": "npx @chakra-ui/cli typegen ./theme/index.ts && npx prisma generate && npx prisma migrate deploy && next build",
     "start": "next start",
     "lint": "eslint",
     "typegen": "npx @chakra-ui/cli typegen ./theme/index.ts",
