@@ -173,8 +173,6 @@ export default function PrivacyPolicyPage() {
             <li>What Are Your Privacy Rights?</li>
             <li>Controls for Do-Not-Track Features</li>
             <li>Rights for U.S. Residents</li>
-            <li>Rights in Other Regions</li>
-            <li>Updates to This Notice</li>
             <li>How to Contact Us</li>
             <li>How to Review, Update, or Delete Your Data</li>
           </ol>
@@ -612,7 +610,7 @@ export default function PrivacyPolicyPage() {
           attorney general.
         </p>
 
-        <h2>14. How to Contact Us</h2>
+        <h2>12. How to Contact Us</h2>
         <p>
           For questions about this notice or our privacy practices, contact us
           at:
@@ -625,7 +623,7 @@ export default function PrivacyPolicyPage() {
           <br />
         </p>
 
-        <h2>15. How to Review, Update, or Delete Your Data</h2>
+        <h2>13. How to Review, Update, or Delete Your Data</h2>
         <p>
           You may review, update, or delete your information from within your
           account settings, or by emailing{" "}
