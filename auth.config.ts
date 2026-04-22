@@ -42,7 +42,7 @@ export const authConfig = {
       // Public pages
       const publicPaths = [
         "/privacy-policy",
-        "/terms-and-conditions",
+        "/terms-of-service",
         "/refund-policy",
       ];
       if (publicPaths.includes(nextUrl.pathname)) return true;
