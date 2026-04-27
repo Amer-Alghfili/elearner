@@ -15,7 +15,7 @@ export default function LearnsContainer(props: {
     function syncLearns() {
       setLearns(props.learns);
     },
-    [props.learns]
+    [props.learns],
   );
 
   return (

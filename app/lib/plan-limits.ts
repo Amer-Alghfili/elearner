@@ -12,11 +12,30 @@ const PLAN_LIMITS: Record<LimitType, number> = {
 };
 
 async function isPremium(email: string): Promise<boolean> {
-  const subscription = await prisma.subscription.findUnique({
-    where: { user_email: email },
-    select: { endsAt: true },
+  const user = await prisma.user.findUnique({
+    where: { email },
+    select: { paddleId: true },
   });
-  return subscription !== null && subscription.endsAt > new Date();
+
+  if (!user?.paddleId) return false;
+
+  const res = await fetch(
+    `${process.env.PADDLE_API_URL}/subscriptions?customer_id=${user.paddleId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.PADDLE_API_KEY}`,
+      },
+      cache: "no-store",
+    },
+  );
+
+  if (!res.ok) return false;
+
+  const { data } = await res.json();
+  return data.some(
+    (sub: { status: string }) =>
+      sub.status === "active" || sub.status === "trialing",
+  );
 }
 
 async function getCount(email: string, type: LimitType): Promise<number> {

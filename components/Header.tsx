@@ -36,6 +36,14 @@ export default function Header({
         />
       )}
       <Flex ms="auto" display="flex" alignItems="center" gap="2em">
+        <Link
+          asChild
+          color="primary"
+          fontWeight="bold"
+          _hover={{ textDecoration: "none" }}
+        >
+          <NextLink href="/subscription">Subscription</NextLink>
+        </Link>
         <FeedbackButton />
         <form action={logout}>
           <Button
