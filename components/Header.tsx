@@ -36,6 +36,9 @@ export default function Header({
         />
       )}
       <Flex ms="auto" display="flex" alignItems="center" gap="2em">
+        <Link asChild>
+          <NextLink href="/subscription">Subscription</NextLink>
+        </Link>
         <FeedbackButton />
         <form action={logout}>
           <Button
