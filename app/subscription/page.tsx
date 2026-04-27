@@ -3,6 +3,7 @@ import { prisma } from "@/prisma";
 import { auth } from "@/auth";
 import Header from "@/components/Header";
 import { Scaffold } from "@/components/Scaffold";
+import { SubscribeButton } from "./SubscribeButton";
 import {
   Box,
   Stack,
@@ -208,16 +209,6 @@ export default async function Page() {
                   )}
                 </Flex>
               </Stack>
-              <Button
-                alignSelf="flex-end"
-                minW="10em"
-                size="sm"
-                variant="outline"
-                color="feedback.error"
-                borderColor="feedback.error"
-              >
-                Cancel
-              </Button>
             </Stack>
           </Box>
         ) : (
@@ -254,17 +245,12 @@ export default async function Page() {
                       </HStack>
                     ))}
                   </Stack>
-                  <Button
-                    size="sm"
-                    bg="primary"
-                    color="white"
-                    rounded="md"
-                    mt="1"
-                    alignSelf="flex-start"
-                    _hover={{ bg: "primary.thick" }}
-                  >
-                    Subscribe now
-                  </Button>
+                  <SubscribeButton
+                    env={process.env.PADDLE_ENV as "production" | "sandbox"}
+                    token={process.env.PADDLE_CLIENT_TOKEN as string}
+                    email={email}
+                    paddleId={paddleId}
+                  />
                 </Stack>
                 <Stack gap="0" alignItems="flex-end">
                   <Text textStyle="h3" color="text.primary" fontWeight="bold">
