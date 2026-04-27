@@ -91,6 +91,30 @@ export default async function Page() {
     }
   }
 
+  let priceId: string | null = null;
+  let priceAmount: string | null = null;
+
+  try {
+    const pricesRes = await fetch(`${process.env.PADDLE_API_URL}/prices`, {
+      headers: {
+        Authorization: `Bearer ${process.env.PADDLE_API_KEY}`,
+      },
+      cache: "no-store",
+    });
+
+    if (pricesRes.ok) {
+      const { data } = await pricesRes.json();
+      const firstPrice = data?.[0];
+      priceId = firstPrice?.id ?? null;
+      const rawAmount = firstPrice?.unit_price?.amount;
+      if (rawAmount != null) {
+        priceAmount = (Number(rawAmount) / 100).toFixed(2);
+      }
+    }
+  } catch (err) {
+    console.log(err);
+  }
+
   let activeSub: PaddleSubscription | null = null;
   let historySubs: PaddleSubscription[] = [];
 
@@ -250,11 +274,12 @@ export default async function Page() {
                     token={process.env.PADDLE_CLIENT_TOKEN as string}
                     email={email}
                     paddleId={paddleId}
+                    priceId={priceId}
                   />
                 </Stack>
                 <Stack gap="0" alignItems="flex-end">
                   <Text textStyle="h3" color="text.primary" fontWeight="bold">
-                    7.00$/
+                    {priceAmount != null ? `$${priceAmount}/` : null}
                   </Text>
                   <Text textStyle="sm" color="text.caption">
                     Monthly

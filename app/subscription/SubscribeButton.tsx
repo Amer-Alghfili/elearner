@@ -10,11 +10,13 @@ export function SubscribeButton({
   token,
   email,
   paddleId,
+  priceId,
 }: {
   env: "sandbox" | "production";
   token: string;
   email: string;
   paddleId: string | null | undefined;
+  priceId: string | null;
 }) {
   const [paddle, setPaddle] = React.useState<Paddle | undefined>();
 
@@ -55,7 +57,7 @@ export function SubscribeButton({
       onClick={() =>
         paddle?.Checkout.open({
           customer: paddleId == null ? { email } : { id: paddleId },
-          items: [{ priceId: "pri_01kpz2znnec6jqff3wdbfycrv4", quantity: 1 }],
+          items: priceId ? [{ priceId, quantity: 1 }] : [],
         })
       }
     >
