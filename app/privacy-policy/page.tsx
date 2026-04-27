@@ -129,10 +129,10 @@ export default function PrivacyPolicyPage() {
           <li>
             <strong>What we process:</strong> Account data (email, name,
             username, password), usage and device data
-            {/* <span>
+            <span>
               {" "}
               and payment data processed via our Merchant of Record, Paddle.
-            </span> */}
+            </span>
           </li>
           <li>
             <strong>Sensitive data:</strong> We do not process sensitive
@@ -140,7 +140,7 @@ export default function PrivacyPolicyPage() {
           </li>
           <li>
             <strong>Third parties:</strong> We share data with{" "}
-            {/* <span>Paddle (payments &amp; tax),</span> */}
+            <span>Paddle (payments &amp; tax),</span>
             Google Analytics (usage analytics), our hosting and email providers,
             and as required by law. See Section 4.
           </li>
@@ -199,7 +199,7 @@ export default function PrivacyPolicyPage() {
           </li>
         </ul>
 
-        {/* <h3>Payment Data &mdash; Processed by Paddle (Merchant of Record)</h3>
+        <h3>Payment Data &mdash; Processed by Paddle (Merchant of Record)</h3>
         <div className="callout">
           <strong>
             Paddle.com Market Limited acts as our Merchant of Record for all
@@ -220,7 +220,7 @@ export default function PrivacyPolicyPage() {
           . We receive only limited billing metadata (such as the last four
           digits of your card, your country, and your subscription status)
           &mdash; we never see or store your full payment details.
-        </div> */}
+        </div>
 
         <h3>Information automatically collected</h3>
         <ul>
@@ -248,16 +248,16 @@ export default function PrivacyPolicyPage() {
             Deliver the Services you subscribe to (note-taking, retention,
             organization features).
           </li>
-          {/* <li>Process payments, subscriptions, and refunds through Paddle.</li> */}
+          <li>Process payments, subscriptions, and refunds through Paddle.</li>
           <li>Provide customer support and respond to inquiries.</li>
           <li>
             Send transactional emails (receipts, password resets, service
             updates).
           </li>
-          {/* <li>
+          <li>
             Send marketing communications, where you have consented &mdash; you
             can unsubscribe at any time.
-          </li> */}
+          </li>
           <li>
             Improve, personalize, and develop the Services based on usage
             patterns.
@@ -285,7 +285,7 @@ export default function PrivacyPolicyPage() {
           <li>
             <strong>Performance of a Contract:</strong> to provide the Services
             you signed up for
-            {/* <span>, process subscriptions, and </span>  */} deliver support.
+            <span>, process subscriptions, and </span> deliver support.
           </li>
           <li>
             <strong>Legitimate Interests:</strong> to secure our Services,
@@ -315,7 +315,7 @@ export default function PrivacyPolicyPage() {
           parties:
         </p>
         <ul>
-          {/* <li>
+          <li>
             <strong>Paddle (Paddle.com Market Limited)</strong> &mdash; our
             Merchant of Record. Processes payments, subscriptions, refunds, and
             tax remittance globally. See{" "}
@@ -327,7 +327,7 @@ export default function PrivacyPolicyPage() {
               Paddle&apos;s Privacy Policy
             </a>
             .
-          </li> */}
+          </li>
           <li>
             <strong>Cloud hosting provider</strong> &mdash; stores application
             data and user content on secure, encrypted infrastructure.
@@ -381,7 +381,7 @@ export default function PrivacyPolicyPage() {
 
         <p>
           Elearner is operated from Saudi Arabia. Our service providers
-          (including {/* <span>Paddle, </span> */}
+          (including <span>Paddle, </span>
           Google, and hosting partners) may process data in the United States,
           the European Union, the United Kingdom, and other jurisdictions.
         </p>
@@ -442,11 +442,11 @@ export default function PrivacyPolicyPage() {
             <strong>User content (notes, highlights):</strong> deleted within 30
             days of account closure, unless you export or retain it.
           </li>
-          {/* <li>
+          <li>
             <strong>Billing and transaction records:</strong> retained by us
             and/or Paddle for up to 7 years to comply with tax and accounting
             laws.
-          </li> */}
+          </li>
           <li>
             <strong>Support communications:</strong> retained for up to 2 years
             for quality and dispute resolution.
@@ -538,11 +538,11 @@ export default function PrivacyPolicyPage() {
               <td>Age, gender, race, etc.</td>
               <td className="no">NO</td>
             </tr>
-            {/* <tr>
+            <tr>
               <td>D. Commercial information</td>
               <td>Subscription history, transaction records (via Paddle)</td>
               <td className="yes">YES</td>
-            </tr> */}
+            </tr>
             <tr>
               <td>E. Biometric information</td>
               <td>Fingerprints, voiceprints</td>

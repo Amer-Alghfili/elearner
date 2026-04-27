@@ -163,7 +163,7 @@ export default function TermsAndConditionsPage() {
             <li>Intellectual Property Rights</li>
             <li>User Representations</li>
             <li>User Registration</li>
-            {/* <li>Purchases and Payment (Paddle as Merchant of Record)</li> */}
+            <li>Purchases and Payment (Paddle as Merchant of Record)</li>
             <li>Subscriptions</li>
             <li>Refunds</li>
             <li>Prohibited Activities</li>
@@ -293,7 +293,7 @@ export default function TermsAndConditionsPage() {
           third-party rights.
         </p>
 
-        {/* <h2>5. Purchases and Payment (Paddle as Merchant of Record)</h2>
+        <h2>5. Purchases and Payment (Paddle as Merchant of Record)</h2>
 
         <div className="callout">
           <strong>Paddle as Merchant of Record.</strong> Our order process is
@@ -354,20 +354,20 @@ export default function TermsAndConditionsPage() {
           We reserve the right to refuse or cancel any order at our discretion,
           including orders that appear fraudulent, duplicate, or in breach of
           these Legal Terms.
-        </p> */}
+        </p>
 
-        <h2>5. Subscriptions</h2>
+        <h2>6. Subscriptions</h2>
 
         <h3>Billing and renewal</h3>
         <p>
           Elearner is offered as a monthly subscription. Your subscription will
           automatically renew at the end of each billing cycle unless you
           cancel.
-          {/* <span>
+          <span>
             {" "}
             By subscribing, you authorize Paddle to charge your payment method
             on a recurring monthly basis until you cancel.
-          </span> */}
+          </span>
         </p>
 
         <h3>Cancellation</h3>
@@ -396,18 +396,18 @@ export default function TermsAndConditionsPage() {
           will automatically begin and your payment method will be charged.
         </p>
 
-        <h2>6. Refunds</h2>
+        <h2>7. Refunds</h2>
         <p>
           Refunds are governed by our{" "}
           <a href="https://elearner.academy/refund-policy">Refund Policy</a>
-          {/* <span>
+          <span>
             , and are processed by Paddle as our Merchant of Record. Please
             review the Refund Policy for eligibility, timelines, and how to
             request a refund.
-          </span> */}
+          </span>
         </p>
 
-        <h2>7. Prohibited Activities</h2>
+        <h2>8. Prohibited Activities</h2>
         <p>You agree not to:</p>
         <ul>
           <li>
@@ -453,7 +453,7 @@ export default function TermsAndConditionsPage() {
           prohibited activities.
         </p>
 
-        <h2>8. Your Content</h2>
+        <h2>9. Your Content</h2>
         <p>
           You are solely responsible for the content you upload, create, or
           store in the Services (&ldquo;User Content&rdquo;). You represent that
@@ -472,7 +472,7 @@ export default function TermsAndConditionsPage() {
           providing the Services to you, as described in Section 2.
         </p>
 
-        <h2>9. Feedback and Suggestions</h2>
+        <h2>10. Feedback and Suggestions</h2>
         <p>
           If you send us suggestions, feedback, ideas, or feature requests
           (&ldquo;Feedback&rdquo;), you agree that we may use this Feedback for
@@ -481,7 +481,7 @@ export default function TermsAndConditionsPage() {
           your User Content.
         </p>
 
-        <h2>10. Services Management</h2>
+        <h2>11. Services Management</h2>
         <p>
           We reserve the right (but are not obligated) to monitor the Services
           for violations, take legal action where appropriate, remove content
@@ -489,7 +489,7 @@ export default function TermsAndConditionsPage() {
           designed to protect our rights and ensure proper functioning.
         </p>
 
-        <h2>11. Privacy Policy</h2>
+        <h2>12. Privacy Policy</h2>
         <p>
           We care about data privacy and security. Please review our{" "}
           <a href="https://elearner.academy/privacy-policy">Privacy Policy</a>.
@@ -500,7 +500,7 @@ export default function TermsAndConditionsPage() {
           Privacy Policy.
         </p>
 
-        <h2>12. Term and Termination</h2>
+        <h2>13. Term and Termination</h2>
         <p>
           These Legal Terms remain in effect while you use the Services. We may
           suspend or terminate your account, at our discretion and without
@@ -519,7 +519,7 @@ export default function TermsAndConditionsPage() {
           account under a different name without our written permission.
         </p>
 
-        <h2>13. Modifications and Interruptions</h2>
+        <h2>14. Modifications and Interruptions</h2>
         <p>
           We may modify, suspend, or discontinue the Services (or any part of
           them) at any time. We will provide reasonable notice of material
@@ -534,7 +534,7 @@ export default function TermsAndConditionsPage() {
           applicable law.
         </p>
 
-        <h2>14. Governing Law and Consumer Rights</h2>
+        <h2>15. Governing Law and Consumer Rights</h2>
         <p>
           These Legal Terms are governed by the laws of Saudi Arabia, without
           regard to its conflict-of-law rules.
@@ -548,7 +548,7 @@ export default function TermsAndConditionsPage() {
           limits those statutory rights.
         </p>
 
-        <h2>15. Dispute Resolution</h2>
+        <h2>16. Dispute Resolution</h2>
         <p>
           Before initiating formal legal proceedings, you agree to contact us at{" "}
           <a href="mailto:support@elearner.academy">support@elearner.academy</a>{" "}
@@ -557,7 +557,7 @@ export default function TermsAndConditionsPage() {
           subject to Section 14.
         </p>
 
-        <h2>16. Disclaimer</h2>
+        <h2>17. Disclaimer</h2>
         <div className="caps">
           The Services are provided on an &ldquo;as-is&rdquo; and
           &ldquo;as-available&rdquo; basis. To the fullest extent permitted by
@@ -572,7 +572,7 @@ export default function TermsAndConditionsPage() {
           consumer protection rights.
         </div>
 
-        <h2>17. Limitation of Liability</h2>
+        <h2>18. Limitation of Liability</h2>
         <div className="caps">
           To the fullest extent permitted by law, in no event will Elearner or
           its directors, employees, or agents be liable for any indirect,
@@ -587,7 +587,7 @@ export default function TermsAndConditionsPage() {
           willful misconduct, or death/personal injury caused by negligence.
         </div>
 
-        <h2>18. Indemnification</h2>
+        <h2>19. Indemnification</h2>
         <p>
           To the extent permitted by law, you agree to indemnify, defend, and
           hold harmless Elearner and its officers, agents, partners, and
@@ -600,7 +600,7 @@ export default function TermsAndConditionsPage() {
           arises from our own breach of these Legal Terms or our negligence.
         </p>
 
-        <h2>19. User Data</h2>
+        <h2>20. User Data</h2>
         <p>
           We maintain data that you transmit to the Services to operate and
           improve them, and we perform routine backups. However, you are
@@ -610,7 +610,7 @@ export default function TermsAndConditionsPage() {
           negligence or where liability cannot be excluded under applicable law.
         </p>
 
-        <h2>20. Electronic Communications</h2>
+        <h2>21. Electronic Communications</h2>
         <p>
           By using the Services, sending us emails, and completing online forms,
           you consent to receive electronic communications from us and to
@@ -620,7 +620,7 @@ export default function TermsAndConditionsPage() {
           applicable law.
         </p>
 
-        <h2>21. Miscellaneous</h2>
+        <h2>22. Miscellaneous</h2>
         <p>
           These Legal Terms and any policies referenced herein (including our
           Privacy Policy and Refund Policy) constitute the entire agreement
@@ -632,7 +632,7 @@ export default function TermsAndConditionsPage() {
           relationship is created by these Legal Terms.
         </p>
 
-        <h2>22. Contact Us</h2>
+        <h2>23. Contact Us</h2>
         <p>
           For questions, complaints, or support regarding the Services, please
           contact us at:

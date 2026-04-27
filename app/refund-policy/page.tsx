@@ -64,14 +64,22 @@ export default function RefundPolicyPage() {
           . By subscribing to Elearner, you agree to this Refund Policy.
         </p>
 
-        {/* <h2>2. Paddle as Our Merchant of Record</h2>
+        <h2>2. Paddle as Our Merchant of Record</h2>
         <div className="callout">
-          All purchases of Elearner subscriptions are processed by <strong>Paddle.com Market Limited</strong> (or its affiliate Paddle.com Inc. for purchases from the United States) (&ldquo;Paddle&rdquo;), acting as our Merchant of Record. This means Paddle handles payment, billing, tax, and refund processing on our behalf.
-          <br /><br />
-          All refund requests are reviewed and approved by us (Elearner), but the actual refund transaction &mdash; returning the funds to your payment method &mdash; is carried out by Paddle.
-        </div> */}
+          All purchases of Elearner subscriptions are processed by{" "}
+          <strong>Paddle.com Market Limited</strong> (or its affiliate
+          Paddle.com Inc. for purchases from the United States)
+          (&ldquo;Paddle&rdquo;), acting as our Merchant of Record. This means
+          Paddle handles payment, billing, tax, and refund processing on our
+          behalf.
+          <br />
+          <br />
+          All refund requests are reviewed and approved by us (Elearner), but
+          the actual refund transaction &mdash; returning the funds to your
+          payment method &mdash; is carried out by Paddle.
+        </div>
 
-        <h2>2. 14-Day Satisfaction Guarantee</h2>
+        <h2>3. 14-Day Satisfaction Guarantee</h2>
         <p>
           If you are not satisfied with Elearner for any reason, you may request
           a full refund within <strong>14 days of your initial purchase</strong>
@@ -93,7 +101,7 @@ export default function RefundPolicyPage() {
           your account
         </p>
 
-        <h2>3. Refunds Available at Any Time</h2>
+        <h2>4. Refunds Available at Any Time</h2>
         <p>
           Regardless of the 14-day window, we will always issue a refund in the
           following cases:
@@ -118,7 +126,7 @@ export default function RefundPolicyPage() {
           </li>
         </ul>
 
-        <h2>4. What Is Not Eligible for a Refund</h2>
+        <h2>5. What Is Not Eligible for a Refund</h2>
         <p>
           Outside the 14-day window, the following are generally{" "}
           <strong>not</strong> eligible for a refund:
@@ -158,7 +166,7 @@ export default function RefundPolicyPage() {
           example as a goodwill gesture for a first-time missed cancellation.
         </p>
 
-        <h2>5. Statutory Consumer Rights (EU, UK, and Other Jurisdictions)</h2>
+        <h2>6. Statutory Consumer Rights (EU, UK, and Other Jurisdictions)</h2>
         <p>
           If you are a consumer residing in the European Union, the United
           Kingdom, or another jurisdiction with mandatory consumer protection
@@ -178,7 +186,7 @@ export default function RefundPolicyPage() {
           protections for all users worldwide.
         </p>
 
-        <h2>6. How to Request a Refund</h2>
+        <h2>7. How to Request a Refund</h2>
         <p>
           Send an email to{" "}
           <a href="mailto:support@elearner.academy">support@elearner.academy</a>{" "}
@@ -186,16 +194,16 @@ export default function RefundPolicyPage() {
         </p>
         <ul>
           <li>The email address associated with your Elearner account</li>
-          {/* <li>
+          <li>
             The Paddle order number or receipt ID (found in your purchase
             confirmation email from Paddle)
-          </li> */}
+          </li>
           <li>
             A brief description of why you are requesting a refund (not required
             within the 14-day window, but helpful)
           </li>
         </ul>
-        {/* <p>
+        <p>
           Alternatively, you can manage your purchase and request a refund
           directly through Paddle&apos;s buyer portal at{" "}
           <a
@@ -206,14 +214,14 @@ export default function RefundPolicyPage() {
             buyers.paddle.com
           </a>
           .
-        </p> */}
+        </p>
         <p>
           We review all refund requests within <strong>3 business days</strong>{" "}
           of receipt and will notify you by email of our decision.
         </p>
 
-        <h2>7. How Long Refunds Take</h2>
-        {/* <p>
+        <h2>8. How Long Refunds Take</h2>
+        <p>
           Once approved, refunds are processed by Paddle and typically appear on
           your original payment method within:
         </p>
@@ -226,13 +234,13 @@ export default function RefundPolicyPage() {
             <strong>5&ndash;10 business days</strong> for PayPal, bank transfer,
             and other payment methods
           </li>
-        </ul> */}
+        </ul>
         <p>
           The exact timing depends on your bank or payment provider. Refunds are
           always issued to the original payment method used for the purchase.
         </p>
 
-        <h2>8. Subscription Cancellation vs. Refund</h2>
+        <h2>9. Subscription Cancellation vs. Refund</h2>
         <p>
           Cancelling your subscription and requesting a refund are two different
           actions:
@@ -257,14 +265,14 @@ export default function RefundPolicyPage() {
           .
         </p>
 
-        <h2>9. Chargebacks</h2>
+        <h2>10. Chargebacks</h2>
         <p>
           If you believe a charge is incorrect, please contact us first at{" "}
           <a href="mailto:support@elearner.academy">support@elearner.academy</a>{" "}
           before filing a chargeback or dispute with your bank.
         </p>
 
-        <h2>10. Changes to This Policy</h2>
+        <h2>11. Changes to This Policy</h2>
         <p>
           We may update this Refund Policy from time to time. Material changes
           will be communicated via email or a notice in the Services. The
@@ -273,7 +281,7 @@ export default function RefundPolicyPage() {
           before the update.
         </p>
 
-        <h2>11. Contact Us</h2>
+        <h2>12. Contact Us</h2>
         <p>
           For refund requests or questions about this policy, contact us at:
         </p>
