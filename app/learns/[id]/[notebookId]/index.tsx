@@ -47,6 +47,7 @@ export function Notebook({
   });
 
   const titleRef = React.useRef<HTMLInputElement>(null);
+  const containerRef = React.useRef<HTMLDivElement>(null);
 
   const [documentState, setDocumentState] = React.useState<Block<any>[]>();
   const hasEditedDocument = React.useRef(false);
@@ -88,6 +89,10 @@ export function Notebook({
   React.useEffect(function registerOnEnterClick() {
     function handleArrowNavigation(e: KeyboardEvent) {
       const { activeElement } = document;
+
+      if (!containerRef.current?.contains(activeElement as Node)) {
+        return;
+      }
 
       // From title => editor
       if (activeElement === titleRef.current) {
@@ -144,7 +149,7 @@ export function Notebook({
   }, []);
 
   return (
-    <Stack>
+    <Stack ref={containerRef}>
       <Stack ps="3.375rem" gap="1em">
         <Field>
           <Input
