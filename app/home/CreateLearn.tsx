@@ -9,69 +9,50 @@ import {
 import { Field } from "@/components/ui/field";
 import { Box, Button, Input, Textarea } from "@chakra-ui/react";
 import React from "react";
-import { postLearn } from "./actions";
-import { toaster } from "@/components/ui/toaster";
-import { isZodError } from "@/types/error";
-import { useRouter } from "next/navigation";
 import { Tooltip } from "@/components/ui/tooltip";
 
-export default function CreateLearn(
-  props: AddButtonProps & { atLearnLimit?: boolean }
-) {
-  const { atLearnLimit, ...rest } = props;
+export default function CreateLearn(props: AddButtonProps) {
   const [open, setOpen] = React.useState<boolean>();
 
-  const [state, formAction, isPending] = React.useActionState(
-    postLearn,
-    undefined
-  );
+  const state = "";
 
-  const router = useRouter();
+  const loading = true;
+
+  async function postLearn() {}
 
   React.useEffect(
     function handleDialogState() {
-      if (state == null) return;
-
-      if (isZodError(state)) {
-        toaster.create({
-          title: state.errorMessage,
-          type: "error",
-          closable: true,
-        });
-      } else {
-        router.refresh();
-
-        setTimeout(() => {
-          toaster.create({
-            title: "Learn has been created successfully 🎉",
-            type: "success",
-            closable: true,
-          });
-          setOpen(false);
-        }, 0);
-      }
+      // if (state == null) return;
+      // if (isZodError(state)) {
+      //   toaster.create({
+      //     title: state.errorMessage,
+      //     type: "error",
+      //     closable: true,
+      //   });
+      // } else {
+      //   router.refresh();
+      //   setTimeout(() => {
+      //     toaster.create({
+      //       title: "Learn has been created successfully 🎉",
+      //       type: "success",
+      //       closable: true,
+      //     });
+      //     setOpen(false);
+      //   }, 0);
+      // }
     },
-    [state]
+    [state],
   );
 
   return (
     <>
-      <Tooltip
-        content="You've reached the free plan limit"
-        disabled={!atLearnLimit}
-      >
-        <Box
-          as="span"
-          display="inline-block"
-          cursor={atLearnLimit ? "not-allowed" : "default"}
-        >
+      <Tooltip content="You've reached the free plan limit">
+        <Box as="span" display="inline-block">
           <AddButton
-            onClick={() => !atLearnLimit && setOpen(true)}
-            disabled={atLearnLimit}
-            pointerEvents={atLearnLimit ? "none" : "auto"}
+            onClick={() => setOpen(true)}
             textStyle="h5"
             iconProps={{ w: "1.5rem", h: "1.5rem" }}
-            {...rest}
+            {...props}
           >
             New Learn
           </AddButton>
@@ -84,7 +65,7 @@ export default function CreateLearn(
           bg="linear-gradient(127deg, #F4F4F2 0%, rgba(255, 255, 255, 0.7) 64%, rgba(255, 255, 255, 0.4) 100%)"
           backdropFilter="blur(80px)"
         >
-          <form action={formAction}>
+          <form action={postLearn}>
             <DialogHeader pb={0} px="3rem">
               <Field>
                 <Input
@@ -122,7 +103,7 @@ export default function CreateLearn(
               >
                 Cancel
               </Button>
-              <Button loading={isPending} type="submit" w="100%" maxW="12.5rem">
+              <Button loading={loading} type="submit" w="100%" maxW="12.5rem">
                 Add
               </Button>
             </DialogFooter>

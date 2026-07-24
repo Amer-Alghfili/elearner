@@ -13,7 +13,6 @@ import {
   Text,
   Textarea,
 } from "@chakra-ui/react";
-import { deleteLearn, Learn, postLearn } from "./actions";
 import {
   DialogActionTrigger,
   DialogBody,
@@ -25,16 +24,9 @@ import {
 } from "@/components/ui/dialog";
 import React from "react";
 import { Field } from "@/components/ui/field";
-import { isZodError } from "@/types/error";
-import { toaster } from "@/components/ui/toaster";
 import { LuTrash } from "react-icons/lu";
-import { useRouter } from "next/navigation";
 
-export function Learns({ learns }: { learns: Learn[] }) {
-  const [loading, setLoading] = React.useState(false);
-
-  const router = useRouter();
-
+export function Learns({ learns }: { learns: any[] }) {
   return learns.map((learn) => {
     const { id, title, lastNoteFileId: LastNoteFileId, description } = learn;
 
@@ -42,6 +34,8 @@ export function Learns({ learns }: { learns: Learn[] }) {
       LastNoteFileId == null
         ? `/learns/${id}`
         : `/learns/${id}/${LastNoteFileId}`;
+
+    async function deleteLearn(id: string) {}
 
     return (
       <LinkBox key={id} w="full">
@@ -90,16 +84,10 @@ export function Learns({ learns }: { learns: Learn[] }) {
                           <Button variant="secondary">Cancel</Button>
                         </DialogActionTrigger>
                         <Button
-                          loading={loading}
+                          loading={true}
                           bg="feedback.error"
                           onClick={async () => {
-                            setLoading(true);
-
                             await deleteLearn(id);
-
-                            router.refresh();
-
-                            setLoading(false);
                           }}
                         >
                           Delete
@@ -117,39 +105,35 @@ export function Learns({ learns }: { learns: Learn[] }) {
   });
 }
 
-function Update({ learn }: { learn: Learn }) {
+function Update({ learn }: { learn: any }) {
   const { id, title, description } = learn;
-
-  const router = useRouter();
 
   const [open, setOpen] = React.useState(false);
 
-  const [state, formAction, isPending] = React.useActionState(
-    postLearn,
-    undefined,
-  );
+  const state = "";
+
+  const loading = true;
+
+  async function postLearn() {}
 
   React.useEffect(
     function handleDialogState() {
-      if (state == null) return;
-
-      if (isZodError(state)) {
-        toaster.create({
-          title: state.errorMessage,
-          type: "error",
-          closable: true,
-        });
-      } else {
-        router.refresh();
-
-        toaster.create({
-          title: "Learn has been created successfully 🎉",
-          type: "success",
-          closable: true,
-        });
-
-        setOpen(false);
-      }
+      // if (state == null) return;
+      // if (isZodError(state)) {
+      //   toaster.create({
+      //     title: state.errorMessage,
+      //     type: "error",
+      //     closable: true,
+      //   });
+      // } else {
+      //   router.refresh();
+      //   toaster.create({
+      //     title: "Learn has been created successfully 🎉",
+      //     type: "success",
+      //     closable: true,
+      //   });
+      //   setOpen(false);
+      // }
     },
     [state],
   );
@@ -167,7 +151,7 @@ function Update({ learn }: { learn: Learn }) {
         bg="linear-gradient(127deg, #F4F4F2 0%, rgba(255, 255, 255, 0.7) 64%, rgba(255, 255, 255, 0.4) 100%)"
         backdropFilter="blur(80px)"
       >
-        <form action={formAction}>
+        <form action={postLearn}>
           <DialogHeader pb={0} px="3rem">
             <Field>
               <Input
@@ -205,7 +189,7 @@ function Update({ learn }: { learn: Learn }) {
                 Cancel
               </Button>
             </DialogActionTrigger>
-            <Button loading={isPending} type="submit" w="100%" maxW="12.5rem">
+            <Button loading={loading} type="submit" w="100%" maxW="12.5rem">
               Update
             </Button>
           </DialogFooter>

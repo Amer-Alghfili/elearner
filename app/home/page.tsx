@@ -1,71 +1,15 @@
+"use client";
+
 import Header from "@/components/Header";
 import { Scaffold } from "@/components/Scaffold";
 import { Button, Card, Image, Stack, Link } from "@chakra-ui/react";
-import { auth } from "@/auth";
-import { prisma } from "@/prisma";
 import LearnsContainer from "./LearnsContainer";
 import VideoGuide from "./VideoGuide";
-import { createSampleLearn } from "@/app/lib/sample-learn";
-import { hasReachedLimit } from "@/app/lib/plan-limits";
 
-export default async function HomePage() {
-  const today = new Date();
+export default function HomePage() {
+  const learns: any[] = [];
 
-  const data = await auth();
-  const email = data?.user?.email as string;
-
-  const user = await prisma.user.findUnique({
-    where: { email },
-    include: { _count: { select: { learns: true } } },
-  });
-
-  if (user && !user.sampleLearnsCreated && user._count.learns === 0) {
-    await createSampleLearn(email);
-  }
-
-  const learns = await prisma.learn.findMany({
-    where: {
-      user_id: email,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-    include: {
-      noteFiles: {
-        select: {
-          id: true,
-        },
-        take: 1,
-        orderBy: {
-          createdAt: "desc",
-        },
-      },
-    },
-  });
-
-  let knowledgeItemsCount = await prisma.flashCard.count({
-    where: {
-      learn_id: {
-        in: learns.map(({ id }) => id),
-      },
-      due: {
-        lte: today,
-      },
-    },
-  });
-
-  if (!knowledgeItemsCount) {
-    knowledgeItemsCount = await prisma.practiceTask.count({
-      where: {
-        learn_id: {
-          in: learns.map(({ id }) => id),
-        },
-        due: {
-          lte: today,
-        },
-      },
-    });
-  }
+  const knowledgeItemsCount = 0;
 
   return (
     <Scaffold>
@@ -116,7 +60,6 @@ export default async function HomePage() {
             ...learn,
             lastNoteFileId: learn.noteFiles[learn.noteFiles.length - 1]?.id,
           }))}
-          atLearnLimit={await hasReachedLimit("learns")}
         />
       </Stack>
     </Scaffold>
